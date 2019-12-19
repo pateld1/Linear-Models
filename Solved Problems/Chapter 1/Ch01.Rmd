@@ -1,0 +1,17 @@
+---
+title: 'Chapter 1: Linear Regression with One Predictor Variable'
+author: "Darshan Patel"
+date: "12/19/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Question 1: 
+Refer to the sales volume example on page 3. 
+
+
+to be continued...
+
