@@ -1,0 +1,277 @@
+% DO NOT COMPILE THIS TEX FILE
+% COMPILE MAIN TEX FILE
+
+\section{Linear Regression with One Predictor Variable}
+\subsection{Relations between Variables}
+\begin{itemize}
+\item Regression analysis is a statistical methodology that utilizes the relation between two or more quantitative variables so that a response or outcome variable can be predicted from the other, or others 
+\item A functional relation between two variables is expressed as follows: if $X$ denotes the independent variable and $Y$ the dependent variable, a functional relation is of the form $$Y = f(X) $$ Given a particular value of $X$, the function $f$ indicates the corresponding value of $Y$ 
+\item A statistical relation, unlike a functional relation, is not a perfect one; in general, the observations for a statistical relation do not fall directly on he curve of relationship
+\item Statistical relations can be highly useful, even though they do not have the exactitude of a functional relation
+\end{itemize}
+
+\subsection{Regression Models and their Uses}
+\begin{itemize}
+\item A regression model is a formal means of expressing the two essential ingredients of a statistical relation: 
+\begin{itemize}
+\item A tendency of the response variable $Y$ to vary with the predictor variable $X$ in a systematic fashion
+\item A scattering of points around the curve of statistical relationship
+\end{itemize}
+\item These two characteristics are embodied in a regression model by postulating that: \begin{itemize}
+\item There is a probability distribution of $Y$ for each level of $X$ 
+\item The means of these probability distributions vary in some systematic fashion with $X$ \end{itemize} 
+\item The systematic relationship between $X$ and $Y$ is called the regression function of $Y$ on $X$; the graph of the regression function is called the regression curve 
+\item Regression models may differ in the form of the regression function (linear, curvilinear), in the shape of the probability distribution of $Y$ (symmetrical, skewed), and in other ways 
+\item Regression models may contain more than one predictor variable 
+\item Since reality must be reduced to manageable proportions whenever models are constructed, only a limited number of explanatory or predictor variables can, or should, be included in a regression model for any situation of interest 
+\item A central problem in many exploratory studies is therefore that of choosing, for a regression model, a set of predictor variables that is ``good" in some sense for the purposes of the analysis
+\item The choice of the functional form of the regression relation is tied to the choice of the predictor variables; sometimes, relevant theory may indicate the appropriate functional form 
+\item More frequently, the functional form of the regression relation is not known in advance and must be decided upon empirically once the data have been collected
+\item Linear or quadratic regression functions are often used as satisfactory first approximations to regression functions of unknown nature 
+\item In formulating a regression model, the coverage is usually restricted to some interval or region of values of the predictor variable(s) which is determined either by the design of the investigation or by the range of data at hand 
+\item Regression analysis serves three major purposes: description, control and prediction 
+\item The existence of a statistical relation between the response variable $Y$ and the explanatory or predictor variable $X$ does not imply in any way that $Y$ depends casually on $X$ 
+\end{itemize}
+
+\subsection{Simple Linear Regression Model with Distribution of Error Terms Unspecified}
+\begin{itemize}
+\item A basic regression model where there is only one predictor variable and the regression function is linear can be stated as follows: $$ Y_i = \beta_0 + \beta_1X_i + \eps_i$$ where 
+\begin{itemize}[label={}]
+\item $Y_i$ is the value of the response variable in the $i$th trial
+\item $\beta_0$ and $\beta_1$ are parameters 
+\item $X_i$ is a known constant, namely, the value of the predictor variable in the $i$th trial
+\item $\eps_i$ is a random error with mean $\expe{\eps_i} = 0$ and variance $\var{\eps_i} = \sigma^2$; $\eps_i$ and $\eps_j$ are uncorrelated so that their covariance is zero (i.e., $\cov{\eps_i}{\eps_j} = 0$ for all $i,j; i \neq j$) 
+\item $i = 1, \dots, n$ \end{itemize} 
+\item This regression model is said to be simple, linear in its parameters, and linear in the predictor variable \newpage
+\item Important Features of the Model \begin{enumerate}
+\item The response $Y_i$ in the $i$th trial is the sum of two components: (1) the constant term $\beta_0 + \beta_1X_i$ and (2) the random term $\eps_i$; hence $Y_i$ is a random variable 
+\item Since $\expe{\eps_i} = 0$, then
+$$ \expe{Y_i} = \expe{\beta_0 + \beta_1X_i + \eps_i} = \beta_0 + \beta_1X_i + \expe{\eps_i} = \beta_0 + \beta_1X_i $$ 
+Thus, the response $Y_i$, when the level of $X$ in the $i$th trial is $X_i$, comes from a probability distribution whose mean is $$ \expe{Y_i} = \beta_0 + \beta_1X_i$$ 
+\item The response $Y_i$ in the $i$th trial exceeds or falls short of the value of the regression function by the error term amount $\eps_i$
+\item The error terms $\eps_i$ are assumed to have constant variance $\sigma^2$ and so the responses $Y_i$ have the same constant variance $$ \var{Y_i} = \sigma^2 $$ 
+\end{enumerate}
+\item The parameters $\beta_0$ and $\beta_1$ in the regression model are called regression coefficients
+\item The parameter $\beta_1$ is the slope of the regression line (indicating the change in the mean of the probability distribution of $Y$ per unit change in $X$)
+\item The parameter $\beta_0$ is the $Y$ intercept of the regression line 
+\item When the scope of the model includes $X=0$, $\beta_0$ gives the mean of the probability distribution of $Y$ at $X=0$; when the scope of the model does not cover $X=0$, $\beta_0$ does not have any particular meaning as a separate term in the regression model
+\item The simple linear regression model can be written equivalently as follows: let $X_0$ be a constant identically equal to $1$, then $$ Y_i = \beta_0X_0 + \beta_1X_i + \eps_i \text{ where } X_0 \equiv 1 $$ This version of the model associates an $X$ variable with each regression coefficient 
+\item An alternative modification is to use for the predictor variable the deviation $X_i - \overline{X}$ rather than $X_i$, then 
+$$ \begin{aligned} Y_i &= \beta_0 + \beta_1(X_i - \overline{X}) + \beta_1\overline{X} + \eps_i \\ 
+&= (\beta_0 + \beta_1\overline{X}) + \beta_1(X_i - \overline{X}) + \eps_i \\ 
+&= \beta_0^* + \beta_1(X_9 - \overline{X}) + \eps_i \end{aligned} $$ 
+Thus this alternative model is $$ Y_i = \beta_0^* + \beta_1(X_i - \overline{X}) + \eps_i $$ where $$\beta_0^* = \beta_0 + \beta_1\overline{X}$$ 
+\end{itemize}
+
+\subsection{Data for Regression Analysis}
+\begin{itemize}
+\item Data for regression analysis may be obtained from nonexperimental or experimental studies
+\item Observational data are data obtained from nonexperimental studies; such studies do not control he explanatory or predictor variable(s) of interest 
+\item A major limitation of observational data is that they often do not provide adequate information about cause and effect relationships 
+\item Frequently, it is possible to conduct a controlled experiment to provide data from which the regression parameters can be estimated 
+\item When control over the explanatory variable(s) is exercised through random assignments, the resulting experimental data provide much stronger information about cause and effect relationships than do observational data; the reason is that randomization tends to balance out the effects of any other variables that might affect the response variable
+\item In the terminology of experimental design, a treatment is the object being measured and the experimental units are the subjects of the study, from whom the treatment is done on and measured; control over the explanatory variable(s) then consists of assigning a treatment to each of the experimental units by means of randomization
+\item The most basic type of statistical design for making randomized assignments of treatments to experimental units (or vice versa) is the completely randomized design; with this design, the assignments are made completely at random
+\item This complete randomization provides that all combinations of experimental units assigned to the different treatments are equally likely, which implies that every experimental unit has an equal change to receive any one of the treatment
+\item A completely randomized design is particularly useful when the experimental units are quite homogeneous; this design is very flexible; it accommodates any number of treatments and permits different sample sizes for different treatments 
+\item Its chief disadvantage is that, when the experimental units are heterogeneous, this design is not as efficient as some other statistical designs
+\end{itemize}
+
+\subsection{Overview of Steps in Regression Analysis}
+\begin{itemize}
+\item The regression models given in the following chapters can be used either for observational data or for experimental data from a completely randomized design (regression analysis can also utilize data from other types of experimental designs, bu the regression models presented here will need to be modified) 
+\item Typical Strategy for Regression Analysis \begin{enumerate} 
+\item Start 
+\item Exploratory data analysis
+\item Develop one or more tentative regression models 
+\item Is one or more of the regression models suitable for the data at hand? \begin{itemize} 
+\item If yes, continue
+\item If no, revise regression models and/or develop new ones and answer the question again \end{itemize}
+\item Identify most suitable model
+\item Make inferences on basis of regression model 
+\item Stop \end{enumerate} 
+\end{itemize}
+
+\subsection{Estimation of Regression Function}
+\begin{itemize}
+\item The observational or experimental data to be used for estimating the parameters of the regression function consist of observations on the explanatory or predictor variable $X$ and the corresponding observations on the response variable $Y$; for each trial, there is an $X$ observation and a $Y$ observation; denote the $(X,Y)$ observations for he first trial as $(X_1,Y_1)$, for the second trial as $(X_2,Y_2)$, and in general for the $i$th trial as $(X_i, Y_i)$, where $i=1,\dots,n$
+\item For the observations $(X_i, Y_i)$ for each case, the method of least squares considers the deviation of $Y_i$ from its expected value $Y_i - (\beta_0 + \beta_1X_i)$; in particular, the method of least squares requires considering the sum of the $n$ squared deviations; this criterion is denoted by $Q$: $$ Q = \sum_{i=1}^n (Y_i - \beta_0 - \beta_1X_i)^2 $$ 
+According to the method of least squares, the estimators of $\beta_0$ and $\beta_1$ are those values $b_0$ and $b_1$, respectively, that minimize the criterion $Q$ for the given sample observations $(X_1,Y_1),\dots, (X_n,Y_n)$
+\item The estimators $b_0$ and $b_1$ that satisfy the least squares criterion can be found in two basic ways: \begin{itemize} 
+\item Numerical search procedures can be used hat evaluate in a systematic fashion the least squares criterion for different estimates $b_0$ and $b_1$ until the ones that minimize $Q$ are found
+\item Analytical procedures can often be used to find the values of $b_0$ and $b_1$ that minimize $Q$; this is feasible when the regression model is not mathematically complex \end{itemize}
+\item Using the analytical approach, the values $b_0$ and $b_1$ that minimize $Q$ for the simple linear regression model  are given by the following simultaneous equations: $$ \begin{aligned} 
+\sum Y_i &= nb_0 + b_1\sum X_i \\ \sum X_i Y_i &= b_0\sum X_i + b_1\sum X_i^2 \end{aligned} $$ 
+These two equations are called normal equations; $b_0$ and $b_1$ are called point estimators of $\beta_0$ and $\beta_1$ respectively
+\item The normal equations can be solved simultaneously for $b_0$ and $b_1$: $$ \begin{aligned} 
+b_1 &= \frac{ \sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sum (X_i - \overline{X})^2} \\
+b_0 &= \frac{1}{n} \left( \sum Y_i - b_1 \sum X_i \right) = \overline{Y} - b_1\overline{X} \end{aligned} $$ where $\overline{X}$ and $\overline{Y}$ are the means of the $X_i$ and $Y_i$ observations respectively
+\item Derivation of above result: for given sample observations $(X_i, Y_i)$, the quantity $Q$ is a function of $\beta_0$ and $\beta_1$;  the values of $\beta_0$ and $\beta_1$ that minimize $Q$ can be derived by differentiating $Q$ with respect to $\beta_0$ and $\beta_1$: $$ \begin{aligned} \frac{\partial Q}{\partial \beta_0} &= -2\sum (Y_i - \beta_0 - \beta_1X_i) \\ \frac{\partial Q}{\partial \beta_1} &= -2\sum X_i(Y_i - \beta_0 - \beta_1X_i) \end{aligned} $$ 
+Setting these partial derivatives to zero, using $b_0$ and $b_1$ to denote the particular values of $\beta_0$ and $\beta_1$ that minimize Q and simplifying, the following is obtained $$ \begin{aligned} \sum_{i=1}^n (Y_i - b_0 - b_1X_i) &= 0 \\ \sum_{i=1}^n X_i(Y_i - b_0 - b_1X_i) &= 0 \end{aligned} $$ Expanding this, the following is true: $$ \begin{aligned} \sum Y_i - nb_0 - b_1\sum X_i &= 0 \\ \sum X_iY_i - b_0\sum X_i - b_2\sum X_i^2 &= 0 \end{aligned} $$ 
+By rearranging terms, the normal equations are obtained
+\item Gauss-Markov Theorem: Under the conditions of the simple linear regression model the least squares estimators $b_0$ and $b_1$, as given above, are unbiased and have minimum variance among all unbiased linear estimators
+\item This theorem states first that $b_0$ and $b_1$ are unbiased estimators and so $$ \expe{b_0} = \beta_0 ~~~ \expe{b_1} = \beta_1 $$ so that neither estimator tends to overestimate or underestimate systematically 
+\item Second, the theorem states that the estimators $b_0$ and $b_1$ are more precise (o.e., their sampling distributions are less variable) than any other estimators belonging to the class of unbiased estimators that are linear functions of the observations $Y_1,\dots,Y_n$; the estimators $b_0$ and $b_1$ are such linear functions of the $Y_i$
+\item Given sample estimators $b_0$ and $b_1$ of the parameters in the regression function, $\expe{Y} = \beta_0 + \beta_1X$, the regression function is estimates as $$ \hat{Y} = b_0 + b_1X $$ where $\hat{Y}$ is the value of the estimated regression function at the level $X$ of the predictor variable 
+\item A value of the response variable is called a response while $\expe{Y}$ is called the mean response; thus, the mean response stands for the mean of the probability distribution of $Y$ corresponding to the level $X$ of the predictor variable 
+\item $\hat{Y}$ is a point estimator of the mean response when the level of the predictor variable is $X$ 
+\item As an extension of the Gauss-Markov Theorem, $\hat{Y}$ is an unbiased estimator of $\expe{Y}$, with minimum variance in the class of unbiased linear estimators 
+\item Let $\hat{Y}_i$ be the fitted value for the $i$th case $$ \hat{Y}_i = b_0 + b_1X_i ~~ i = 1,\dots,n$$ Thus the fitted value $\hat{Y}_i$ is to viewed in distinction to the observed value $Y_i$
+\item The $i$th residual is the difference between the observed value $Y_i$ and the corresponding fitted value $\hat{Y}_i$; this residual is denoted by $e_i$ and is defined as follows: $$ e_i = Y_i - \hat{Y}_i $$ 
+\item For the simple linear regression model, the residual $e_i$ becomes $$ e_i = Y_i - (b_0 + b_1X_i) = Y_i - b_0 - b_1X_i $$ 
+\item The model error term value $\eps_i = Y_i - \expe{Y_i}$ involves the vertical deviation of $Y_i$ from the unknown true regression line hence is unknown; the residual $e_i = Y_i - \hat{Y}_i$ is the vertical deviation of $Y_i$ from the fitted value $\hat{Y}_i$ on the estimated regression line, and it is known
+\item Properties of Fitted Regression Line \begin{enumerate} 
+\item The sum of the residuals is zero $$ \sum_{i=1}^n e_i = 0 $$ 
+\item The sum of the squared residuals, $\sum e_i^2$ is a minimum 
+\item The sum of the observed values $Y_i$ equals the sum of the fitted values $\hat{Y}_i$: $$ \sum_{i=1}^n Y_i = \sum_{i=1}^n \hat{Y}_i $$ 
+\item The sum of the weighted residuals is zero when he residual in the $i$th trial is weighted by the level of the predictor variable in the $i$th trial: $$ \sum_{i=1}^n X_ie_i = 0 $$ 
+\item The sum of the weighted residuals is zero when the residual in the $i$th trial is weighted by the fitted value of the response variable for the $i$th trial: $$ \sum_{i=1}^n \hat{Y}_ie_i = 0 $$ 
+\item The regression line always goes through the point $(\overline{X}, \overline{Y})$ \end{enumerate} 
+\end{itemize}
+
+\subsection{Estimation of Error Terms Variance $\sigma^2$}
+\begin{itemize}
+\item The variance $\sigma^2$ of the error terms $\eps_i$ in the regression model needs to be estimated to obtain an indication of the variability of the probability distribution of $Y$
+\item The variance $\sigma^2$ of a single population is estimated by the sample variance $s^2$ as follows: $$ s^2 = \frac{\sum_{i=1}^n (Y_i - \overline{Y})^2}{n-1} $$ where the sum is called a sum of squares and $n-1$ is the degrees of freedom; this number is $n-1$ because one degree of freedom is lost by using $\overline{Y}$ as an estimate of the unknown population mean $\mu$ 
+\item This estimator is the usual sample variance which is an unbiased estimator of the variance $\sigma^2$ of an infinite population
+\item The sample variance is often called a mean square because a sum of squares has been divided by the appropriate number of degrees of freedom
+\item For the regression model, the variance for each observation $Y_i$ is $\sigma^2$, the same as that of each error term $\eps_i$; a sum of squared deviations are needed to be calculated but note that the $Y_i$ now come from different probability distributions with different means that depend upon the level $X_i$; thus, the deviation of an observation $Y_i$ must be calculated around its own estimated mean $\hat{Y}_i$ 
+\item The deviations are the residuals $$ Y_i - \hat{Y}_i = e_i $$ and the appropriate sum of squares, denoted by SSE, is $$ \text{SSE} = \sum_{i=1}^n (Y_i - \hat{Y}_i)^2 = \sum_{i=1}^n e_i^2 $$ where SSE stands for error sum of squares or residual sum of squares 
+\item The SSE has $n-2$ degrees of freedom because both $\beta_0$ and $\beta_1$ had to be estimated in obtaining the estimated means $\hat{Y}_i$ 
+\item The appropriate mean square, denoted by MSE or $s^2$ is $$ s^2 = \text{MSE} = \frac{\text{SSE}}{n-2} = \frac{\sum (Y_i - \hat{Y}_i)^2}{n-2} = \frac{\sum e_i^2}{n-2} $$ where MSE stands for error mean square or residual mean square
+\item The MSE is an unbiased estimator for $\sigma^2$ for a regression model $$ \expe{\text{MSE}} = \sigma^2 $$ 
+\item An estimator of the standard deviation $\sigma$ is simply $s=\sqrt{\text{MSE}}$, the positive square root of the MSE 
+\end{itemize}
+
+\subsection{Normal Error Regression Model}
+\begin{itemize}
+\item The normal error regression model is as follows: $$ Y_i = \beta_0 + \beta_1X_i + \eps_i $$ where \begin{itemize}[label={}]
+\item $Y_i$ is the observed response in the $i$th trial
+\item $X_i$ is a known constant, the level of the predictor variable in the $i$th trial
+\item $\beta_0$ and $\beta_1$ are parameters
+\item $\eps_i$ are independent $N(0, \sigma^2)$
+\item $i=1,\dots,n$ \end{itemize} 
+\item The symbol $N(0, \sigma^2)$ stands for normally distributed with mean $0$ and variance $\sigma^2$
+\item The normal error model is the same as the regression model with unspecified error distribution, except this one assumes that the errors $\eps_i$ are normally distributed 
+\item Since the errors are normally distributed, the assumption of uncorrelatedness of the $\eps_i$ in the regression model becomes one of independence in the normal error model
+\item This model implies that the $Y_i$ are independent normal random variables, with mean $\expe{Y_i} = \beta_0 + \beta_1X_i$ and variance $\sigma^2$ 
+\item The normality assumption for the error term is justifiable in many situations because the error terms frequently represent the effects of factors omitted from the model that affect the response to some extent and that vary at random without reference to the variable $X$ 
+\item A second reason why the normality assumption of the error terms is frequently justifiable is that the estimation and testing procedures are based on the $t$ distribution and are usually only sensitive to large departures from normality 
+\item When the functional form of the probability distribution of the error terms is specified, estimators of the parameters $\beta_0$, $\beta_1$ and $\sigma^2$ can be obtained using the method of maximum likelihood; this method chooses as estimates those values of the parameters that are most consistent with the sample data
+\item The method of maximum likelihood uses the product of the densities as the measure of consistency of the parameter value with the sample data; the product is called the likelihood value of the parameter value and is denoted by $L(\cdot)$ where $\cdot$ is the parameter being estimated; if the value of $\cdot$ is consistent with the sample data, the densities will be relatively large and so will be the likelihood value; if the value of $\cdot$ is not consistent with the data, the densities will be small and the product $L(\cdot)$ will be small
+\item The method of maximum likelihood chooses as the maximum likelihood estimate that value of $\cdot$ for which the likelihood value is largest; there are two methods of finding the estimates: by a systematic numerical search or by use of an analytical solution 
+\item The product of the densities viewed as a function of the unknown parameters is called the likelihood function 
+\item In general, the density of an observation $Y_i$ for the normal error regression model is as follows, utilizing the fact that $\expe{Y_i} = \beta_0 + \beta_1X_i$ and $\var{Y_i} = \sigma^2$: $$ f_i = \frac{1}{\sqrt{2\pi}\sigma} \exp\left[ -\frac{1}{2}\left(\frac{Y_i - \beta_0 - \beta_1X_i}{\sigma}\right)^2\right] $$ 
+\item The likelihood function for $n$ observations $Y_1,\dots,Y_n$ is the product of the individual densities; since the variance $\sigma^2$ of the error terms is usually unknown, the likelihood function is a function of three parameters $\beta_0$, $\beta_1$ and $\sigma^2$ $$ \begin{aligned} L(\beta_0, \beta_1, \sigma^2) &= \prod_{i=1}^n \frac{1}{(2\pi \sigma^2)^{1/2}} \exp\left[-\frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right] \\ &= \frac{1}{(2\pi\sigma^2)^{n/2}}\exp\left[-\frac{1}{2\sigma^2}\sum_{i=1}^n (Y_i - \beta_0 - \beta_1X_i)^2\right] \end{aligned} $$ 
+\item The values of $\beta_0$, $\beta_1$ and $\sigma^2$ that maximize this likelihood function are the maximum likelihood estimators and are denoted by $\hat{\beta}_0$, $\hat{\beta}_1$ and $\hat{\sigma}^2$ respectively; these estimators are calculated analytically and are as follows: $$ \begin{tabular}{c|c} \hline 
+Parameter & Maximum Likelihood Estimator \\ \hline 
+$\beta_0$ & $\hat{\beta}_0 = b_0 = \frac{1}{n}\left(\sum Y_i - b_1\sum X_i\right) = \overline{Y} - b_1\overline{X} $ \\ \hline
+$\beta_1$ & $\hat{\beta}_1 = b_1 = \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sum (X_i - \overline{X})^2} $ \\ \hline 
+$\sigma^2$ & $\hat{\sigma}^2 = \frac{\sum (Y_i - \hat{Y}_i)^2}{n} $ \\ \hline \end{tabular} $$ 
+\item Thus, the maximum likelihood estimators of $\beta_0$ and $\beta_1$ are the same estimators as those provided by the methods of least squares; the maximum likelihood estimator $\hat{\sigma}^2$ is biased and ordinarily the unbiased MSE or $s^2$ is used 
+\item The unbiased MSE or $s^2$ differs but slightly from the maximum likelihood estimator $\hat{\sigma}^2$, especially if $n$ is not small $$ s^2 = \text{MSE} = \frac{n}{n-2}\hat{\sigma}^2 $$ 
+\item Since the maximum likelihood estimators of $\hat{\beta}_0$ and $\hat{\beta}_1$ are the same as the least squares estimators $b_0$ and $b_1$, they have the properties of all least squares estimators: \begin{itemize}
+\item There are unbiased 
+\item They have minimum variance among all unbiased linear estimators \end{itemize}
+\item In addition, the maximum likelihood estimators $b_0$ and $b_1$ for the normal error regression model have other desirable properties: \begin{itemize}
+\item They are consistent
+\item They are sufficient 
+\item They are minimum variance unbiased; that is, they have minimum variance in the class of all unbiased estimators (linear or otherwise) 
+\end{itemize} 
+\item Derivation of maximum likelihood estimators: take partial derivatives of $L$ with respect to $\beta_0$, $\beta_1$ and $\sigma^2$, equating each of the partials to zero and solving the system of equations obtained; work with $\log_e L$ rather than $L$ since both are maximized for the same values of $\beta_0$, $\beta_1$ and $\sigma^2$: $$ \log L = -\frac{n}{2}\log 2\pi - \frac{n}{2} \log \sigma^2 - \frac{1}{2\sigma^2}\sum (Y_i - \beta_0 - \beta_1X_i)^2 $$ 
+The partial derivatives are as shown: $$ \begin{aligned} \frac{\partial \log L}{\partial \beta_0} &= \frac{1}{\sigma^2} \sum (Y_i - \beta_0 - \beta_1X_i) \\ \frac{\partial \log L}{\partial \beta_1} &= \frac{1}{\sigma^2} \sum X_i(Y_i - \beta_0 - \beta_1X_i) \\ \frac{\partial \log L}{\partial \sigma^2} &= -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4}\sum (Y_i - \beta_0 - \beta_1X_i)^2 \end{aligned} $$  Setting these partial derivatives equal to zero and replacing $\beta_0$, $\beta_1$ and $\sigma^2$ by the estimators $\hat{\beta}_0$, $\hat{\beta}_1$ and $\hat{\sigma}^2$, and after some simplifications: $$ \begin{aligned} \sum (Y_i - \hat{\beta}_0 - \hat{\beta}_1X_i) &= 0 \\ \sum X_i(Y_i - \hat{\beta}_0 - \hat{\beta}_1X_i) &= 0 \\ \frac{\sum (Y_i - \hat{\beta}_0 - \hat{\beta}_1X_i)^2}{n} &= \hat{\sigma}^2 \end{aligned} $$ 
+The first two equations are identical to the earlier least squares normal equations and the last one is the biased estimator of $\sigma^2$ as given earlier
+\end{itemize}
+
+
+\section{Inferences in Regression and Correlation Analysis}
+\subsection{Inferences Concerning $\beta_1$}
+
+\subsection{Inferences Concerning $\beta_0$}
+
+\subsection{Some Considerations on Making Inferences Concerning $\beta_0$ and $\beta_1$}
+
+\subsection{Interval Estimation of $\expe{Y_h}$}
+
+\subsection{Prediction of New Observation}
+
+\subsection{Confidence Interval for Regression Line}
+
+\subsection{Analysis of Variance Approach to Regression Analysis}
+
+\subsection{General Linear Test Approach}
+
+\subsection{Descriptive Measures of Linear Association between $X$ and $Y$}
+
+\subsection{Considerations in Applying Regression Analysis}
+
+\subsection{Normal Correlation Models}
+
+
+\section{Diagnostics and Remedial Measures}
+\subsection{Diagnostics for Predictor Variable}
+
+\subsection{Residuals}
+
+\subsection{Diagnostics for Residuals}
+
+\subsection{Overview for Tests Involving Residuals}
+
+\subsection{Correlation Test for Normality}
+
+\subsection{Tests for Constancy of Error Variance}
+
+\subsection{$F$ Test for Lack of Fit}
+
+\subsection{Overview of Remedial Measures}
+
+\subsection{Transformations}
+
+\subsection{Exploration of Shape of Regression Function}
+
+\subsection{Case Example - Plutonium}
+
+
+\section{Simultaneous Inferences and Other Topics in Regression Analysis}
+\subsection{Joint Estimation of $\beta_0$ and $\beta_1$}
+
+\subsection{Simultaneous Estimation of Mean Responses}
+
+\subsection{Simultaneous Prediction Intervals for New Observations}
+
+\subsection{Regression through Origin}
+
+\subsection{Effects of Measurement Errors}
+
+\subsection{Inverse Predictions}
+
+\subsection{Choice of $X$ Levels}
+
+
+\section{Matrix Approach to Simple Linear Regression Analysis}
+\subsection{Matrices}
+
+\subsection{Matrix Addition and Subtraction}
+
+\subsection{Matrix Multiplication}
+
+\subsection{Special Types of Matrices}
+
+\subsection{Linear Dependence and Rank of Matrix}
+
+\subsection{Inverse of a Matrix}
+
+\subsection{Some Basic Results for Matrices}
+
+\subsection{Random Vectors and Matrices}
+
+\subsection{Simple Linear Regression Model in Matrix Terms}
+
+\subsection{Least Squares Estimation of Regression Parameters}
+
+\subsection{Fitted Values and Residuals}
+
+\subsection{Analysis of Variance Results}
+
+\subsection{Inferences in Regression Analysis}
+
