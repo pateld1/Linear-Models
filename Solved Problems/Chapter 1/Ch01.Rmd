@@ -1,5 +1,6 @@
 ---
-title: 'Chapter 1: Linear Regression with One Predictor Variable'
+title: 'ALSM: Chapter 1'
+subtitle: 'Linear Regression with One Predictor Variable'
 author: "Darshan Patel"
 date: "12/19/2019"
 output: html_document
@@ -9,9 +10,324 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### Question 1: 
-Refer to the sales volume example on page 3. 
+```{r, message=FALSE}
+library(tidyverse)
+library(ALSM)
+```
 
 
-to be continued...
+### Problem 1: 
+Refer to the sales volume example on page 3. Suppose that the number of units sold is measured accurately, bur clerical errors are frequently made in determining the dollar sales. Would the relation between the number of units sold and dollar sales still be a functional one? Discuss.
+
+
+### Problem 2: 
+The members of a health spa pay annual membership dues of \$300 plus a charge of \$2 for each visit to the spa. Let $Y$ denote the dollar cost for the year for a member and $X$ the number of visits by the member during the year. Express the relation between $X$ and $Y$ mathematically. Is it a functional relation or a statistical relation?
+
+### Problem 3: 
+Experience with a certain type of plastic indicates that a relation exists between the hardness (measured in Brinell units) of items molded from the plastic ($Y$) and the elapsed time since ter- mination of the molding process ($X$). It is proposed to study this relation by means of regression analysis. A participant in the discussion objects, pointing out that the hardening of the plastic "is the result of a natural chemical process that doesn't leave anything to chance, so the relation must be mathematical and regression analysis is not appropriate." Evaluate this objection.
+
+
+### Problem 4: 
+In Table 1.1, the lot size $X$ is the same in production runs $1$ and $24$ but the work hours $Y$ differ. What feature of regression model (1.1) is illustrated by this?
+
+
+### Problem 5: 
+When asked to state the simple linear regression model, a student wrote it as follows: $E[Y_i] = \beta_0 + \beta_1X_i + \varepsilon$. Do you agree?
+
+
+### Problem 6: 
+Consider the normal error regression model (1.24). Suppose that the parameter values are $\beta_0 = 200$, $\beta_1 = 5.0$ and $\sigma = 4$. 
+
+(a) Plot the normal error regression model in the fashion of Figure 1.6. Show the distributions of $Y$ for $X=10,~20$, and $40$. 
+
+(b) Explain the meaning of the parameters $\beta_0$ and $\beta_1$. Assume that the scope of the model includes $X=0$.
+
+
+### Problem 7: 
+In a simulation exercise, regression model (1.1) applies with $\beta_0 = 100$, $\beta_1 = 20$ and $\sigma^2 = 25$. An observation on $Y$ will be made for $X=5$.
+
+(a) Can you state the exact probability that $Y$ will fall between $195$ and $205$? Explain.
+
+(b) If the normal error regression moel (1.24) is applicable, can you now state the exact probability that $Y$ will fall between $195$ and $205$? If so, state it.
+
+
+### Problem 8: 
+In Figure 1.6, suppose another $Y$ observation is obtained at $X=45$. Would $E[Y]$ for this new observation still be $104$? Would the $Y$ value for this new case again be $108$?
+
+
+### Problem 9: 
+A student in accounting enthusiastically declared: "Regression is a very powerful tool. We can isolate fixed and variable costs by fitting a linear regression model, even when we have no data for small lots." Discuss.
+
+
+### Problem 10: 
+An analyst in a large corporation studied the relation between current annual salary ($Y$) and age ($X$) for the $46$ computer programmers presently employed in the company. The analyst concluded that the relation is curvilinear, reaching a maximum at $47$ years. Does this imply that the salary for a programmer increases until age $47$ and then decreases? Explain.
+
+
+### Problem 11:
+The regression function relating production output by an employee after taking a training program ($Y$) to the production output before the training program ($X$) is $E[Y] = 20 + .95X$, where $X$ ranges from $40$ to $100$. An observer concludes that the training program does not raise production output on the average because $\beta_1$ is not greater than $1.0$. Comment.
+
+
+### Problem 12: 
+In a study of the relationship for senior citizens between physical activity and frequency of colds, participants were asked to monitor their weekly time spent in exercise over a five-year period and the frequency of colds. The study demonstrated that a negative statistical relation exists between time spent in exercise and frequency of colds. The investigator concluded that increasing the time spent in exercise is an effective strategy for reducing the frequency of colds for senior citizens.
+
+(a) Were the data obtained in the study observational or experimental data?
+
+(b) Comment on the validity of the conclusions reached by the investigator.
+
+(c) Identify two or three other explanatory variables that might affect both the time spent in exercise and the frequency of colds for senior citizens simultaneously.
+
+(d) How might the study be changed so that a valid conclusion about causal relationship between amount of exercise and frequency of colds can be reached?
+
+
+### Problem 13: 
+Computer programmers employed by a software developer were asked to participate in a month- long training seminar. During the seminar, each employee was asked to record the number of hours spent in class preparation each week. After completing the seminar, the productivity level of each participant was measured. A positive linear statistical relationship between participants' productivity levels and time spent in class preparation was found. The seminar leader concluded that increases in employee productivity are caused by increased class preparation time.
+
+(a) Were the data used by the seminar leader observational or experimental data?
+
+(b) Comment on the validity of the conclusion reached by the seminar leader.
+
+(c) Identify two or three alternative variables that might cause both the employee productivity scores and the employee class participation times to increase (decrease) simultaneously.
+
+(d) How might the study be changed so that a valid conclusion about causal relationship between class preparation time and employee productivity can be reached?
+
+### Problem 14: 
+Refer to Problem 1.3. Four different elapsed times since termination of the molding process (treatments) are to be studied to see how they affect the hardness of a plastic. Sixteen batches (experimental units) are available for the study. Each treatment is to be assigned to four exper- imental units selected at random. Use a table of random digits or a random number generator to make an appropriate randomization of assignments.
+
+
+### Problem 15:
+The effects of five dose levels are to be studied in a completely randomized design, and 20 experimental units are available. Each dose level is to be assigned to four experimental units selected at random. Use a table of random digits or a random number generator to make an appropriate randomization of assignments.
+
+
+### Problem 16: 
+Evaluate the following statement:"For the least squares method to be fully valid, it is required that the distribution of $Y$ be normal."
+
+
+### Problem 17:
+A person states that $b_0$ and $b_1$ in the fitted regression function (1.13) can be estimated by the method of least squares. Comment.
+
+
+### Problem 18: 
+According to (1.17), $\sum e_i = 0$ when regression model (1.1) is fitted to a set of $n$ cases by the method of least squares. Is it also true that $\sum \varepsilon_i = 0$? Comment.
+
+
+### Problem 19: 
+*Grade point average.* The director of admissions of a small college selected $120$ students at random from the new freshman class in a study to determine whether a student's grade point average (GPA) at the end of the freshman year ($Y$) can be predicted from the ACT test score ($X$). The results of the study follow. Assume that first-order regression model (1.1) is appropriate.
+
+(a) Obtain the least squares estimators of $\beta_0$ and $\beta_1$ and state the regression function.
+
+(b) Plot the estimated regression function and the data. Does the estimated regression function appear to fit the data well?
+
+(c) Obtain a point estimate of the mean freshman GPA for studenets with ACT test score $X=30$.
+
+(d) What is the point estimate of the change in the mean response when the entrance test score increases by one point?
+
+
+### Problem 20:
+*Copier maintenance.* The Tri-City Office Equipment Corporation sells an imported copier on a franchise basis and performs preventive maintenance and repair service on this copier. The data below have been collected from $45$ recent calls on users to perform routine preventive maintenance service; for each call, $X$ is the number of copiers serviced and $Y$ is the total number of minutes spent by the service person. Assume that first-order regression model (1.1) is appropriate.
+
+(a) Obtain the estimated regression function.
+
+(b) Plot the estimated regression function and the data. How well does the estimated regression function fit the data? 
+
+(c) Interpret $b_0$ in your estimated regression function. Does $b_0$ provide any relevant information here? Explain.
+
+(d) Obtain a point estimate of the mean service time when $X=5$ copiers are serviced.
+
+
+### Problem 21: 
+*Airfreight breakage.* A substance used in biological and medical research is shipped by airfreight to users in cartons of $1,000$ ampules. The data, involving $10$ shipments, were collected on the number of times the carton was transferred from one aircraft to another over the shipment route ($X$) and the number of ampules found to be broken upon arrival ($Y$). Assume that first-order regression model (1.1) is appropriate.
+
+(a) Obtain the estimated regression function. Plot the estimated regression function and the data. Does a linear regression function appear to give a good fit here?
+
+(b) Obtain a point estimate of the expected number of broken ampules when $X=1$ transfer is made. 
+
+(c) Estimate the increase in the expected number of ampules broken when there are $2$ transfers as compared to $1$ transfer.
+
+(d) Verify that your fitted regression line goes through the point ($\overline{X}, \overline{Y}$). 
+
+
+### Problem 22: 
+*Plastic hardness.* Refer to Problems 1.3 and 1.14. Sixteen batches of the plastic were made, and from each batch one test item was molded. Each test item was randomly assigned to one of the four predetermined time levels, and the hardness was measured after the assigned elapsed time. $X$ is the elapsed time in hours and $Y$ is hardness in Brinell units. Assume that first-order regression model (1.1) is appropriate.
+
+(a) Obtain the estimated regression function. Plot the estimated regression function and the data. Does a linaer regression function appear to give a good fit here?
+
+(b) Obtain a point estimate of the mean hardness when $X=40$ hours.
+
+(c) Obtain a point estimate of the change in mean hardness when $X$ increases by $1$ hour.
+
+
+### Problem 23:
+Refer to *Grade point average* Problem 1.19. 
+
+(a) Obtain the residuals $e_i$. Do they sum to zero in accord with (1.17)?
+
+(b) Estimate $\sigma^2$ and $\sigma$. In what units is $\sigma$ expressed?
+
+
+### Problem 24: 
+Refer to *Copier maintenance* Problem 1.20.
+
+(a) Obtain the residuals $e_i$ and the sum of the squared residuals $\sum e_i^2$. What is the relation between the sum of the squared residuals here and the quantity $Q$$ in (1.8)?
+
+(b) Obtain point estimates of $\sigma^2$ and $\sigma$. In what units is $\sigma$ expressed?
+
+
+### Problem 25: 
+Refer to *Airfreight breakage* Problem 1.21.
+
+(a) Obtain the residual for the first case. What is its relation to $\varepsilon_1$?
+
+(b) Compute $\sum e_i^2$ and MSE. What is estimated by MSE?
+
+
+### Problem 26: 
+Refer to *Plastic hardness* Problem 1.22.
+
+(a) Obtain the residuals $e_i$. Do they sum to zero in accord with (1.17)?
+
+(b) Estimate $\sigma^2$ and $\sigma$. In what units is $\sigma$ expressed?
+
+
+### Problem 27: 
+*Muscle mass.* A person's muscle mass is expected to decrease with age. To explore this relationship in women, a nutritionist randomly selected $15$ women from each $lO$-year age group, beginning with age $40$ and ending with age $79$. The results follow: $X$ is age, and $Y$ is a measure of muscle mass. Assume that first-order regression model (1.1) is appropriate.
+
+(a) Obtain the estimated regression function. Plot the estimated regression function and the data. Does a linear regression function appear to give a good fit here? Does your plot support the anticipation that muscle mass decreases with age?
+
+(b) Obtain the following: (1) a point estimate of the difference in the mean muscle mass for women differing in age by one year, (2) a point estimate of the mean muscle mass for women aged $X =60$ years, (3) the value of the residual for the eighth case, (4) a point estimate of $\sigma^2$.
+
+
+### Problem 28: 
+*Crime rate.* A criminologist studying the relationship between level of education and crime rate in medium-sized U.S. counties collected data for a random sample of $84$ counties; $X$ is the percentage of individuals in the county having at least a high-school diploma, and $Y$ is the crime rate (crimes reported per $100,000$ residents) last year. Assume that first-order regression model (1.1) is appropriate.
+
+(a) Obtain the estimated regression function. Plot the estimated regression function and the data. Does the linear regression function appear to give a good fit here? Discuss.
+
+(b) Obtain point estimates of the following: (1) the difference in the mean crime rate for two counties whose high-school graduation rates differ by one percentage point, (2) the mean crime rate last year in counties with high school graduation percentage $X = 80$, (3) $\varepsilon_{10}$, (4) $\sigma^2$.
+
+
+### Problem 29: 
+Refer to regression model (1.1). Assume that $X=0$ is within the scope of the model. What is the implication for the regression function if $\beta_0 = 0$ so that the model is $Y_i = \beta_1X_i + \varepsilon_i$? How would the regression function plot on a graph?
+
+
+### Problem 30: 
+Refer to regression model (1.1). What is the implication for the regression function if $\beta_1 = 0$ so that the model is $Y_i = \beta_0 + \varepsilon_i$? How would the regression function plot on a graph?
+
+
+### Problem 31:
+Refer to *Plastic hardness* Problem 1.22. Suppose one test item was molded from a single batch of plastic and the harness of this one item was measured at $16$ different points in time. Would the error term in the regression model for this case still reflect the same effects as for the experiment initually described? Would you expect the error terms for the different points in time to be uncorrelated? Discuss.
+
+
+### Problem 32: 
+Derive the expression for $b_1$ in (1.10a) from the normal equation in (1.9). 
+
+
+### Problem 33: 
+(Calculus needed.) Refer to the regression model $Y_i = \beta_0 + \varepsilon_i$ in Exercise 1.30. Derive the least squares estimator of $\beta_0$ for this model.
+
+
+### Problem 34: 
+Prove that the least squares estimator of $\beta_0$ obtained in Exercise 1.33 is unbiased.
+
+
+### Problem 35: 
+Prove the result in (1.18) - that the sum of the $Y$ observations is the same as the sum of the fitted values.
+
+
+### Problem 36:
+Prove the result in (1.20) - that the sum of the residuals weighted by the fitted values is zero.
+
+
+### Problem 37: 
+Refer to Table l.l for the Toluca Company example. When asked to present a point estimate of the expected work hours for lot sizes of $30$ pieces, a person gave the estimate $202$ because this is the mean number of work hours in the three-runs of size $30$ in the study. A critic states that this person's approach "throws away" most of the data in the study because cases with lot sizes other than $30$ are ignored. Comment.
+
+
+### Problem 38: 
+In *Airfreight breakage* Problem 1.21, the least squares estimates are $b_0 = 10.20$ and $b_1 = 4.00$, and $\sum e_i^2 = 17.60$. Evaluate the least squares criterion $Q$ in (1.8) for the estimates (1) $b_0 = 9$, $b_1 = 3$; (2) $b_0 = 11$, $b_1 = 5$. Is the criterion $Q$ larger for these estimates than for the least squares estimates?
+
+
+### Problem 39: 
+Two observations on $Y$ were obtained at each of three $X$ levels, namely, at $X=5$, $X=10$ and $X=15$.
+
+(a) Show that the least squares regression line fitted to the three points ($5, \overline{Y}_1$), ($10, \overline{Y}_2$) and ($15, \overline{Y}_3$), where $\overline{Y}_1$, $\overline{Y}_2$ and $\overline{Y}_3$ denote the means of the $Y$ observations at the three $X$ levels, is identical to the least squares regression line fitted to the original six cases.
+
+(b) In this study, could the error term variance $\sigma^2$ be estimated without fitting a regression line? Explain.
+
+
+### Problem 40: 
+In fitting regression model (1.1), it was found that observation $Y_i$ fell directly on the fitted regression line (i.e, $Y_i = \hat{Y}_i$). If this case were deleted, would the least squares regression line fitted to the remaining $n-1$ cases be changed? [Hint: What is the contribution of case $i$ to the least squares criterion $Q$?]
+
+
+### Problem 41: 
+(Calculus needed.) Refer to the regression model $Y_i = \beta_1X_i + \varepsilon_i$, $i=1,\dots, n$, in Exercise 1.29. 
+
+(a) Find the least squares estimator of $\beta_1$.
+
+(b) Assume that the error terms $\varepsilon_i$ are independent $N(0, \sigma^2)$ and that $\sigma^2$ is known. State the likelihood function for the $n$ sample observations on $Y$ and obtain the maximum likelihood estimator of $\beta_1$. Is it the same as the least squares estimator?
+
+(c) Show that the maximum likelihood estimator of $\beta_1$ is unbiased.
+
+
+### Problem 42:
+*Typographical errors.* The number of galleys for a manuscript $X$ and the dollar cost of correcting typographical errors $Y$ in a random sample of recent orders are handled by a firm specializing in technical manuscripts. Assume that the regression model $Y_i = \beta_1X_i + \varepsilon_i$ is appropriate, with normally distributed indepent error terms whose variance is $\sigma^2 = 16$. 
+
+(a) State the likelihood function for the six $Y$ observations, for $\sigma^2 = 16$.
+
+(b) Evaluate the likelihood function for $\beta_1 = 17$, $18$ and $19$. For which of these $\beta_1$ values is the likelihood function largest?
+
+(c) The maximum likelihood estimator is $b_1 = \sum X_iY_i / \sum X_i^2$. Find the maximum likelihood estimate. Are your results in part (b) consistent with this estimate? 
+
+(d) Evaluate the likelihood function for values of $\beta_1$ between $\beta_1 = 17$ and $\beta_1 = 19$ and plot the function. Does the point at which the likelihood function is maximized correspond to the maximum likelihood estimate found in part (c)?
+
+
+
+### Problem 43: 
+Refer to the *CDI* data set in Appendix C.2. The number of active physicians in a CDI ($Y$) is expected to be related to total population, number of hospital beds and total personal income. Assume that first-order regression model (1.1) is appropriate for each of the three predictor variables.
+
+(a) Regress the number og active physicians in turn on each of the three predictor variables. State the estimated regression functions.
+
+(b) Plot the three estimated functions and data on separate graphs. Does a linear regression relation appear to provide a good fit for each of the three predictor variables?
+
+(c) Calculate MSE for each of the three predictor variables. Which predictor variable leads to the smallest variability around the fitted regression line? 
+
+
+### Problem 44: 
+Refer to the *CDI* data set in Appendix C.2
+
+(a) For each geographic region, regress per capita income in a CDI ($Y$) against the percentage of individuals in a county having at least a bachelor's degree ($X$). Assume that first-order regression model (1.1) is appropriate for each region. State the estimated regression functions.
+
+(b) Are the estimated regression functions similar for the four regions? Discuss.
+
+(c) Calcuate MSE for each region. Is the variability around the fitted regression line approximately the same for the four regions? Discuss.
+
+
+### Problem 45: 
+Refer to the *SENIC* data set in Appendix C.1. The average length of stay in a hospital ($Y$) is anticipated to be related to infection risk, available facilities and services, and routine chest X-ray ratio. Assume that first-order regression model (1.1) is appropriate for each of the three predictor variables.
+
+(a) Regress average length of stay on each of the three predictor variables. State the estimated regression functions.
+
+(b) Plot the three estimated regression functions and data on separate graphs. Does a linear relation appear to provide a good fit for each of the three predictor variables?
+
+(c) Calculate MSE for each of the three predictor variables. Which predictor variable leads to the smallest variability around the fitted regression line?
+
+
+### Problem 46:
+Refer to the *SENIC* data set in Appendix C.1.
+
+(a) For each geographic region, regress average length of stay in hospital ($Y$) against infection risk ($X$). Assume that first-order regression model (1.1) is appropriate for each region. State the estimated regression functions.
+
+(b) Are the estimated regression funtions similar for the four regions? Discuss.
+
+(c) Calculate MSE for each region. Is the variability around the fitted regression line approximately the same for the four regions? Discuss.
+
+
+### Problem 47:
+Refer to *Typographical errors* Problem 1.42. Assume that first-order regression model (1.1) is appropriate, with normally distributed independent error terms whose variance is $\sigma^2 = 16$. 
+
+(a) State the likelihood function for the six observations, for $\sigma^2 = 16$.
+
+(b) Obtain the maximum likelihood estimates of $\beta_0$ and $\beta_1$, using (1.27). 
+(c) Obtain a three-dimensional plot of the likelihood function for values of $\beta_0$ between $\beta_0 = -10$ and $\beta_0 = 10$ and for values of $\beta_1$ between $\beta_1 = 17$ and $\beta_1 = 19$. Does the likelihood appear to be maximized by the maximum likelihood estimates found in part (b)? 
+
+
+
+
 
