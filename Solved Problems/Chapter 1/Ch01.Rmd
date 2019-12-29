@@ -13,7 +13,6 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, message=FALSE}
 library(tidyverse)
 library(latex2exp)
-library(ALSM)
 ```
 
 
@@ -218,13 +217,13 @@ gpa = read.csv('CH01PR19.txt', sep = '', header = FALSE,
 lm.fit_manual = function(X, Y){
   b1 = sum((X - mean(X))*(Y - mean(Y))) / (sum((X - mean(X))^2))
   b0 = mean(Y) - b1*mean(X)
-  return(c(round(b0, 3), round(b1, 3)))
+  return(c(b0, b1))
 }
 
 ls_est19 = lm.fit_manual(gpa$x, gpa$y)
 ```
 
-Using the least squares method, the estimate for $\beta_0$ is `r paste('b0 = ', ls_est19[1])` and the estimate for $\beta_1$ is `r paste('b1 = ', ls_est19[2])`. The regression function is $$ Y = 2.114 + 0.039X $$ 
+Using the least squares method, the estimate for $\beta_0$ is `r paste('b0 = ', round(ls_est19[1], 3))` and the estimate for $\beta_1$ is `r paste('b1 = ', round(ls_est19[2]), 3)`. The regression function is $$ Y = 2.114 + 0.039X $$ 
 
 (b) Plot the estimated regression function and the data. Does the estimated regression function appear to fit the data well?
 ```{r}
@@ -242,12 +241,12 @@ The estimated regression function appears to fit the data decently. Using a poly
 Answer: 
 ```{r}
 paste("The mean freshman GPA for students with an ACT test score of 30 is", 
-      ls_est19[1] + (ls_est19[2]*30))
+      round(ls_est19[1] + (ls_est19[2]*30), 3))
 ```
 
 (d) What is the point estimate of the change in the mean response when the entrance test score increases by one point?
 
-Answer: When the entrance test score increases by one point, the change in the mean response is `r ls_est19[2]`.
+Answer: When the entrance test score increases by one point, the change in the mean response is `r round(ls_est19[2], 3)`.
 
 
 ### Problem 20:
@@ -263,7 +262,7 @@ copier = read.csv('CH01PR20.txt', sep = '', header = FALSE,
 ls_est20 = lm.fit_manual(copier$x, copier$y)
 ```
 
-Using the least squares method, the estimate for $\beta_0$ is `r paste('b0 = ', ls_est20[1])` and the estimate for $\beta_1$ is `r paste('b1 = ', ls_est20[2])`. The regression function is $$ Y = -0.580 + 15.035X $$ 
+Using the least squares method, the estimate for $\beta_0$ is `r paste('b0 = ', round(ls_est20[1], 3))` and the estimate for $\beta_1$ is `r paste('b1 = ', round(ls_est20[2], 3))`. The regression function is $$ Y = -0.580 + 15.035X $$ 
 
 (b) Plot the estimated regression function and the data. How well does the estimated regression function fit the data? 
 
@@ -285,7 +284,7 @@ Answer: $b_0$ gives the total number of minutes spent by the service person when
 
 (d) Obtain a point estimate of the mean service time when $X=5$ copiers are serviced.
 
-Answer: When $X=5$ copiers are serviced, the mean service time is `r ls_est20[1] + 5*ls_est20[2]` minutes.
+Answer: When $X=5$ copiers are serviced, the mean service time is `r round(ls_est20[1] + 5*ls_est20[2], 3)` minutes.
 
 ### Problem 21: 
 *Airfreight breakage.* A substance used in biological and medical research is shipped by airfreight to users in cartons of $1,000$ ampules. The data, involving $10$ shipments, were collected on the number of times the carton was transferred from one aircraft to another over the shipment route ($X$) and the number of ampules found to be broken upon arrival ($Y$). Assume that first-order regression model (1.1) is appropriate.
@@ -356,11 +355,11 @@ The linear regression function appears to be a good fit here.
 
 (b) Obtain a point estimate of the mean hardness when $X=40$ hours.
 
-Answer: When the elapsed time is $X=40$ hours, then the mean hardness is `r ls_est22[1] + 40*ls_est22[2]` Brinell units. 
+Answer: When the elapsed time is $X=40$ hours, then the mean hardness is `r round(ls_est22[1] + 40*ls_est22[2], 3)` Brinell units. 
 
 (c) Obtain a point estimate of the change in mean hardness when $X$ increases by $1$ hour.
 
-Answer: When $X$ increases by one hour, then the mean hardness increases by 2.034 on the Brinell units. 
+Answer: When $X$ increases by one hour, then the mean hardness increases by $2.034$ on the Brinell units. 
 
 ### Problem 23:
 Refer to *Grade point average* Problem 1.19. 
@@ -373,19 +372,14 @@ resid19 = gpa$y - (ls_est19[1] + ls_est19[2]*gpa$x)
 sum(resid19)
 ```
 
-The residuals do not sum to $0$. 
-
-Note: When using the `lm` function in R which does not perform rounding, the residuals add up to nearly $0$.
-```{r}
-sum(lm(data = gpa, y~x)$residuals)
-```
+The residuals do sum to $0$. 
 
 (b) Estimate $\sigma^2$ and $\sigma$. In what units is $\sigma$ expressed?
 
 Answer: $\sigma^2$ and $\sigma$ are, respectively, 
 ```{r}
-sd(resid19)^2
-sd(resid19)
+sum((resid19)^2)/ (nrow(gpa)-2)
+sqrt(sum((resid19)^2)/ (nrow(gpa)-2))
 ```
 
 The units of $\sigma$ is the same as GPA scores. 
@@ -395,7 +389,7 @@ Refer to *Copier maintenance* Problem 1.20.
 
 (a) Obtain the residuals $e_i$ and the sum of the squared residuals $\sum e_i^2$. What is the relation between the sum of the squared residuals here and the quantity $Q$$ in (1.8)?
 
-Answer:
+Answer: The sum of the squared residuals is
 ```{r}
 resid20 = copier$y - (ls_est20[1] + ls_est20[2]*copier$x)
 sum(resid20^2)
@@ -407,8 +401,8 @@ The criterion given by Q: $$ Q = \sum_{i=1}^n (Y_i - \beta_0 - \beta_1X_i)^2 $$ 
 
 Answer: $\sigma^2$ and $\sigma$ are, respectively,
 ```{r}
-sd(resid20)^2
-sd(resid20)
+sum((resid20)^2) / (nrow(copier)-2)
+sqrt(sum((resid20)^2) / (nrow(copier)-2))
 ```
 
 The units of $\sigma$ is minutes.
@@ -438,7 +432,7 @@ while the MSE is
 sum(resid21^2)/(nrow(airfreight)-2)
 ```
 
-The MSE estimates the mean of the residuals squared.
+The MSE estimates the variance of the error terms.
 
 ### Problem 26: 
 Refer to *Plastic hardness* Problem 1.22.
@@ -451,17 +445,14 @@ resid22 = plastic$y - (ls_est22[1] + ls_est22[2]*plastic$x)
 sum(resid22)
 ```
 
-Due to rounding, they do not sum to zero. Howevery by using `R`'s `lm` function, the residuals do sum to nearly zero.
-```{r}
-sum(lm(data = plastic, y~x)$residuals)
-```
+The residuals sum to zero.
 
 (b) Estimate $\sigma^2$ and $\sigma$. In what units is $\sigma$ expressed?
 
 Answer: $\sigma^2$ and $\sigma$ are, respectively,
 ```{r}
-sd(resid22)^2
-sd(resid22)
+sum((resid22)^2)/nrow(plastic-2)
+sqrt(sum((resid22)^2)/nrow(plastic-2))
 ```
 
 The units of $\sigma$ is Brisnell units.
@@ -477,7 +468,7 @@ Answer:
 muscle = read.csv('CH01PR27.txt', sep = '', header = FALSE, 
                   col.names = c('y', 'x'), 
                   colClasses = c('numeric', 'numeric'))
-ls_est27 = lm(data = muscle, y~x)$coef
+ls_est27 = lm.fit_manual(muscle$x, muscle$y)
 ggplot(muscle, aes(x,y)) + geom_point(size = 0.8) + 
   geom_abline(intercept = ls_est27[1], slope = ls_est27[2], color = "cadetblue") + 
   labs(title = "Women's Muscle Mass", 
@@ -502,12 +493,13 @@ as.numeric(ls_est27[1] + ls_est27[2]*60)
 
 (3) The value of the residual for the eighth case is 
 ```{r}
-(muscle$y - (ls_est27[1] + ls_est27*muscle$x))[8]
+(muscle$y - (ls_est27[1] + ls_est27[2]*muscle$x))[8]
 ```
 
 (4) The point estimate of $\sigma^2$ is 
 ```{r}
-sum((muscle$y - (ls_est27[1] + ls_est27*muscle$x))^2) / (nrow(muscle)-2)
+resid27 = (muscle$y - (ls_est27[1] + ls_est27[2]*muscle$x))
+sum((resid27)^2)/nrow(muscle-2)
 ```
 
 ### Problem 28: 
@@ -520,7 +512,7 @@ Answer:
 crime = read.csv('CH01PR28.txt', sep = '', header = FALSE, 
                   col.names = c('y', 'x'), 
                   colClasses = c('numeric', 'numeric'))
-ls_est28 = lm(data = crime, y~x)$coef
+ls_est28 = lm.fit_manual(crime$x, crime$y)
 ggplot(crime, aes(x,y)) + geom_point(size = 0.8) + 
   geom_abline(intercept = ls_est28[1], slope = ls_est28[2], color = "cadetblue") + 
   labs(title = "Crime Rate", 
@@ -551,69 +543,204 @@ as.numeric(ls_est28[1] + ls_est28[2]*80)
 
 (d) The point estimate of $\sigma^2$ is
 ```{r}
-sum((crime$y - (ls_est28[1] + ls_est28*crime$x))^2) / (nrow(crime) - 2)
+sum((crime$y - (ls_est28[1] + ls_est28[2]*crime$x))^2) / (nrow(crime) - 2)
 ```
 
 ### Problem 29: 
 Refer to regression model (1.1). Assume that $X=0$ is within the scope of the model. What is the implication for the regression function if $\beta_0 = 0$ so that the model is $Y_i = \beta_1X_i + \varepsilon_i$? How would the regression function plot on a graph?
 
+Answer: If $X=0$ is within the scope of the model and if $\beta_0 = 0$, that means the regression function does not have a nonzero "initial" value for when $X=0$. The plot on a graph would look like a line passing through the origin.
+
 
 ### Problem 30: 
 Refer to regression model (1.1). What is the implication for the regression function if $\beta_1 = 0$ so that the model is $Y_i = \beta_0 + \varepsilon_i$? How would the regression function plot on a graph?
+
+Answer: If $\beta_1 = 0$, then the regression function does not depend on the value of $X$. The regression function would be a straight line on a graph.
 
 
 ### Problem 31:
 Refer to *Plastic hardness* Problem 1.22. Suppose one test item was molded from a single batch of plastic and the harness of this one item was measured at $16$ different points in time. Would the error term in the regression model for this case still reflect the same effects as for the experiment initually described? Would you expect the error terms for the different points in time to be uncorrelated? Discuss.
 
+Answer: In this case, the error term in the regression model would not reflect the same effects as for the experiment initially described because there is only one test item. The error terms for the different points in time will somewhat be correlated since there is only one object being measured on.
 
 ### Problem 32: 
 Derive the expression for $b_1$ in (1.10a) from the normal equation in (1.9). 
 
+Answer: $$ \begin{aligned} 
+\sum Y_i &= nb_0 + b_1\sum X_i \\
+\sum X_i \cdot \sum Y_i &= nb_0 \sum X_i + b_1\sum X_i^2  \\ 
+\sum X_iY_i &= b_0\sum X_i + b_1 \sum X_i^2 \\
+n\sum X_iY_i &= nb_0\sum X_i + nb_1\sum X_i^2 \\
+n\sum X_iY_i - \sum X_i \sum Y_i &= nb_0\sum X_i + nb_1\sum X_i^2 - nb_0 \sum X_i - b_1\sum X_i^2 \\ &= nb_1\sum X_i^2 - b_1\sum X_i^2 \\ &= b_1\left(n\sum X_i^2 - \sum X_i^2\right) \\ 
+b_1 &= \frac{n\sum X_i \sum Y_i - \sum X_i Y_i}{n\sum X_i^2 - \sum X_i^2} \\ 
+&= \frac{\sum X_i \sum Y_i - \frac{\sum X_i Y_i}{n}}{\sum X_i^2 - \frac{\sum X_i^2}{n}} \\ 
+&= \frac{SS_{xy}}{SS_{xx}} \\
+&= \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sum (X_i - \overline{X})^2}
+\end{aligned} $$ 
 
 ### Problem 33: 
 (Calculus needed.) Refer to the regression model $Y_i = \beta_0 + \varepsilon_i$ in Exercise 1.30. Derive the least squares estimator of $\beta_0$ for this model.
 
+Answer: 
+$$ \begin{aligned}
+Q &= \sum (Y_i - \beta_0)^2 \\ 
+\frac{\partial Q}{\partial \beta_0} &= -2\sum (Y_i - \beta_0) = 0 \\
+\sum Y_i &= n\beta_0 \\
+\beta_0 &= \frac{\sum Y_i}{n} = \overline{Y}
+\end{aligned} $$ 
 
 ### Problem 34: 
 Prove that the least squares estimator of $\beta_0$ obtained in Exercise 1.33 is unbiased.
 
+Answer: To prove that the least squares estimator of $\beta_0$ is unbiased, show that its expected value is equal to the true value of the parameter. 
+$$ \begin{aligned}
+Y_i &= \beta_0 + \varepsilon_i \\ 
+E[Y_i] &= E[\beta_0] + E[\varepsilon_i] \\
+\overline{Y} &= E[\beta_0] + 0 \\
+E[\beta_0] &= \overline{Y}
+\end{aligned} $$ 
 
 ### Problem 35: 
 Prove the result in (1.18) - that the sum of the $Y$ observations is the same as the sum of the fitted values.
 
+Answer:
+$$ \begin{aligned}
+b_0 &= \overline{Y} - b_1\overline{X} \\ 
+Y_i &= b_0 + b_1X_i \\ 
+\sum \hat{Y}_i &= \sum (b_0 + b_1X_i) \\ 
+&= \sum (\overline{Y} - b_1\overline{X} + b_1X_i) \\
+&= n\overline{Y} - nb_1\overline{X} + b_1\sum X_i \\
+&= \sum Y_i - nb_1\overline{X} + nb_1\overline{X} \\
+&= \sum Y_i
+\end{aligned} $$ 
 
 ### Problem 36:
 Prove the result in (1.20) - that the sum of the residuals weighted by the fitted values is zero.
 
+Answer:
+$$ \begin{aligned}
+\sum X_ie_i &= \sum (X_i(Y_i - b_0 - b_1X_i)) \\ 
+&= \sum X_iY_i - b_0\sum X_i - b_1\sum X_i^2 \end{aligned} $$ 
+
+But due to the second normal equation,
+$$ \sum X_iY_i - b_0\sum X_i - b_1\sum X_i^2 = 0 $$ 
+Hence 
+$$ \sum X_ie_i = 0 $$
 
 ### Problem 37: 
 Refer to Table l.l for the Toluca Company example. When asked to present a point estimate of the expected work hours for lot sizes of $30$ pieces, a person gave the estimate $202$ because this is the mean number of work hours in the three-runs of size $30$ in the study. A critic states that this person's approach "throws away" most of the data in the study because cases with lot sizes other than $30$ are ignored. Comment.
 
+Answer: The critic is correct in making this accusation. All of the data should be used to create a proper point estimate. Narrowing the study to just the lot size asked for will increase bias in the estimate since it does not look at the entire range of lot sizes. 
 
 ### Problem 38: 
 In *Airfreight breakage* Problem 1.21, the least squares estimates are $b_0 = 10.20$ and $b_1 = 4.00$, and $\sum e_i^2 = 17.60$. Evaluate the least squares criterion $Q$ in (1.8) for the estimates (1) $b_0 = 9$, $b_1 = 3$; (2) $b_0 = 11$, $b_1 = 5$. Is the criterion $Q$ larger for these estimates than for the least squares estimates?
 
+Answer: Note that $$ Q = \sum (Y_i - \beta_0 - \beta_1X_i)^2 $$ Then for the least squares estimate, 
+```{r}
+paste("Q =", sum((airfreight$y - 10.2 - (4*airfreight$x))^2))
+```
+
+When $b_0 = 9$, $b_1=3$, then
+```{r}
+paste("Q =", sum((airfreight$y - 9 - (3*airfreight$x))^2))
+```
+
+and when $b_0 = 11$, $b_1 = 5$, then
+```{r}
+paste("Q =", sum((airfreight$y - 11 - (5*airfreight$x))^2))
+```
+
+Thus the criterion $Q$ is larger for these estimates than for the least squares estimates.
 
 ### Problem 39: 
 Two observations on $Y$ were obtained at each of three $X$ levels, namely, at $X=5$, $X=10$ and $X=15$.
 
 (a) Show that the least squares regression line fitted to the three points ($5, \overline{Y}_1$), ($10, \overline{Y}_2$) and ($15, \overline{Y}_3$), where $\overline{Y}_1$, $\overline{Y}_2$ and $\overline{Y}_3$ denote the means of the $Y$ observations at the three $X$ levels, is identical to the least squares regression line fitted to the original six cases.
 
+Answer: Use the normal equations with the three fitted points to solve for $b_1$ and $b_0$.
+$$ \begin{aligned} 
+b_1 &= \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sum (X_i - \overline{X})^2} \\ 
+&= \frac{(5-10)(\overline{Y}_1 - \overline{Y}) + (10-10)(\overline{Y}_2 - \overline{Y}) + (15-10)(\overline{Y}_3 - \overline{Y})}{(5-10)^2 + (10-10)^2 + (15-10)^2} \\
+&= \frac{-5\overline{Y}_1 + 5\overline{Y} + 5\overline{Y}_3 - 5\overline{Y}}{50} \\ &= \frac{-5\overline{Y}_1 + 5\overline{Y}_3}{50} \\ 
+&= \frac{\overline{Y}_3 - \overline{Y}_1}{10} \\ 
+b_0 &= \overline{Y} - b_1\overline{X} \\
+&= \frac{\overline{Y}_1 + \overline{Y}_2 + \overline{Y}_3}{3} - 10\frac{\overline{Y}_3 - \overline{Y}_1}{10} \\ 
+&= \frac{\overline{Y}_1 + \overline{Y}_2 + \overline{Y}_3 - 3\overline{Y}_3 + 3\overline{Y}_1}{3} \\
+&= \frac{4\overline{Y}_1 + \overline{Y}_2 -2\overline{Y}_3}{3}
+\end{aligned} $$
+
+Now use the normal equation with the six original points. Let the original six cases be denoted as: ($5, Y_{1,1}$), ($5, Y_{1,2}$), ($10, Y_{2,1}$), ($10, Y_{2,2}$), ($15, Y_{3,1}$), and ($15, Y_{3,2}$). Then the equations for $b_0$ and $b_1$ can be solved as follows:
+$$ \begin{aligned} 
+b_1 &= \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sum (X_i - \overline{X})^2} \\ 
+&= \frac{(5 - 10)(Y_{1,1} - \overline{Y}) + (5-10)(Y_{1,2}-\overline{Y}) + 
+(10-10)(Y_{2,1} - \overline{Y}) + (10-10)(Y_{2,2} - \overline{Y}) + 
+(15-10)(Y_{3,1} - \overline{Y}) + (15-10)(Y_{3,2} - \overline{Y})}{(5-10)^2 + (5-10)^2 + (10-10)^2 + (10-10)^2 + (15-10)^2 + (15-10)^2} \\
+&= \frac{-5(Y_{1,1} - \overline{Y}) -5(Y_{1,2} - \overline{Y}) + 5(Y_{3,1} - \overline{Y}) + 5(Y_{3,2} - \overline{Y})}{100} \\ 
+&= \frac{-Y_{1,1} + \overline{Y} - Y_{1,2} + \overline{Y} + Y_{3,1} - \overline{Y} + Y_{3,2} - \overline{Y}}{20} \\
+&= \frac{-Y_{1,1} - Y_{1,2} + Y_{3,1} + Y_{3,2}}{20} \\ 
+&= \frac{-\sum Y_{1,i} + \sum Y_{3,i}}{20} \\ 
+&= \frac{-2\overline{Y}_1 + 2\overline{Y}_3}{20} \\ 
+&= \frac{\overline{Y}_3 - \overline{Y}_1}{10} \\
+b_0 &= \overline{Y} - b_1\overline{X} \\
+&= \frac{Y_{1,1} + Y_{1,2} + Y_{2,1} + Y_{2,2} + Y_{3,1} + Y_{3,2}}{6} - 10\frac{\overline{Y}_3 - \overline{Y}_1}{10} \\
+&= \frac{Y_{1,1} + Y_{1,2} + Y_{2,1} + Y_{2,2} + Y_{3,1} + Y_{3,2} - 6\overline{Y}_3 + 6\overline{Y}_1}{6} \\
+&= \frac{2\overline{Y}_1 + 2\overline{Y}_2 + 2\overline{Y}_3 - 6\overline{Y}_3 + 6\overline{Y}_1}{6} \\ 
+&= \frac{8\overline{Y}_1 + 2\overline{Y}_2 -4\overline{Y}_3}{6} \\
+&= \frac{4\overline{Y}_1 + \overline{Y}_2 - 2\overline{Y}_3}{3}
+\end{aligned} $$ 
+
+Both the $b_0$ and $b_1$ calculations are the same using the six original points and the mean $Y$ observations at the 3 $X$ levels.
+
 (b) In this study, could the error term variance $\sigma^2$ be estimated without fitting a regression line? Explain.
 
+Answer: Without fitting the regression line, the error term variance $\sigma^2$ could be estimated. Since $\beta_0$ and $\beta_1$ are not estimated, the degrees of freedom is $n$ in the sum of squares SSE and the ``calculated" $Y$ values are the means of the $Y$ observations at the same $X$ level. Then 
+$$ s^2 = \text{MSE} = \frac{\text{SSE}}{n} = \frac{\sum (Y_i - \hat{Y}_i)^2}{n} $$ 
 
 ### Problem 40: 
 In fitting regression model (1.1), it was found that observation $Y_i$ fell directly on the fitted regression line (i.e, $Y_i = \hat{Y}_i$). If this case were deleted, would the least squares regression line fitted to the remaining $n-1$ cases be changed? [Hint: What is the contribution of case $i$ to the least squares criterion $Q$?]
 
+Answer: If the case $Y_i = \hat{Y}_i$ was deleted, the least squares regression line fitted to the remaining $n-1$ casees would not be changed. Its contribution to the least squares criterion $Q$ is $0$.
 
 ### Problem 41: 
 (Calculus needed.) Refer to the regression model $Y_i = \beta_1X_i + \varepsilon_i$, $i=1,\dots, n$, in Exercise 1.29. 
 
 (a) Find the least squares estimator of $\beta_1$.
 
+Answer: Use $Q$ to derive the least squares estimator of $\beta_1$.
+$$ \begin{aligned} 
+Q &= \sum (Y_i - \beta_1X_i)^2 \\
+\frac{d Q}{d \beta_1} &= -2\sum X_i(Y_i - \beta_1X_i) \\ 
+0 &= \sum X_i(Y_i - \beta_1X_i) \\ 
+&= \sum X_iY_i - \beta_1X_i^2 \\
+\beta_1\sum X_i^2 &= \sum X_iY_i \\ 
+\beta_1 &= \frac{\sum X_i Y_i}{\sum X_i^2} 
+\end{aligned} $$ 
+
 (b) Assume that the error terms $\varepsilon_i$ are independent $N(0, \sigma^2)$ and that $\sigma^2$ is known. State the likelihood function for the $n$ sample observations on $Y$ and obtain the maximum likelihood estimator of $\beta_1$. Is it the same as the least squares estimator?
 
+Answer: Knowing $E[Y_i] = \beta_1X_i$ and $Var[Y_i] = \sigma^2$, then
+$$ \begin{aligned}
+L(\beta_0, \beta_1, \sigma^2) &= \prod \frac{1}{(2\pi \sigma^2)^{\frac{1}{2}}} \exp\left(-\frac{1}{2\sigma^2}(Y_9 - \beta_1X_i)^2\right) \\
+\log L(\beta_0, \beta_1, \sigma^2) &= -\frac{n}{2} \log (2\pi \sigma^2) - \frac{1}{2\sigma^2}\sum (Y_i - \beta_1X_i)^2 \\
+\frac{d \log L}{d \beta_1} &= \frac{1}{\sigma^2} \sum X_i(Y_i - \beta_1X_i) \\
+0 &= \frac{1}{\sigma^2} \sum X_i(Y_i - \beta_1X_i) \\ 
+&= \sum X_i(Y_i - \beta_1X_i) \\ 
+\beta_1\sum X_i &= \sum X_iY_i \\ 
+\beta_1 &= \frac{\sum X_iY_i}{\sum X_i}
+\end{aligned} $$ 
+
+The same result is reached using the maximum likelihhood function for $n$ sample observations on $Y$.  
+
 (c) Show that the maximum likelihood estimator of $\beta_1$ is unbiased.
+
+Answer: To show that the estimator is unbiased, show that the expected value of the parameter $b_1$ is equal to $\beta_1$. 
+$$ \begin{aligned}
+E[b_1] &= E\left[ \frac{\sum X_iY_i}{\sum X_i^2}\right ] \\ 
+&= \frac{\sum X_i E[Y_i]}{\sum X_i^2} \\
+&= \frac{\sum X_i(\beta_1X_i)}{\sum X_i^2} \\ 
+&= \frac{\beta_1 \sum X_i^2}{\sum X_i^2} \\ 
+&= \beta_1 
+\end{aligned} $$ 
 
 
 ### Problem 42:
@@ -621,13 +748,60 @@ In fitting regression model (1.1), it was found that observation $Y_i$ fell dire
 
 (a) State the likelihood function for the six $Y$ observations, for $\sigma^2 = 16$.
 
+Answer: Using the model, $Y_i = \beta_1X_i + \varepsilon_i$, the likelihood function is
+$$ L(\beta_1) = \prod_{i=1}^6 \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{1}{2\sigma^2}(Y_i - \beta_1X_i)^2\right) = \prod_{i=1}^6 \frac{1}{\sqrt{32\pi}} \exp\left( -\frac{1}{32}(Y_i - \beta_1X_i)^2\right) $$ 
+
 (b) Evaluate the likelihood function for $\beta_1 = 17$, $18$ and $19$. For which of these $\beta_1$ values is the likelihood function largest?
+
+Answer:
+```{r}
+typo_errors = read.csv('CH01PR42.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+typo_llh_fun = function(z){
+  return(prod((32*pi)^(-1/2)*exp(-(1/32)*(typo_errors$y - z*typo_errors$x)^2)))
+  }
+```
+
+When $\beta_1 = 17$, $18$ and $19$, respectively, likelihood function is 
+```{r}
+typo_llh_fun(17)
+typo_llh_fun(18)
+typo_llh_fun(19)
+```
+
+The likelihood function is largest for $\beta_1 = 18$. 
 
 (c) The maximum likelihood estimator is $b_1 = \sum X_iY_i / \sum X_i^2$. Find the maximum likelihood estimate. Are your results in part (b) consistent with this estimate? 
 
+Answer: Inputting the data values into the maximum likelihood estimator gives the following result
+```{r}
+sum(typo_errors$x * typo_errors$y) / sum((typo_errors$x)^2)
+```
+
+This is the value of $b_1$. This estimate is consistent with the estimate above.
+
 (d) Evaluate the likelihood function for values of $\beta_1$ between $\beta_1 = 17$ and $\beta_1 = 19$ and plot the function. Does the point at which the likelihood function is maximized correspond to the maximum likelihood estimate found in part (c)?
 
+Answer: The plot is created below.
+```{r}
+data.frame(x=17:19) %>%
+  ggplot(aes(x)) + 
+  stat_function(fun = typo_llh_fun) + 
+  lims(y = c(8e-256, 9.5e-256)) + 
+  labs(x = TeX('$\\beta_1$'), y = TeX('$L(\\beta_1)$'),
+       title = "Likelihood Function", 
+       subtitle = TeX('for $\\beta_1 \\in \\[17, 19\\]$')) + 
+  theme_minimal()
+```
 
+The point at which the likelihood function is maximized is not visually seen. Use `optimize` to find the the maximum of the function. 
+
+```{r}
+optimize(typo_llh_fun, 17:19)
+```
+
+The maximum is reached when $\beta_1 = 18.99995$ while looking in the scope of $[17,19]$. This corresponds to the estimate found in part (c). 
 
 ### Problem 43: 
 Refer to the *CDI* data set in Appendix C.2. The number of active physicians in a CDI ($Y$) is expected to be related to total population, number of hospital beds and total personal income. Assume that first-order regression model (1.1) is appropriate for each of the three predictor variables.
