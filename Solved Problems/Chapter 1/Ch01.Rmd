@@ -13,6 +13,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, message=FALSE}
 library(tidyverse)
 library(latex2exp)
+library(gridExtra)
+library(wesanderson)
+library(plotly)
 ```
 
 
@@ -798,60 +801,444 @@ data.frame(x=17:19) %>%
 The point at which the likelihood function is maximized is not visually seen. Use `optimize` to find the the maximum of the function. 
 
 ```{r}
-optimize(typo_llh_fun, 17:19)
+optimize(typo_llh_fun, 17:19, maximum = TRUE)
 ```
 
-The maximum is reached when $\beta_1 = 18.99995$ while looking in the scope of $[17,19]$. This corresponds to the estimate found in part (c). 
+The maximum is reached when $\beta_1 = 17.9285$ while looking in the scope of $[17,19]$. This corresponds to the estimate found in part (c). 
 
 ### Problem 43: 
 Refer to the *CDI* data set in Appendix C.2. The number of active physicians in a CDI ($Y$) is expected to be related to total population, number of hospital beds and total personal income. Assume that first-order regression model (1.1) is appropriate for each of the three predictor variables.
 
-(a) Regress the number og active physicians in turn on each of the three predictor variables. State the estimated regression functions.
+(a) Regress the number of active physicians in turn on each of the three predictor variables. State the estimated regression functions.
+
+Answer: Read in the data and keep only the predictor variables and response variable.
+```{r}
+cdi_cols = c('ID', 'county', 'state', 'area', 'total_pop', 'perc_pop_18to34',
+             'perc_pop_65plus', 'num_physicians', 'num_hosp_beds', 'total_crimes',
+             'perc_hs_grads', 'perc_bach', 'perc_below_poverty', 'perc_unemploy', 
+             'per_capita_income', 'total_personal_income', 'geographic_region')
+cdi_colclasses = c('integer', 'character', 'character', rep('numeric', 13), 'factor')
+cdi = read.csv('APPENC02.txt', sep = '', header = FALSE, 
+                  col.names = cdi_cols, 
+                  colClasses = cdi_colclasses)
+cdi_43 = cdi %>% 
+  select(num_physicians, total_pop, 
+         num_hosp_beds, total_personal_income)
+```
+
+Form the three regression functions.
+```{r}
+physicians_pop = lm.fit_manual(cdi_43$total_pop, cdi_43$num_physicians)
+physicians_beds = lm.fit_manual(cdi_43$num_hosp_beds, cdi_43$num_physicians)
+physicians_income = lm.fit_manual(cdi_43$total_personal_income,
+                                  cdi_43$num_physicians)
+```
+
+The regression functions are
+
+* `r paste("Y =", round(physicians_pop[1], 3), " + ", round(physicians_pop[2], 3), "* X_population")`
+* `r paste("Y =", round(physicians_beds[1], 3), " + ", round(physicians_beds[2], 3), "* X_beds")`
+* `r paste("Y =", round(physicians_income[1], 3), " + ", round(physicians_income[2], 3), "* X_income")`
 
 (b) Plot the three estimated functions and data on separate graphs. Does a linear regression relation appear to provide a good fit for each of the three predictor variables?
 
+Answer:
+```{r}
+physicians_plot1 = ggplot(cdi_43, aes(x = total_pop, 
+                                      y = num_physicians)) + 
+  geom_point(color = "deepskyblue3") + 
+  geom_abline(intercept = physicians_pop[1],
+              slope = physicians_pop[2], color = "darkslateblue") + 
+  labs(x = "total population", y = "number of physicians",
+       title = "Regressing on Number of Physicians",
+       subtitle = "using Total Population") + 
+  theme_minimal() + 
+  theme(plot.title = element_text(size=10),
+        plot.subtitle = element_text(size=10),
+        axis.title.y = element_text(size = 10))
+physicians_plot2 = ggplot(cdi_43, aes(x = num_hosp_beds, 
+                                      y = num_physicians)) + 
+  geom_point(color = "deepskyblue3") + 
+  geom_abline(intercept = physicians_beds[1],
+              slope = physicians_beds[2], color = "darkslateblue") + 
+  labs(x = "number of hospital beds", y = "number of physicians",
+       title = "Regressing on Number of Physicians",
+       subtitle = "using Number of Hospital Beds") + 
+  theme_minimal() + 
+  theme(plot.title = element_text(size=10),
+        plot.subtitle = element_text(size=10),
+        axis.title.y = element_text(size = 10))
+physicians_plot3 = ggplot(cdi_43, aes(x = total_personal_income, 
+                                      y = num_physicians)) + 
+  geom_point(color = "deepskyblue3") + 
+  geom_abline(intercept = physicians_income[1],
+              slope = physicians_income[2], color = "darkslateblue") + 
+  labs(x = "total personal income", y = "number of physicians",
+       title = "Regressing on Number of Physicians",
+       subtitle = "using Total Personal Income") + 
+  theme_minimal() + 
+  theme(plot.title = element_text(size=10),
+        plot.subtitle = element_text(size=10),
+        axis.title.y = element_text(size = 10))
+grid.arrange(arrangeGrob(physicians_plot1, physicians_plot2, ncol = 2), 
+             arrangeGrob(physicians_plot3), 
+             nrow=2)
+```
+
+A linear regression relation appears to provide a good fit for all three of the predictor variables. 
+
 (c) Calculate MSE for each of the three predictor variables. Which predictor variable leads to the smallest variability around the fitted regression line? 
 
+Answer: The MSE for each of the three predictor variables, total population, number of hospital beds and total personal income, respectively, is
+```{r}
+cdi_resid_total_pop = cdi_43$num_physicians - 
+  (physicians_pop[1] + physicians_pop[2]*cdi_43$total_pop)
+sum(cdi_resid_total_pop^2)/(nrow(cdi_43 - 2))
+cdi_resid_beds = cdi_43$num_physicians - 
+  (physicians_beds[1] + physicians_beds[2]*cdi_43$num_hosp_beds)
+sum(cdi_resid_beds^2)/(nrow(cdi_43 - 2))
+cdi_resid_income = cdi_43$num_physicians - 
+  (physicians_income[1] + physicians_income[2]*cdi_43$total_personal_income)
+sum(cdi_resid_income^2)/(nrow(cdi_43 - 2))
+```
+
+The smallest variability around the fitted regression line belonged to the number of hospital beds variable.
 
 ### Problem 44: 
 Refer to the *CDI* data set in Appendix C.2
 
 (a) For each geographic region, regress per capita income in a CDI ($Y$) against the percentage of individuals in a county having at least a bachelor's degree ($X$). Assume that first-order regression model (1.1) is appropriate for each region. State the estimated regression functions.
 
+Answer: First filter out the data for each geographic region.
+```{r}
+cdi_geo1 = cdi %>% filter(geographic_region == 1) %>% 
+  select(per_capita_income, perc_bach) 
+cdi_geo2 = cdi %>% filter(geographic_region == 2) %>% 
+  select(per_capita_income, perc_bach)
+cdi_geo3 = cdi %>% filter(geographic_region == 3) %>% 
+  select(per_capita_income, perc_bach)
+cdi_geo4 = cdi %>% filter(geographic_region == 4) %>% 
+  select(per_capita_income, perc_bach)
+```
+
+Create the regression models.
+```{r}
+cdi_geo1_model = lm.fit_manual(cdi_geo1$perc_bach, cdi_geo1$per_capita_income)
+cdi_geo2_model = lm.fit_manual(cdi_geo2$perc_bach, cdi_geo2$per_capita_income)
+cdi_geo3_model = lm.fit_manual(cdi_geo3$perc_bach, cdi_geo3$per_capita_income)
+cdi_geo4_model = lm.fit_manual(cdi_geo4$perc_bach, cdi_geo4$per_capita_income)
+```
+
+The estimated regression functions are, from geographic region 1-4 respectively,
+
+* `r paste("Y =", round(cdi_geo1_model[1], 3), " + ", round(cdi_geo1_model[2], 3), "* X")`
+* `r paste("Y =", round(cdi_geo2_model[1], 3), " + ", round(cdi_geo2_model[2], 3), "* X")`
+* `r paste("Y =", round(cdi_geo3_model[1], 3), " + ", round(cdi_geo3_model[2], 3), "* X")`
+* `r paste("Y =", round(cdi_geo4_model[1], 3), " + ", round(cdi_geo4_model[2], 3), "* X")`
+
 (b) Are the estimated regression functions similar for the four regions? Discuss.
+
+Answer: The estimated regression functions are not similar for the four regions. Each have a very different intercept value that is around $10,000$. The slope values are in the magnitudes of $100$s. 
+
+A plot is created to see how each regression line looks on the data.
+```{r}
+intercepts = c(cdi_geo1_model[1], cdi_geo2_model[1], 
+               cdi_geo3_model[1], cdi_geo4_model[1])
+slopes = c(cdi_geo1_model[2], cdi_geo2_model[2], 
+               cdi_geo3_model[2], cdi_geo4_model[2])
+regions = 1:4
+geo_labeller = c( '1' = 'Region 1', '2' = 'Region 2', 
+                  '3' = 'Region 3', '4' = 'Region 4')
+cdi_region_reg = data.frame(slope=slopes, intercept=intercepts, 
+                            geographic_region=regions)
+
+ggplot(cdi, aes(x = perc_bach, y = per_capita_income, 
+                color = geographic_region)) + 
+  geom_point(size = 0.7) + 
+  geom_abline(data = cdi_region_reg, 
+              aes(intercept = intercept, slope=slope)) + 
+  facet_wrap(~geographic_region, 
+             labeller = labeller(geographic_region = geo_labeller)) + 
+  scale_color_manual(values=wes_palette(n=4, name="GrandBudapest2")) + 
+  labs(x = "% of individual in country having at least a bachelors degree",
+       y = "per capita income", 
+       title = "Determining per Capita Income",
+       subtitle = "based on Geographic Region") +
+  theme(legend.position = '')
+```
 
 (c) Calcuate MSE for each region. Is the variability around the fitted regression line approximately the same for the four regions? Discuss.
 
+Answer: The MSE is calculated for region 1-4, respectively, below.
+```{r}
+sum((cdi_geo1$per_capita_income - (cdi_geo1_model[1] +
+                                cdi_geo1$perc_bach*cdi_geo1_model[2]))^2) / 
+  (nrow(cdi_geo1)-2)
+sum((cdi_geo2$per_capita_income - (cdi_geo2_model[1] +
+                                cdi_geo2$perc_bach*cdi_geo1_model[2]))^2) / 
+  (nrow(cdi_geo2)-2)
+sum((cdi_geo3$per_capita_income - (cdi_geo3_model[1] +
+                                cdi_geo3$perc_bach*cdi_geo1_model[2]))^2) / 
+  (nrow(cdi_geo3)-2)
+sum((cdi_geo4$per_capita_income - (cdi_geo4_model[1] +
+                                cdi_geo4$perc_bach*cdi_geo1_model[2]))^2) / 
+  (nrow(cdi_geo2)-2)
+```
+
+The variability around the fitted regression line is not approximately the same for the four regions. This is because all four regression lines were fitted on different data. 
 
 ### Problem 45: 
 Refer to the *SENIC* data set in Appendix C.1. The average length of stay in a hospital ($Y$) is anticipated to be related to infection risk, available facilities and services, and routine chest X-ray ratio. Assume that first-order regression model (1.1) is appropriate for each of the three predictor variables.
 
 (a) Regress average length of stay on each of the three predictor variables. State the estimated regression functions.
 
+Answer: Read in the data and select the variables needed.
+```{r}
+senic_cols = c('ID', 'length_stay', 'age', 'infection_risk', 'culturing_ratio',
+               'chest_xray_ratio', 'num_beds', 'med_school_aff', 'region', 
+               'avg_daily_census', 'num_nurses', 'available_facilities')
+senic_colclasses = c(rep('numeric', 6), rep('factor', 2), rep('numeric', 3))
+senic = read.csv('APPENC01.txt', sep = '', header = FALSE, 
+                  col.names = senic_cols, 
+                  colClasses = senic_colclasses)
+senic_length_stay = senic %>% 
+  select(length_stay, infection_risk, available_facilities, chest_xray_ratio)
+```
+
+Now form the linear models.
+```{r}
+senic_stay1 = lm.fit_manual(senic_length_stay$infection_risk, 
+                            senic_length_stay$length_stay)
+senic_stay2 = lm.fit_manual(senic_length_stay$available_facilities, 
+                            senic_length_stay$length_stay)
+senic_stay3 = lm.fit_manual(senic_length_stay$chest_xray_ratio, 
+                            senic_length_stay$length_stay)
+```
+
+The estimated regression functions are
+
+* `r paste("Y =", round(senic_stay1[1], 3), " + ", round(senic_stay1[2], 3), "* X_infection")`
+* `r paste("Y =", round(senic_stay2[1], 3), " + ", round(senic_stay2[2], 3), "* X_facilities")`
+* `r paste("Y =", round(senic_stay3[1], 3), " + ", round(senic_stay3[2], 3), "* X_chest")`
+
 (b) Plot the three estimated regression functions and data on separate graphs. Does a linear relation appear to provide a good fit for each of the three predictor variables?
+
+Answer: The plot is created below.
+```{r}
+senic_stay1_plot = ggplot(senic, aes(x = infection_risk, y = length_stay)) + 
+  geom_point(size = 0.7) + 
+  geom_abline(intercept = senic_stay1[1], slope = senic_stay1[2],
+              color = "orchid4") + 
+  labs(x = "infection rate", 
+       y = "length of stay",
+       title = "Determining Average Length of Stay in a Hospital",
+       subtitle = "using Infection Risk") + 
+  theme_minimal() + 
+  theme(plot.title = element_text(size = 8),
+        plot.subtitle = element_text(size = 8),
+        axis.title = element_text(size = 8), 
+        axis.title.y = element_text(size = 8))
+senic_stay2_plot = ggplot(senic, aes(x = available_facilities, y = length_stay)) + 
+  geom_point(size = 0.7) + 
+  geom_abline(intercept = senic_stay2[1], slope = senic_stay2[2],
+              color = "orchid4") + 
+  labs(x = "percentage of facilities and services", 
+       y = "length of stay",
+       title = "Determining Average Length of Stay in a Hospital",
+       subtitle = "using Available Facilities and Services") + 
+  theme_minimal() + 
+  theme(plot.title = element_text(size = 8),
+        plot.subtitle = element_text(size = 8),
+        axis.title = element_text(size = 8), 
+        axis.title.y = element_text(size = 8))
+senic_stay3_plot = ggplot(senic, aes(x = chest_xray_ratio, y = length_stay)) + 
+  geom_point(size = 0.7) + 
+  geom_abline(intercept = senic_stay3[1], slope = senic_stay3[2],
+              color = "orchid4") + 
+  labs(x = "ratio of number of X-rays performed to # of patients", 
+       y = "length of stay",
+       title = "Determining Average Length of Stay in a Hospital",
+       subtitle = "using Routine Chest X-Ray Ratio") +
+  theme_minimal() + 
+  theme(plot.title = element_text(size = 8),
+        plot.subtitle = element_text(size = 8),
+        axis.title = element_text(size = 8), 
+        axis.title.y = element_text(size = 8))
+
+grid.arrange(arrangeGrob(senic_stay1_plot, senic_stay2_plot, ncol = 2), 
+             arrangeGrob(senic_stay3_plot), 
+             nrow=2)
+```
+
+A linear relation does appear to provide a good fit for each of the three predictor varaibles.
 
 (c) Calculate MSE for each of the three predictor variables. Which predictor variable leads to the smallest variability around the fitted regression line?
 
+Answer: The MSEs for each of the three predictor variables, infection risk, available facilities and services, and routine chest x-ray ratio (respectively), are
+```{r}
+sum((senic$length_stay - 
+       (senic_stay1[1] + senic_stay1[2]*senic$infection_risk))^2) / 
+  (nrow(senic)-2)
+sum((senic$length_stay - 
+       (senic_stay2[1] + senic_stay2[2]*senic$available_facilities))^2) /
+  (nrow(senic)-2)
+sum((senic$length_stay - 
+       (senic_stay3[1] + senic_stay3[2]*senic$chest_xray_ratio))^2) / 
+  (nrow(senic)-2)
+```
+
+The smallest varability around the fitted regression line belongs to the infection risk predictor variable.
 
 ### Problem 46:
 Refer to the *SENIC* data set in Appendix C.1.
 
 (a) For each geographic region, regress average length of stay in hospital ($Y$) against infection risk ($X$). Assume that first-order regression model (1.1) is appropriate for each region. State the estimated regression functions.
 
-(b) Are the estimated regression funtions similar for the four regions? Discuss.
+Answer: First filter out the data for each geographic region.
+```{r}
+senic_geo1 = senic %>% filter(region == 1) %>% 
+  select(length_stay, infection_risk) 
+senic_geo2 = senic %>% filter(region == 2) %>% 
+  select(length_stay, infection_risk)
+senic_geo3 = senic %>% filter(region == 3) %>% 
+  select(length_stay, infection_risk)
+senic_geo4 = senic %>% filter(region == 4) %>% 
+  select(length_stay, infection_risk)
+```
+
+Create the regression models.
+```{r}
+senic_geo1_model = lm.fit_manual(senic_geo1$infection_risk, senic_geo1$length_stay)
+senic_geo2_model = lm.fit_manual(senic_geo2$infection_risk, senic_geo2$length_stay)
+senic_geo3_model = lm.fit_manual(senic_geo3$infection_risk, senic_geo3$length_stay)
+senic_geo4_model = lm.fit_manual(senic_geo4$infection_risk, senic_geo4$length_stay)
+```
+
+The estimated regression functions are, from geographic region 1-4 respectively,
+
+* `r paste("Y =", round(senic_geo1_model[1], 3), " + ", round(senic_geo1_model[2], 3), "* X")`
+* `r paste("Y =", round(senic_geo2_model[1], 3), " + ", round(senic_geo2_model[2], 3), "* X")`
+* `r paste("Y =", round(senic_geo3_model[1], 3), " + ", round(senic_geo3_model[2], 3), "* X")`
+* `r paste("Y =", round(senic_geo4_model[1], 3), " + ", round(senic_geo4_model[2], 3), "* X")`
+
+(b) Are the estimated regression functions similar for the four regions? Discuss.
+
+Answer: The estimated regression functions have some simiarities with each other. The intercept value for region 2-4 are close in value. The slope value for region 2-3 are close too.
+
+A plot is created to see how each regression line looks on the data.
+```{r}
+intercepts = c(senic_geo1_model[1], senic_geo2_model[1], 
+               senic_geo3_model[1], senic_geo4_model[1])
+slopes = c(senic_geo1_model[2], senic_geo2_model[2], 
+               senic_geo3_model[2], senic_geo4_model[2])
+regions = 1:4
+geo_labeller = c( '1' = 'Region 1', '2' = 'Region 2', 
+                  '3' = 'Region 3', '4' = 'Region 4')
+senic_region_reg = data.frame(slope=slopes, intercept=intercepts, 
+                            region=regions)
+
+ggplot(senic, aes(x = infection_risk, y = length_stay, 
+                color = factor(region))) + 
+  geom_point(size = 0.7) + 
+  geom_abline(data = senic_region_reg, 
+              aes(intercept = intercept, slope=slope)) + 
+  facet_wrap(~region, 
+             labeller = labeller(region = geo_labeller)) + 
+  scale_color_manual(values=wes_palette(n=4, name="BottleRocket1")) + 
+  labs(x = "average probability of acquiring infections in hospital",
+       y = "length of stay of all patients in hospital (in days)", 
+       title = "Determining Patient Length of Stay using Infection Risk",
+       subtitle = "based on Geographic Region") +
+  theme(legend.position = '',
+        axis.title.x = element_text(size=10),
+        axis.title.y = element_text(size=10))
+```
 
 (c) Calculate MSE for each region. Is the variability around the fitted regression line approximately the same for the four regions? Discuss.
 
+Answer: The MSEs for region 1-4, respectively, are
+```{r}
+sum((senic_geo1$length_stay - (senic_geo1_model[1] +
+                                senic_geo1$infection_risk*senic_geo1_model[2]))^2) /
+  (nrow(senic_geo1)-2)
+sum((senic_geo2$length_stay - (senic_geo2_model[1] +
+                                senic_geo2$infection_risk*senic_geo2_model[2]))^2) /
+  (nrow(senic_geo2)-2)
+sum((senic_geo3$length_stay - (senic_geo3_model[1] +
+                                senic_geo3$infection_risk*senic_geo3_model[2]))^2) /
+  (nrow(senic_geo3)-2)
+sum((senic_geo4$length_stay - (senic_geo4_model[1] +
+                                senic_geo4$infection_risk*senic_geo4_model[2]))^2) /
+  (nrow(senic_geo4)-2)
+```
+
+The variability around the fitted regression line for each of the four regions are not the same. The variability for region 1 sticks out from the other 3 regions. The variability for region 2-4 are close to each other.
 
 ### Problem 47:
 Refer to *Typographical errors* Problem 1.42. Assume that first-order regression model (1.1) is appropriate, with normally distributed independent error terms whose variance is $\sigma^2 = 16$. 
 
 (a) State the likelihood function for the six observations, for $\sigma^2 = 16$.
 
+Answer: Using the model, $Y_i = \beta_0 + \beta_1X_i + \varepsilon_i$, the likelihood function for the six observations is
+$$ L(\beta_0, \beta_1) = \prod_{i=1}^6 \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right) = \prod_{i=1}^6 \frac{1}{\sqrt{32\pi}} \exp\left( -\frac{1}{32}(Y_i - \beta_0 - \beta_1X_i)^2\right) $$ 
+
 (b) Obtain the maximum likelihood estimates of $\beta_0$ and $\beta_1$, using (1.27). 
+
+Answer: Using the maximum likelihood estimation method, the estimator for $\beta_0$ is $\hat{\beta}_0 = b_0$ and for $\beta_1$ is $\hat{\beta}_1 = b_1$. Hence, 
+```{r}
+typo_mle = lm.fit_manual(typo_errors$x, typo_errors$y)
+paste('b0 =', round(typo_mle[1], 3))
+paste('b1 =', round(typo_mle[2], 3))
+```
+
 (c) Obtain a three-dimensional plot of the likelihood function for values of $\beta_0$ between $\beta_0 = -10$ and $\beta_0 = 10$ and for values of $\beta_1$ between $\beta_1 = 17$ and $\beta_1 = 19$. Does the likelihood appear to be maximized by the maximum likelihood estimates found in part (b)? 
 
+Answer: Create a function for the likelihood function that will take in values of $\beta_0$ and $\beta_1$.
+```{r}
+typo_mle_fun = function(beta_zero, beta_one){
+  return(prod((32*pi)^(-1/2)*exp(-(1/32)*(typo_errors$y - 
+                                            beta_zero - 
+                                            beta_one*typo_errors$x)^2)))
+  }
+```
 
+Create a data frame storing the $\beta_0$, $\beta_1$ and likelihood values.
+```{r}
+n = 350
+typo_likelihood_matrix = matrix(rep(NA, n^2), nrow = n, ncol = n)
+b0_val = seq(-10, 10, length = n)
+b1_val = seq(17, 19, length = n)
 
+for(i in 1:n){
+  row = c()
+  for(j in b1_val){
+    row = c(row, typo_mle_fun(b0_val[i], j))
+  }
+  typo_likelihood_matrix[i,] = row
+}
+typo_likelihood_df = data.frame(b0 = b0_val, 
+                                typo_likelihood_matrix)
+colnames(typo_likelihood_df) = c('b0', b1_val)
+typo_likelihood_df = typo_likelihood_df %>% 
+  gather(key = b1, value = likelihood, colnames(typo_likelihood_df)[1:n+1])
+```
 
+Plot the 3D scatterplot.
+```{r}
+plot_ly(data = typo_likelihood_df, x = ~b0, y = ~b1, z = ~likelihood, 
+        marker = list(color = ~likelihood, colorscale = "RdBu",
+                      showscale = TRUE)) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = "beta0"),
+                      yaxis = list(title = "beta1"),
+                      zaxis = list(title = "likelihood")))
+```
 
+By looking at the 3D plot and using the zoom feature, it is apparent that the likelihood is maximized by the maximum likelihood estimates found in part (b).
+
+Using `R`'s `which.max` to find the maximum likelihood value, the following $\beta_0$ and $\beta_1$ estimates create the maximum likelihood value.
+```{r}
+typo_likelihood_df[which.max(typo_likelihood_df$likelihood),]
+```
+
+Same result as before with more precision! 
