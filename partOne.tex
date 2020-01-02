@@ -56,11 +56,11 @@ Thus, the response $Y_i$, when the level of $X$ in the $i$th trial is $X_i$, com
 \item The parameter $\beta_0$ is the $Y$ intercept of the regression line 
 \item When the scope of the model includes $X=0$, $\beta_0$ gives the mean of the probability distribution of $Y$ at $X=0$; when the scope of the model does not cover $X=0$, $\beta_0$ does not have any particular meaning as a separate term in the regression model
 \item The simple linear regression model can be written equivalently as follows: let $X_0$ be a constant identically equal to $1$, then $$ Y_i = \beta_0X_0 + \beta_1X_i + \eps_i \text{ where } X_0 \equiv 1 $$ This version of the model associates an $X$ variable with each regression coefficient 
-\item An alternative modification is to use for the predictor variable the deviation $X_i - \overline{X}$ rather than $X_i$, then 
-$$ \begin{aligned} Y_i &= \beta_0 + \beta_1(X_i - \overline{X}) + \beta_1\overline{X} + \eps_i \\ 
-&= (\beta_0 + \beta_1\overline{X}) + \beta_1(X_i - \overline{X}) + \eps_i \\ 
-&= \beta_0^* + \beta_1(X_9 - \overline{X}) + \eps_i \end{aligned} $$ 
-Thus this alternative model is $$ Y_i = \beta_0^* + \beta_1(X_i - \overline{X}) + \eps_i $$ where $$\beta_0^* = \beta_0 + \beta_1\overline{X}$$ 
+\item An alternative modification is to use for the predictor variable the deviation $X_i - \Xbar$ rather than $X_i$, then 
+$$ \begin{aligned} Y_i &= \beta_0 + \beta_1(X_i - \Xbar) + \beta_1\Xbar + \eps_i \\ 
+&= (\beta_0 + \beta_1\Xbar) + \beta_1(X_i - \Xbar) + \eps_i \\ 
+&= \beta_0^* + \beta_1(X_9 - \Xbar) + \eps_i \end{aligned} $$ 
+Thus this alternative model is $$ Y_i = \beta_0^* + \beta_1(X_i - \Xbar) + \eps_i $$ where $$\beta_0^* = \beta_0 + \beta_1\Xbar$$ 
 \end{itemize}
 
 \subsection{Data for Regression Analysis}
@@ -104,8 +104,8 @@ According to the method of least squares, the estimators of $\beta_0$ and $\beta
 \sum Y_i &= nb_0 + b_1\sum X_i \\ \sum X_i Y_i &= b_0\sum X_i + b_1\sum X_i^2 \end{aligned} $$ 
 These two equations are called normal equations; $b_0$ and $b_1$ are called point estimators of $\beta_0$ and $\beta_1$ respectively
 \item The normal equations can be solved simultaneously for $b_0$ and $b_1$: $$ \begin{aligned} 
-b_1 &= \frac{ \sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sum (X_i - \overline{X})^2} \\
-b_0 &= \frac{1}{n} \left( \sum Y_i - b_1 \sum X_i \right) = \overline{Y} - b_1\overline{X} \end{aligned} $$ where $\overline{X}$ and $\overline{Y}$ are the means of the $X_i$ and $Y_i$ observations respectively
+b_1 &= \frac{ \sum (X_i - \Xbar)(Y_i - \Ybar)}{\sum (X_i - \Xbar)^2} \\
+b_0 &= \frac{1}{n} \left( \sum Y_i - b_1 \sum X_i \right) = \Ybar - b_1\Xbar \end{aligned} $$ where $\Xbar$ and $\Ybar$ are the means of the $X_i$ and $Y_i$ observations respectively
 \item Derivation of above result: for given sample observations $(X_i, Y_i)$, the quantity $Q$ is a function of $\beta_0$ and $\beta_1$;  the values of $\beta_0$ and $\beta_1$ that minimize $Q$ can be derived by differentiating $Q$ with respect to $\beta_0$ and $\beta_1$: $$ \begin{aligned} \frac{\partial Q}{\partial \beta_0} &= -2\sum (Y_i - \beta_0 - \beta_1X_i) \\ \frac{\partial Q}{\partial \beta_1} &= -2\sum X_i(Y_i - \beta_0 - \beta_1X_i) \end{aligned} $$ 
 Setting these partial derivatives to zero, using $b_0$ and $b_1$ to denote the particular values of $\beta_0$ and $\beta_1$ that minimize Q and simplifying, the following is obtained $$ \begin{aligned} \sum_{i=1}^n (Y_i - b_0 - b_1X_i) &= 0 \\ \sum_{i=1}^n X_i(Y_i - b_0 - b_1X_i) &= 0 \end{aligned} $$ Expanding this, the following is true: $$ \begin{aligned} \sum Y_i - nb_0 - b_1\sum X_i &= 0 \\ \sum X_iY_i - b_0\sum X_i - b_2\sum X_i^2 &= 0 \end{aligned} $$ 
 By rearranging terms, the normal equations are obtained
@@ -126,13 +126,13 @@ By rearranging terms, the normal equations are obtained
 \item The sum of the observed values $Y_i$ equals the sum of the fitted values $\hat{Y}_i$: $$ \sum_{i=1}^n Y_i = \sum_{i=1}^n \hat{Y}_i $$ 
 \item The sum of the weighted residuals is zero when he residual in the $i$th trial is weighted by the level of the predictor variable in the $i$th trial: $$ \sum_{i=1}^n X_ie_i = 0 $$ 
 \item The sum of the weighted residuals is zero when the residual in the $i$th trial is weighted by the fitted value of the response variable for the $i$th trial: $$ \sum_{i=1}^n \hat{Y}_ie_i = 0 $$ 
-\item The regression line always goes through the point $(\overline{X}, \overline{Y})$ \end{enumerate} 
+\item The regression line always goes through the point $(\Xbar, \Ybar)$ \end{enumerate} 
 \end{itemize}
 
 \subsection{Estimation of Error Terms Variance $\sigma^2$}
 \begin{itemize}
 \item The variance $\sigma^2$ of the error terms $\eps_i$ in the regression model needs to be estimated to obtain an indication of the variability of the probability distribution of $Y$
-\item The variance $\sigma^2$ of a single population is estimated by the sample variance $s^2$ as follows: $$ s^2 = \frac{\sum_{i=1}^n (Y_i - \overline{Y})^2}{n-1} $$ where the sum is called a sum of squares and $n-1$ is the degrees of freedom; this number is $n-1$ because one degree of freedom is lost by using $\overline{Y}$ as an estimate of the unknown population mean $\mu$ 
+\item The variance $\sigma^2$ of a single population is estimated by the sample variance $s^2$ as follows: $$ s^2 = \frac{\sum_{i=1}^n (Y_i - \Ybar)^2}{n-1} $$ where the sum is called a sum of squares and $n-1$ is the degrees of freedom; this number is $n-1$ because one degree of freedom is lost by using $\Ybar$ as an estimate of the unknown population mean $\mu$ 
 \item This estimator is the usual sample variance which is an unbiased estimator of the variance $\sigma^2$ of an infinite population
 \item The sample variance is often called a mean square because a sum of squares has been divided by the appropriate number of degrees of freedom
 \item For the regression model, the variance for each observation $Y_i$ is $\sigma^2$, the same as that of each error term $\eps_i$; a sum of squared deviations are needed to be calculated but note that the $Y_i$ now come from different probability distributions with different means that depend upon the level $X_i$; thus, the deviation of an observation $Y_i$ must be calculated around its own estimated mean $\hat{Y}_i$ 
@@ -165,8 +165,8 @@ By rearranging terms, the normal equations are obtained
 \item The likelihood function for $n$ observations $Y_1,\dots,Y_n$ is the product of the individual densities; since the variance $\sigma^2$ of the error terms is usually unknown, the likelihood function is a function of three parameters $\beta_0$, $\beta_1$ and $\sigma^2$ $$ \begin{aligned} L(\beta_0, \beta_1, \sigma^2) &= \prod_{i=1}^n \frac{1}{(2\pi \sigma^2)^{1/2}} \exp\left[-\frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right] \\ &= \frac{1}{(2\pi\sigma^2)^{n/2}}\exp\left[-\frac{1}{2\sigma^2}\sum_{i=1}^n (Y_i - \beta_0 - \beta_1X_i)^2\right] \end{aligned} $$ 
 \item The values of $\beta_0$, $\beta_1$ and $\sigma^2$ that maximize this likelihood function are the maximum likelihood estimators and are denoted by $\hat{\beta}_0$, $\hat{\beta}_1$ and $\hat{\sigma}^2$ respectively; these estimators are calculated analytically and are as follows: $$ \begin{tabular}{c|c} \hline 
 Parameter & Maximum Likelihood Estimator \\ \hline 
-$\beta_0$ & $\hat{\beta}_0 = b_0 = \frac{1}{n}\left(\sum Y_i - b_1\sum X_i\right) = \overline{Y} - b_1\overline{X} $ \\ \hline
-$\beta_1$ & $\hat{\beta}_1 = b_1 = \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sum (X_i - \overline{X})^2} $ \\ \hline 
+$\beta_0$ & $\hat{\beta}_0 = b_0 = \frac{1}{n}\left(\sum Y_i - b_1\sum X_i\right) = \Ybar - b_1\Xbar $ \\ \hline
+$\beta_1$ & $\hat{\beta}_1 = b_1 = \frac{\sum (X_i - \Xbar)(Y_i - \Ybar)}{\sum (X_i - \Xbar)^2} $ \\ \hline 
 $\sigma^2$ & $\hat{\sigma}^2 = \frac{\sum (Y_i - \hat{Y}_i)^2}{n} $ \\ \hline \end{tabular} $$ 
 \item Thus, the maximum likelihood estimators of $\beta_0$ and $\beta_1$ are the same estimators as those provided by the methods of least squares; the maximum likelihood estimator $\hat{\sigma}^2$ is biased and ordinarily the unbiased MSE or $s^2$ is used 
 \item The unbiased MSE or $s^2$ differs but slightly from the maximum likelihood estimator $\hat{\sigma}^2$, especially if $n$ is not small $$ s^2 = \text{MSE} = \frac{n}{n-2}\hat{\sigma}^2 $$ 
@@ -185,19 +185,182 @@ The first two equations are identical to the earlier least squares normal equati
 
 
 \section{Inferences in Regression and Correlation Analysis}
-\subsection{Inferences Concerning $\beta_1$}
+Throughout this chapter (excluding Section 2.11), and in the remainder of Part I unless otherwise stated, assume that the normal error regression model is applicable. This model is
+$$ Y_i = \beta_0 + \beta_1X_i + \eps_i $$ where: \begin{itemize}[label={}]
+\item $\beta_0$ and $\beta_1$ are parameters 
+\item $X_i$ are known constants 
+\item $\eps_i$ are independent $N(0, \sigma^2)$ \end{itemize} 
 
+\subsection{Inferences Concerning $\beta_1$}
+\begin{itemize}
+\item At times, tests concerning $\beta_1$ are of interest, particularly one of the form: \hyptest{\beta_1 = 0}{\beta_1 \neq 0} 
+\item The reason for interest in testing whether or not $\beta_1 = 0$ is that, when $\beta_1 = 0$, there is no linear association between $Y$ and $X$
+\item When $\beta_1 = 0$, the regression line is horizontal and the means of the probability distributions of $Y$ are therefore all equal, namely: $$\expe{Y} = \beta_0 + (0)X = \beta_0 $$ 
+\item $\beta_1 = 0$ for the normal error regression model also implies that there is no relation of any type between $Y$ and $X$ since the probability distributions of $Y$ are then identical at all levels of $X$
+\item The point estimator $b_1$ is as follows: $$ b_1= \frac{\sum (X_i - \Xbar)(Y_i- \Ybar)}{\sum (X_i - \Xbar)^2} $$ 
+\item The sampling distribution of $b_1$ refers to the different values of $b_1$ that would be obtained with repeated sampling when the levels of the predictor variable $X$ are held constant from sample to sample 
+\item For the normal error regression model, the sampling distribution of $b_1$ is normal, with mean and variance: $\expe{b_1} = \beta_1$ and $\var{b_1} = \frac{\sigma^2}{\sum (X_i - \Xbar)^2} $
+\item $b_1$ can be expressed as follows: $$ b_1 = \frac{\sum (X_i - \Xbar)(Y_i - \Ybar)}{\sum (X_i - \Xbar)^2} = \sum k_iY_i $$ where $k_i = \frac{X_i - \Xbar}{\sum (X_i - \Xbar)^2} $; Observe that the $k_i$ are a function of the $X_i$ are therefore are fixed quantities since the $X_i$ are fixed; hence, $b_1$ is a linear combination of the $Y_i$ where the coefficients are solely a function of the fixed $X_i$
+\item The coefficients $k_i$ have a number of interesting properties 
+$$ \sum k_i = 0 ~~~~~~~ \sum k_iX_i = 1 ~~~~~~~ \sum k_i^2 = \frac{1}{\sum (X_i - \Xbar)^2} $$ 
+\item To show that $b_1$ is a linear combination of the $Y_i$ with coefficients $k_i$, first prove that $$ \sum (X_i - \Xbar)(Y_i - \Ybar) = \sum (X_i - \Xbar)Y_i $$ This follows since $$ \sum (X_i - \Xbar)(Y_i - \Ybar) = \sum (X_i - \Xbar)Y_i - \sum (X_i - \Xbar)\Ybar $$ But $\sum (X_i. - \Xbar)\Ybar = \Ybar \sum (X_i - \Xbar) = 0$ since $\sum (X_i - \Xbar) = 0$. Now 
+$$ b_1 = \frac{\sum (X_i - \Xbar)(Y_i - \Ybar)}{\sum (X_i - \Xbar)^2} = \frac{\sum (X_i - \Xbar)Y_i}{\sum (X_i - \Xbar)^2} = \sum k_i Y_i $$ 
+\item The normality of the sampling distribution of $b_1$ follows at once from the fact that $b_1$ is a linear combination of the $Y_i$; the $Y_i$ are independently, normally distributed; note that a linear combination of independent normal random variables is normally distributed 
+\item The unbiasedness of the point estimator $b_1$, stated in the Gauss-Markov theorem, can be proved as follows: 
+$$ \begin{aligned} \expe{b_1} &= \expe{\sum k_iY_i} = \sum k_i \expe{Y_i} = \sum k_i(\beta_0 + \beta_1X_i) \\ &= \beta_0 \sum k_i + \beta_1 \sum k_iX_i \end{aligned} $$ and so $\expe{b_1} = \beta_1$
+\item The variance of $b_1$ can be derived as follows: $$ \begin{aligned} 
+\var{b_1} &= \var{\sum k_iY_i} = \sum k_i^2 \var{Y_i} \\ &= \sum k_i^2 \sigma^2 = \sigma^2 \sum k_i^2 \\ &= \frac{\sigma^2}{\sum (X_i - \Xbar)^2} \end{aligned} $$ 
+\item The variance of the sampling distribution of $b_1$ can be estimated by replacing $\sigma^2$ with MSE, the unbiased estimator of $\sigma^2$
+$$ s^2[b_1] = \frac{\text{MSE}}{\sum (X_i - \Xbar)^2} $$ which is an unbiased estimator of $\var{b_1}$
+\item Since $b_1$ is normally distributed, the standardized statistic $\frac{b_1 - \beta_1}{\sig{b_1}}$ is a standard normal variable
+\item When a statistic is standardized but the denominator is an estimated standard deviation rather than the true standard deviation, it is called a studentized statistic
+\item Theorem: $$ \frac{b_1 - \beta_1}{\sd{b_1}} \text{ is distributed as } t_{n-2} \text{ for the normal error regression model} $$ 
+\item Proof: Note that $\frac{\text{SSE}}{\sigma^2}$ is distributed as $\chi^2$ with $n-2$ degrees of freedom and is independent of $b_0$ and $b_1$. First rewrite $(b_1 - \beta_1)/\sd{b_1}$ as follows:
+$$ \frac{b_1-\beta_1}{\sig{b_1}} / \frac{\sd{b_1}}{\sig{b_1}} $$ 
+The numerator is a standard normal variable $z$; now, $$ \begin{aligned} \frac{s^2[b_1]}{\sigma^2[b_1]} &= \frac{ \frac{\text{MSE}}{\sum (X_i - \Xbar)^2}}{ \frac{\sigma^2}{\sum (X_i - \Xbar)^2}} = \frac{\text{MSE}}{\sigma^2} = \frac{\frac{\text{SSE}}{n-2}}{\sigma^2} \\ &= \frac{ \text{SSE}}{\sigma^2(n-2)} \sim \frac{\chidist{n-2}}{n-2} \end{aligned} $$  where the symbol $\sim$ stands for ``is distributed as"; hence
+$$ \frac{b_1 - \beta_1}{s[b_1]} \sim \frac{z}{\sqrt{ \frac{\chidist{n-2}}{n-2}}} $$ But $z$ and $\chi^2$ are independent since $z$ is a function of $b_1$ and $b_1$ is independent of $\text{SSE}/\sigma^2 \sim \chi^2$ and so $$ \frac{b_1 - \beta_1}{s[b_1] \sim t_{n-2}} $$ 
+\item  Since $(b_1 - \beta_1)/s[b_1]$ follows a $t$ distribution, the following can be said $$ \prob{\tdist{\frac{\alpha}{2}}{n-2} \leq \frac{b_1 - \beta_1}{s[b_1]} \leq \tdist{1 - \frac{\alpha}{2}}{n-2}} = 1 - \alpha $$ 
+$\tdist{\frac{\alpha}{2}}{n-2}$ denotes the $(\alpha/2)100$ percentile of the $t$ distribution with $n-2$ degrees of freedom
+\item The $1-\alpha$ confidence limits for $\beta_1$ are $$ b_1 \pm t_{1 - \frac{\alpha}{2}, n-2} s[b_1] $$ 
+\item This is derived from the following: because of the symmetry of the $t$ distribution around its mean $0$, it follows that $$ \tdist{\frac{\alpha}{2}}{n-2} = -\tdist{1 - \frac{\alpha}{2}}{n-2} $$ and by rearranging the probability statement,
+$$ \prob{b_1 - \tdist{1 - \frac{\alpha}{2}}{n-2}s[b_1] \leq \beta_1 \leq b_1 + \tdist{1 - \frac{\alpha}{2}}{n-2} s[b_1]} = 1 - \alpha $$ 
+\item Two-Sided $T$ Test: Let the null and alternative hypotheses be \hyptest{\beta_1 = 0}{\beta_1 \neq 0} An explicit test of the alternatives is based on the test statistic $$ t^* = \frac{b_1}{s[b_1]} $$ The decision rule with this test statistic for controlling the level of significance at $\alpha$ is: \begin{itemize} 
+\item If $\abs{t^*} \leq \tdist{1 - \frac{\alpha}{2}}{n-2}$, conclude $H_0$ (fail to reject $H_0$)
+\item If $\abs{t^*} > \tdist{1 - \frac{\alpha}{2}}{n-2}$, conclude $H_A$ (reject $H_0$) \end{itemize} 
+\item When the test of whether or not $\beta_1 = 0$ leads to the conclusion that $\beta_1 \neq 0$, the association between $Y$ and $X$ is sometimes described to be a linear statistical association 
+\item The two-sided $P$-value is obtained by first finding the one-sided $P$-value and then multiplying by $2$; if it is less than $\alpha$, then conclude $H_A$ (or reject $H_0$) else conclude $H_0$ (or fail to reject $H_0$)
+\item One-Sided $T$ Test: Let the null and alternative hypotheses be: \hyptest{\beta_1 \leq 0}{\beta_1 > 0} The decision rule based on this test statistic would be: \begin{itemize} 
+\item If $t^* \leq \tdist{1 - \alpha}{n-2}$, conclude $H_0$ (fail to reject $H_0$)
+\item If $t^* > \tdist{1-\alpha}{n-2}$, conclude $H_A$ (reject $H_0$) \end{itemize}
+\item Occasionally, it is desired to test whether or not $\beta_1$ equals some specified nonzero value $v$; the alternatives now are \hyptest{\beta_1 = v}{\beta_1 \neq v} and the appropriate test statistic is $$ t^* = \frac{b_1 - v}{s[b_1]} $$ The decision rule remains the same
+\end{itemize} 
 \subsection{Inferences Concerning $\beta_0$}
+\begin{itemize}
+\item Inferences concerning $\beta_0$ only occur when the scope of the model includes $X=0$
+\item The point estimator $b_0$ is as follows: $$ b_0 = \Ybar - b_1\Xbar $$ 
+\item The sampling distribution of $b_0$ refers to the different values of $b_0$ that would be obtained with repeated sampling when the levels of the predictor variable $X$ are held constant from sample to sample 
+\item For the normal error regression model, the sampling distribution of $b_0$ is normal with mean and variance $$ \expe{b_0} = \beta_0 ~~~~~~ \var{b_0} = \sigma^2\left[ \frac{1}{n} + \frac{\Xbar^2}{\sum (X_i - \Xbar)^2} \right] $$ 
+\item The normality of the sampling distribution of $b_0$ follows because $b_0$ is a linear combination of the observations $Y_i$ and the mean and variance of the sampling distribution of $b_0$ can be derived as before for $b_1$
+\item An estimator of $\var{b_0}$ is obtained by replacing $\sigma^2$ by its point estimator MSE $$ s^2[b_0] = \text{MSE}\left[ \frac{1}{n} + \frac{\Xbar^2}{\sum (X_i - \Xbar)^2} \right] $$ The positive square root, $s[b_0]$ is an estimator of $\sig{b_0}$
+\item Theorem: $$ \frac{b_) - \beta_0}{s[b_0]} \text{ is distributed as } t_{n-2} \text{ for the normal error regression model} $$ 
+\item The $1-\alpha$ confidence limits for $\beta_0$ are obtained in the same manner as those for $\beta_1$ and are: 
+$$ b_0 \pm \tdist{1 - \frac{\alpha}{2}}{n-2} s[b_0] $$ 
+\end{itemize}
 
 \subsection{Some Considerations on Making Inferences Concerning $\beta_0$ and $\beta_1$}
+\begin{itemize}
+\item If the probability distribution of $Y$ are not exactly normal but do not depart seriously, the sampling distributions of $b_0$ and $b_1$ will be approximately normal and the use of the $t$ distribution will provide approximately the specified confidence coefficient or level of significance 
+\item Even if the distribution of $Y$ are far from normal, the estimators $b_0$ and $b_1$ generally have the property of asymptotically normality - their distributions approach normality under very general conditions as the sample size increases
+\item For large samples, the $t$ value is replaced by the $z$ value for the standard normal distribution
+\item Since the regression model assumes that the $X_i$ are known constants, the confidence coefficients and risks of errors are interpreted with respect to taking repeated samples in which the $X$ observations are kept at the same levels as in the observed sample; for example, concerning a confidence interval for $\beta_1$, the coefficient is interpreted to mean that if many independent samples are taken where the levels of $X$ are the same as in the data set and a $\alpha$ confidence interval is constructed for each sample, $\alpha$ percent of the intervals will contain the true value of $\beta_1$
+\item Variances of $b_1$ and $b_0$ are affected by the spacing of the $X$ levels in the observed data, as indicated by the use of $n$ and $\sigma^2$ in the formulas; for example, the greater is the spread in the $X$ levels, the larger is the quantity $\sum (X_i - \Xbar)^2$ and the smaller is the variance of $b_1$
+\item The power of tests on $\beta_0$ and $\beta_1$ is the probability that the test correctly rejects the null hypothesis (concluding $H_A$)
+\item For example, using the hypothesis test concerning $\beta_1$ where \hyptest{\beta_1 = v}{\beta_1 \neq v} the test statistic computed is $$ t^* = \frac{b_1 - v}{s[b_1]} $$ and the decision rule for level of significance $\alpha$ is \begin{itemize} 
+\item If $\abs{t^*} \leq \tdist{1 - \frac{\alpha}{2}}{n-2}$, conclude $H_0$ (fail to reject $H_0$)
+\item If $\abs{t^*} > \tdist{1 - \frac{\alpha}{2}}{n-2}$, conclude $H_A$ (reject $H_0$) \end{itemize} 
+The power of test is the probability that the decision rule will lead to conclusion $H_A$ when $H_A$ in fact holds; specifically, the power of the test is given by 
+$$ \text{Power} = \prob{\abs{t^*} > \tdist{1 - \frac{\alpha}{2}}{n-2} | \delta} $$ where $\delta$ is the noncentrality measure, i.e., a measure of how far the true value of $\beta_1$ is from a given value $v$ $$ \delta = \frac{\abs{\beta_1 - v}}{\sig{b_1}} $$ 
+\end{itemize}
 
 \subsection{Interval Estimation of $\expe{Y_h}$}
+\begin{itemize}
+\item Let $X_h$ denote the level of $X$ for which the mean response is to be estimated; it may be a value which occurred in the sample or it may be some other value of the predictor variable within the scope of the model; the mean response when $X=X_h$ is denoted by $\expe{Y_h}$ 
+\item The point estimator $\hat{Y}_h$ of $\expe{Y_h}$ is $\hat{Y}_h = b_0 + b_1X_h$
+\item The sampling distribution of $\hat{Y}_h$ refers to the different values of $\hat{Y}_h$ that would be obtained if repeated samples were selected, each holding the levels of the predictor variable $X$ constant, and calculating $\hat{Y}_h$ for each sample
+\item For the normal error regression model, the sampling distribution of $\hat{Y}_h$ is normal with mean and variance $$ \expe{\hat{Y}_h} = \expe{Y_h} ~~~~~~ \var{\hat{Y}_h} = \sigma^2\left[ \frac{1}{n} + \frac{(X_h - \Xbar)^2}{\sum (X_i - \Xbar)^2}\right] $$ 
+\item The normality of the sampling distribution of $\hat{Y}_h$ follows directly from the fact that $\hat{Y}_h$ is a linear combination of the observations $Y_i$
+\item $\hat{Y}_h$ is an unbiased estimator of $\expe{Y_h}$ $$ \expe{\hat{Y}_h} = \expe{b_0 + b_1X_h} = \expe{b_0} + X_h\expe{b_1} = \beta_0 + \beta_1X_h $$ 
+\item The variability of the sampling distribution of $\hat{Y}_h$ is affected by how far $X_h$ is from $\Xbar$, through the term $(X_h - \Xbar)^2$; the further from $\Xbar$ is $X_h$, the greater the quantity $(X_h - \Xbar)^2$ and the larger is the variance of $\hat{Y}_h$
+\item The estimated variance of $\hat{Y}_h$ is $$ s^2[\hat{Y}_h] = \text{MSE}\left[ \frac{1}{n} + \frac{(X_h - \Xbar)^2}{\sum (X_i - \Xbar)^2} \right] $$ The estimated standard deviation of $\hat{Y}_h$ is then $s[\hat{Y}_h]$, the positive square root of $s^2[\hat{Y}_h]$
+\item When $X_h = 0$, the variance of $\hat{Y}_h$ is reduced to the variance of $b_0$ since $\hat{Y}_h = b_0 + b_1X_h = b_0 + b_1(0) = b_0$
+\item To derive $\sig{\hat{Y}_h}$, first show that $b_1$ and $\Ybar$ are uncorrelated and hence, for the regression model, independent: $\cov{\Ybar}{b_1} = 0$, where the LHS denotes the covariance between the two; now, $$ \Ybar = \sum \left( \frac{1}{n} \right)Y_i ~~~~~~ b_1 = \sum k_iY_i $$ where $k_i$ is defined as before; now, knowing that $Y_i$ are independent random variables, 
+$$ \cov{\Ybar}{b_1} = \sum \left( \frac{1}{n} \right) k_i \sigma^2[Y_i] = \frac{\sigma^2}{n} \sum k_i $$ but $\sum k_i = 0$ and so the covariance is $0$; to find the variance of $\hat{Y}_h$, use the alternative form of the estimator $$ \var{\hat{Y}_h} = \var{\Ybar - b_1(X_h - \Xbar)} $$ Since $\Ybar$ and $b_1$ are independent and $X_h$ and $\Xbar$ are constants, then $$ \var{\hat{Y}_h} = \var{\Ybar} + (X_h - \Xbar)^2\var{b_1} $$ Since $$ \var{\Ybar}. = \frac{\var{Y_i}}{n} = \frac{\sigma^2}{n} $$ and so $$ \var{\hat{Y}_h} = \frac{\sigma^2}{n} + (X_h - \Xbar)^2\frac{\sigma^2}{\sum (X_i  - \Xbar)^2} $$ 
+\item Theorem: $$ \frac{\hat{Y}_h - \expe{Y_h}}{s[\hat{Y}_h]} \text{ is distributed as } t_{n-2} \text{ for the regression model} $$ All inferences concerning $\expe{Y_h}$ are carried out in the usual fashion with the $t$ distribution
+\item A confidence interval for $\expe{Y_h}$ is constructed in the standard fashion as follows $$ \hat{Y}_h \pm \tdist{1 - \frac{\alpha}{2}}{n-2}s[\hat{Y}_h] $$ 
+\item Since the $X_i$ are known constants in the regression model, the interpretation of confidence intervals and risks of errors in inferences on the mean response is in terms of taking repeated samples in which the $X$ observations are at the same levels as in the actual study
+\item For given sample results, the variance of $\hat{Y}_h$ is smallest when $X_h = \Xbar$; thus, in an experiment to estimate the mean response at a particular level $X_h$ of the predictor variable, the precision of the estimate will be greatest if (everything else remaining equal) the observations on $X$ are spaced so that $\Xbar = X_h$
+\item The usual relationship between confidence intervals and tests applies in inferences concerning the mean response; thus, the two-sided confidence limits can be utilized for two-sided tests concerning the mean response at $X_h$; alternatively, a regular decision rule can be set up
+\item The confidence limits for a mean response $\expe{Y_h}$ are not sensitive to moderate departures from the assumption that the error terms are normally distributed 
+\item Confidence limits apply when a single mean response is to be estimated from the study
+\end{itemize}
 
 \subsection{Prediction of New Observation}
+\begin{itemize}
+\item A new observation on $Y$ to be predicted is viewed as a result of a new trial, independent of the trials on which the regression analysis is based; denote the level of $X$ for the new trial as $X_h$ and the new observation on $Y$ as $Y_{h(\text{new})}$
+\item In the estimation of the mean response $\expe{Y_h}$, the mean of the distribution of $Y$ is estimated; in the prediction of a new response $Y_{h(\text{new})}$, an individual outcome drawn from the distribution of $Y$ is predicted 
+\item The basic idea of a prediction interval is to choose a range in the distribution of $Y$ wherein most of the observations will fall and then to declare that the next observation will fall in this range; the usefulness of the prediction interval depends on the width of the interval and the needs for precision by the user
+\item Assume that all regression parameters of the normal error regression model are known, then the $1-\alpha$ prediction limits for $Y_{h(\text{new})}$ are $$ \expe{Y_h} \pm \zdist{1-\frac{\alpha}{2}} \sigma $$ In centering the limits around $\expe{Y_h}$, the narrowest interval consistent with the specified probability of a correct prediction is obtained 
+\item When the regression parameters are unknown, the mean of the distribution of $Y$ is estimated by $\hat{Y}_h$ as usual and the variance of the distribution of $Y$ is estimated by the MSE but the prediction limit above with the parameters replaced by the corresponding point estimators cannot be used since the mean $\expe{Y_h}$ itself is estimated by a confidence interval, making the location of the distribution of $Y$ uncertain
+\item Prediction limits for $Y_{h(\text{new})}$ must take account of the variation in possible location of the distribution of $Y$ and the variation within the probability distribution of $Y$
+\item Prediction limits for a new observations $Y_{h(\text{new})}$ at a given level $X_h$ are obtained by the following theorem: $$ \frac{Y_{h(\text{new})} - \hat{Y}_h}{s[\text{pred]}} \text{ is distributed as } t(n-2) \text{ for the normal error regression model} $$ Note that the studentized statistic uses the point estimator $\hat{Y}_h$ in the numerator rather than the true mean $\expe{Y}_h$ because the true mean is unknown
+\item Thus, when the regression parameters are unknown, the $1-\alpha$ prediction limits for a new observation $Y_{h(\text{new})}$ are $$ \hat{Y}_h \pm \tdist{1 - \frac{\alpha}{2}}{n-2} s[\text{pred}] $$ 
+\item The variance of this prediction error can be obtained by utilizing the independence of the new observation $Y_{h(\text{new})}$ and the original $n$ sample cases on which $\hat{Y}_h$ is based 
+$$ \var{\text{pred}} = \var{Y_{h(\text{new})} - \hat{Y}_h} = \var{Y_{h(\text{new})}} + \var{\hat{Y}_h} = \sigma^2 + \var{\hat{Y}_h} $$ The first term is the variance of the distribution of $Y$ at $X=X_h$ while the second term is the variance of the sampling distribution of $\hat{Y}_h$
+\item An unbiased estimator of $\var{\text{pred}}$ is $$ s^2[\text{pred}] = \text{MSE} + s^2[\hat{Y}_h] $$ which can be expressed as 
+$$ s^2[\text{pred}] = \text{MSE}\left[1 + \frac{1}{n} + \frac{(X_h - \Xbar)^2}{\sum (X_i - \Xbar)^2} \right] $$ 
+\item The prediction interval for $Y_{h(\text{new})}$ is wider than the confidence interval for $\expe{Y_h}$ because both the variability in $\hat{Y}_h$ from sample to sample and the variation within the probability distribution of $Y$ is encountered
+\item The prediction interval is wider the further $X_h$ is from $\Xbar$ since the estimate of the mean $\hat{Y}_h$ is less precise as $X_h$ is located farther away from $\Xbar$
+\item The prediction limits for a mean response $\expe{Y_h}$ are sensitive to departures from normality of the error terms distributions
+\item The confidence coefficient for the prediction limits refers to the taking of repeated samples based on the same set of $X$ values, and calculating prediction limits for $Y_{h(\text{new})}$ for each sample
+\item Prediction limits apply for a single prediction based on the sample data
+\item Prediction intervals resemble confidence intervals but differ conceptually; a confidence interval represents an inference on a parameter and is an interval that is intended to cover the value of the parameter; a prediction interval is a statement about the value to be taken by a random variable, the new observation $Y_{h(\text{new})}$
+\item Suppose the mean of $m$ new observations on $Y$ for a given level of the predictor variable is to be predicted, then the mean of the new $Y$ observations to be predicted is denoted $\overline{Y}_{h(\text{new})}$ and the appropriate $1-\alpha$ prediction limits are, assuming that the new $Y$ observations are independent: $$ \hat{Y}_h \pm \tdist{1 - \frac{\alpha}{2}}{n-2}s[\text{predmean}] $$ where $$ s^2[\text{predmean}] = \frac{\text{MSE}}{m} + s^2[\hat{Y}_h] $$ or equivalently $$ s^2[\text{predmean}] = \text{MSE}\left[ \frac{1}{m} + \frac{1}{n}. + \frac{(X_h - \Xbar)^2}{\sum (X_i - \Xbar)^2}\right] $$ Note that the variance $s^2[\text{predmean}]$ has two components: (1) the variance of the mean of $m$ observations from the probability distribution of $Y$ at $X=X_h$ and (2) the variance of the sampling distribution of $\hat{Y}_h$ 
+\item The prediction limits for predicting $m$ new observations on $Y$ are narrower than those for predicting for a single new observation on $Y$ because it involve a prediction of the mean response for $m$ new observations
+\end{itemize}
 
-\subsection{Confidence Interval for Regression Line}
+\subsection{Confidence Band for Regression Line}
+\begin{itemize}
+\item A confidence band for the entire regression line $\expe{Y} = \beta_0 + \beta_1X$ allows one to determine the appropriateness of a fitted regression function
+\item The Working-Hotelling $1-\alpha$ confidence band for the regression line has the following two boundary values at any level $X_h$: $$ \hat{Y}_h \pm W\sd{\hat{Y}_h} $$ where $$ W^2 = 2\Fdist{1-\alpha}{n-2} $$ Here $\Fdist{1-\alpha}{n-2}$ denotes the density of the $F$ distribution at $1-\alpha$ confidence with $n-2$ degrees of freedom; this formula for the boundary values is of exactly the same form as the one for the confidence limits for the mean response at $X_h$, except that the $t$ multiple has been replaced by the $W$ multiple
+\item The boundary points of the confidence band for the regression line are wider apart the farther $X_h$ is from the mean $\Xbar$ of the $X$ observations; the $W$ multiple will be larger than the $t$ multiple because the confidence band must encompass the entire regression line, whereas the confidence limits for $\expe{Y_h}$ at $X_h$ apply only at the single level $X_h$
+\item The boundary values of the confidence band for the regression line define a hyperbola, as seen by replacing $\hat{Y}_h$ and $s[\hat{Y}_h]$ by their definitions $$ b_0 + b_1X \pm W \sqrt{\text{MSE}} \left[ \frac{1}{n} + \frac{(X - \Xbar)^2}{\sum (X_i - \Xbar)^2} \right]^{\frac{1}{2}} $$ 
+\item The boundary values of the confidence band for the regression line at any value $X_h$ often are not substantially wider than the confidence limits for the mean response at that single $X_h$ level; with the somewhat wider limits for the entire regression line, one is able to draw conclusions about any and all mean responses for the entire regression line and not just about the mean response at a given $X$ level
+\item The confidence band applies to the entire regression line over all real-numbered values of $X$ from $-\infty$ to $\infty$; the confidence coefficient indicates the proportion of time that the estimating procedure will yield a band that covers the entire line, in a long series of samples in which the $X$ observations are kept at the same level as in the actual study; in applications, the confidence band is ignored for that part of the regression line which is not of interest in the problem at hand
+\item The confidence coefficient for a limited segment of the band of interest is somewhat higher than $1-\alpha$, so $1-\alpha$ serves then as a lower bound to the confident coefficient
+\end{itemize}
 
 \subsection{Analysis of Variance Approach to Regression Analysis}
+\begin{itemize}
+\item The analysis of variance approach is based on the partitioning of sums of squares and degrees of freedom associated with the response variable $Y$ 
+\item Variation is conventionally measured in terms of the deviations of the $Y_i$ around their mean $\hat{Y}$: $$ Y_i - \Ybar $$ 
+\item The measure of total variation, denoted by SSTO (total sum of squares), is the sum of the squared deviations $$ \text{SSTO} = \sum (Y_i - \Ybar)^2 $$ If all $Y_i$ observations are the same, SSTO $= 0$; the greater the variation among the $Y_i$ observations, the larger is SSTO
+\item When the predictor variable $X$ is utilized, the variation reflecting the uncertainty concerning the variable $Y$ is that of the $Y_i$ observations around the fitted regression line: $$ Y_i - \hat{Y}_i $$ 
+\item The measure of variation in the $Y_i$ observations that is present when the predictor variable $X$ is taken into account is the sum of the squared deviations $$ \text{SSE} = \sum (Y_i - \hat{Y}_i)^2 $$ where SSE denotes error sum of squares; if all $Y_i$ observations fall on the fitted regression line, SSE $=0$; the greater the variation of the $Y_i$ observations around the fitted regression line, the larger is SSE
+\item Another important deviations is squared deviations $$ \hat{Y}_i - \Ybar $$ SSR, or regression sum of squares, is a sum of squared deviations $$ \text{SSR} = \sum (\hat{Y}_i - \Ybar)^2 $$ Each deviation is simply the difference between the fitted value on the regression line and the mean of the fitted values $\Ybar$
+\item If the regression line is horizontal so that $\hat{Y}_i - \Ybar \equiv 0$, then SSR $=0$; otherwise SSR is positive
+\item SSR may be considered a measure of that part of the variability of the $Y_i$ which is associated with the regression line; the larger SSR is in relation to SSTO, the greater is the effect of the regression relation in accounting for the total variation in the $Y_i$ observations 
+\item The total deviation $Y_i - \Ybar$, used in the measure of the total variation of the observations $Y_i$ without taking the predictor variable into account, can be decomposed into two components: 
+$$ \underbrace{Y_i - \Ybar}_{\text{total deviation}} = \underbrace{\hat{Y}_i - \Ybar}_{\text{ deviation of fitted regression value around mean}} + \underbrace{Y_i - \hat{Y}_i}_{\text{deviation around fitted regression line}} $$ These two components are: the deviation of the fitted value $\hat{Y}_i$ around the mean $\Ybar$ and the deviation of the observation $Y_i$ around the fitted regression line
+\item This relationship can be summarized as $$ \begin{aligned} \text{SSTO} &= \text{SSR} + \text{SSE} \\ \sum (Y_i - \Ybar)^2 &= \sum (\hat{Y}_i - \Ybar)^2 + \sum (Y_i - \hat{Y}_i)^2 \end{aligned} $$ 
+\item Proof; $$ \begin{aligned} \sum (Y_i - \Ybar)^2 &= \sum[(\hat{Y}_i - \Ybar) + (Y_i - \hat{Y}_i)]^2 \\ &= \sum [(\hat{Y}_i - \Ybar)^2 + (Y_i - \hat{Y}_i)^2 + 2(\hat{Y}_i - \Ybar)(Y_i - \hat{Y}_i)] \\ &= \sum (\hat{Y}_i - \Ybar)^2 + \sum (Y_i - \hat{Y}_i)^2 + 2\sum (\hat{Y}_i - \Ybar)(Y_i - \hat{Y}_i) \\ &= \sum (\hat{Y}_i - \Ybar)^2 + \sum (Y_i - \hat{Y}_i)^2 + 2\sum \hat{Y}_i(Y_i - \hat{Y}_i) - 2\Ybar \sum (Y_i - \hat{Y}_i) \\ &= \sum (\hat{Y}_i - \Ybar)^2 + \sum (Y_i - \hat{Y}_i)^2 + 0 - 0 \\ &= \sum (\hat{Y}_i - \Ybar)^2 + \sum (Y_i - \hat{Y}_i)^2 \end{aligned} $$ 
+\item There are $n-1$ degrees of freedom associated with SSTO; one degree is lost because the deviations $Y_i - \Ybar$ are subject to one constraint: they must sum to zero; equivalently, one degree is lost because the sample mean $\Ybar$ is used to estimate the population mean
+\item There are $n-2$ degrees of freedom associated with SSE because two parameters are estimated in obtaining the fitted values $\hat{Y}_i$
+\item SSR has one degree of freedom associated with it; although there are $n$ deviations $\hat{Y}_i - \Ybar$, all fitted values $\hat{Y}_i$ are calculated from the same regression line; two degrees of freedom are associated with a regression line (corresponding to the intercept and slope); one of the degrees is lost because the deviations $\hat{Y}_i - \Ybar$ are subject to a constraint: they must sum to zero
+\item Note that the degrees of freedom are additive $$ n-1 = 1 + (n-2) $$ 
+\item A sum of squares divided by its associated degrees of freedom is called a mean square (MS)
+\item The regression mean square, MSR, is $$ \text{MSR} = \frac{\text{SSR}}{1} = \text{SSR} $$ and the error mean square (MSE) is $$ \text{MSE} = \frac{\text{SSE}}{n-2} $$ 
+\item Note that mean squares are not additive 
+\item The breakdown of the total sum of squares and associated degrees of freedom are displayed in the form of an analysis of variance table (ANOVA table)
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|c|c|} \hline 
+Source of variation & SS & df & MS & $\expe{\text{MS}}$ \\ \hline 
+Regression & $\text{SSR} = \sum (\hat{Y}_i - \Ybar)^2$ & $1$ &  $\text{MSR} = \frac{\text{SSR}}{1}$ & $\sigma^2 + \beta_1^2\sum (X_i - \Xbar)^2$ \\ \hline 
+Error & $\text{SSE} = \sum (Y_i - \hat{Y}_i)^2$ & $n-2$ & $\text{MSE} = \frac{\text{SSE}}{n-2}$ & $\sigma^2$ \\ \hline 
+Total & $\text{SSTO} = \sum (Y_i - \Ybar)^2$ & $n-1$  & - & - \\ \hline \end{tabular} \caption*{ANOVA Table for Simple Linear Regression}  \end{table}
+\item The total sum of squares can be decomposed as follows: $$ \text{SSTO} = \sum (Y_i - \Ybar)^2 = \sum Y_i^2 - n\Ybar^2 $$ In a modified ANOVA table, the total uncorrected sum of squares, denoted by SSTOU, is defined as $$ \text{SSTOU} = \sum Y_I^2 $$ and the correction for the mean sum of squares, denoted by SS(correction for mean) is $$ \text{SS(correction for mean)} = n\Ybar^2 $$ 
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|c|c|} \hline 
+Source of variation & SS & df & MS \\ \hline 
+Regression & $\text{SSR} = \sum (\hat{Y}_i - \Ybar)^2$ & $1$ &  $\text{MSR} = \frac{\text{SSR}}{1}$  \\ \hline 
+Error & $\text{SSE} = \sum (Y_i - \hat{Y}_i)^2$ & $n-2$ & $\text{MSE} = \frac{\text{SSE}}{n-2}$  \\ \hline 
+Total & $\text{SSTO} = \sum (Y_i - \Ybar)^2$ & $n-1$  & -  \\ \hline 
+Correction for mean & $\text{SS(correction for mean)} = n\Ybar^2$ & 1 & - \\ \hline
+Total, uncorrected & $\text{SSTOU} = \sum Y_i^2$ & n & - \\ \hline \end{tabular} \caption*{Modified ANOVA Table for Simple Linear Regression}  \end{table} 
+
+
+\end{itemize}
 
 \subsection{General Linear Test Approach}
 
