@@ -1,6 +1,7 @@
 \documentclass[11pt]{report}
 \usepackage[letterpaper, portrait, margin=1in]{geometry}
-\usepackage{amsmath, amsthm, multicol, physics} 
+\usepackage{amsmath, dsfont, amsthm, caption, physics} 
+\usepackage{breqn}
 \usepackage{enumitem}
 
 \usepackage{fancyhdr}
@@ -11,10 +12,25 @@
 \renewcommand{\footrulewidth}{0.4pt}
 \cfoot{\thepage} 
 
+\newcommand{\Xbar}{\overline{X}}
+\newcommand{\Ybar}{\overline{Y}}
+\newcommand{\mean}[1]{\overline{#1}}
 \newcommand{\expe}[1]{\mathrm{E}\left[ #1 \right]}
 \renewcommand{\var}[1]{\mathrm{Var}\left[ #1 \right]}
 \newcommand{\cov}[2]{\mathrm{Cov}\left[ #1,~#2\right]}
+\newcommand{\sig}[1]{\sigma \left[ #1 \right] }
+\newcommand{\sd}[1]{s \left[ #1 \right] }
+\newcommand{\corr}[2]{\rho[#1, #2]}
 \newcommand{\eps}{\varepsilon}
+
+\newcommand{\zdist}[1]{z_{#1}}
+\newcommand{\tdist}[2]{t_{#1, #2}}
+\newcommand{\chidist}[1]{\chi^2_{#1}}
+\newcommand{\Fdist}[2]{F_{#1, #2}}
+
+\newcommand{\prob}[1]{\mathds{P} \left( #1 \right)}
+\newcommand{\cprob}[2]{\mathds{P}\left( #1 ~!~ #2 \right)}
+\newcommand{\hyptest}[2]{ $$ \begin{aligned} H_0: ~#1 \\ H_A: ~ #2 \end{aligned} $$ }
 
 
 \begin{document}
