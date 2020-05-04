@@ -689,37 +689,36 @@ This confidence band is wider at this point than the confidence interval in part
 ### Problem 17: 
 An analyst fitted a normal error regression model and conducted an $F$ test of $\beta_1 = 0$ vs $\beta_ \neq 0$. The $P$-value of the test was $.033$ and the analyst concluded $H_A: \beta_1 \neq 0$. Was the $\alpha$ level used by the analyst greater than or smaller than $.033$? If the $\alpha$ level had been $.01$, what would have been the appropriate conclusion? 
 
-Answer: 
+Answer: Since the analyst rejected the null hypothesis, it can be assumed that the $\alpha$ level had to be greater than $0.33$. If the $\alpha$ level had been $0.01$, the appropriate conclusion would be to fail to reject the null hypothesis. 
 
 
 ### Problem 18: 
 For conducting statistical tests concerning the parameter $\beta_1$, why is the $t$ test more versatile than the $F$ test? 
 
-Answer: 
-
+Answer: The $t$ test is more versatile than the $F$ test in this scenario because it can be used for one sided alternatives. 
 
 ### Problem 19: 
 When testing whether or not $\beta_1 = 0$, why the $F$ test a one-sided test even though $H_A$ includes both $\beta_1 < 0$ and $\beta_1 > 0$? 
 
-Answer: 
+Answer: The $F$ test is a one-sided test because it calculates the probability of $F^*$ being larger than $F_{1, n-2}$, the $(1-\alpha)100$ percentile of the appropriate $F$ distribution.
 
 
 ### Problem 20: 
 A student asks whether $R^2$ is a point estimator of any parameter in the normal error regression model. Respond.
 
-Answer: 
+Answer: $R^2$ is not a point estimator of any parameter in the normal error regression model. 
 
 
 ### Problem 21: 
 A value of $R^2$ near $1$ is sometimes interpreted to imply that the relation between $Y$ and $X$ is sufficiently close so that suitably precise precisions of $Y$ can be made from knowledge of $X$. Is this implication a necessary consequence of the definition of $R^2$? 
 
-Answer: 
+Answer: The definition of $R^2$ is "the proportionate reduction of total variation associated with the use of the predictor variable $X$". This is the opposite of what the implication is saying, so no, it is not a necessary consequence of the definition of $R^2$. 
 
 
 ### Problem 22: 
 Using the normal error regression model in an engineering safety experiment, a researcher found for the first $10$ cases that $R^2$ was zero. Is it possible for that for the complete set of $30$ cases $R^2$ will not be zero? Could $R^2$ not be zero for the first $10$ cases, yet equal zero for all $30$ cases> Explain.
 
-Answer: 
+Answer: It is possible for the $R^2$ for all $30$ cases to be non-zero if for the first $10$ it was since the latter $20$ cases can have reduction in variation of $Y$ by an explanatory variable. Likewise, it is also possible for $R^2$ is not be zero for the first $10$ cases and yet equal zero for all $30$ cases because the sum of squared residuals can be equal to zero when all $30$ cases are looked. 
 
 
 ### Problem 23: 
@@ -728,26 +727,140 @@ Refer to *Grade point average* Problem 1.19.
 (a) Set up the ANOVA table.
 
 Answer: 
+```{r}
+simple_anova = function(data, x, y){
+  
+  X = data$x
+  Y = data$y
+  Ybar = mean(Y)
+  
+  coefs = lm.fit_manual(X, Y)
+  preds = coefs[1] + coefs[2]*X
+
+  SSR_reg = sum((preds - Ybar)^2)
+  df_reg = 1
+  MS_reg = SSR_reg/df_reg
+  
+  SSE_error = sum((Y - preds)^2)
+  df_error = nrow(data) - 2
+  MS_error = SSE_error/df_error
+  
+  SSTO = SSR_reg + SSE_error
+  df_total = nrow(data) -1
+  
+  return(data.frame("source of variation" = c("Regression", "Error", "Total"), 
+                    "SS" = c(SSR_reg, SSE_error, SSTO),
+                    "df" = c(df_reg, df_error, df_total),
+                    "Mean Squares" = c(MS_reg, MS_error, NA)))
+}
+
+simple_anova(gpa, x, y)
+```
 
 (b) What is estimated by MSR in your ANOVA table? by MSE? Under what conditions do MSR and MSE estimate the same quantity? 
 
-Answer: 
+Answer: The MSR estimates the mean of the sampling distribution of the regression while MSE estimates the mean of the sampling distribution of the errors (or residuals). In equation form, the MSR is $\sigma^2 + \beta_1^2\sum (X_i - \overline{X})^2$ and MSE is $\sigma^2$.  MSR and MSE estimate the same quantity when the sampling distribution of MSR and MSE are located identically. This happens when $\beta_1 = 0$. 
 
 (c) Conduct an $F$ test of whether or not $\beta_1 = 0$. Control the $\alpha$ risk at $.01$. State the alternatives, decision rule and conclusion.
 
 Answer: 
+```{r}
+ftest = function(data, alpha = 0.05){
+  
+  X = data$x
+  Y = data$y
+  
+  coefs = lm.fit_manual(X, Y)
+  preds = coefs[1] + coefs[2]*X
+
+  SSR_reg = sum((preds - mean(Y))^2)
+  df_reg = 1
+  MS_reg = SSR_reg/df_reg
+  
+  SSE_error = sum((Y - preds)^2)
+  df_error = nrow(data) - 2
+  MS_error = SSE_error/df_error
+  
+  F_ast = round(MS_reg/MS_error, 3)
+  
+  if(F_ast > rf(1, alpha, df_error)){
+    paste("At the alpha level of", alpha, "the calculated F statistic is", F_ast, 
+          "and the decision is to reject H_0. beta_1 is not equal to zero.", sep = ' ')
+  }
+  else{
+    paste("At the alpha level of", alpha, "the calculated $F$ statistic is", F_ast,
+          "and the decision is to fail to reject H_0. There is no sufficicent evident for beta_1 to not be zero", sep = ' ')
+  }
+}
+
+ftest(gpa, alpha = 0.01)
+```
 
 (d) What is the absolute magnitude of the reduction in the variation of $Y$ when $X$ is introduced into the regression model? What is the relative reduction? What is the name of the latter measure? 
 
 Answer: 
 
+```{r}
+SSR = function(data){
+  
+  X = data$x
+  Y = data$y
+  
+  coefs = lm.fit_manual(X, Y)
+  preds = coefs[1] + coefs[2]*X
+
+  SSR_reg = sum((preds - mean(Y))^2)
+  return(SSR_reg)
+}
+
+SSTO = function(data){
+  
+  X = data$x
+  Y = data$y
+  
+  coefs = lm.fit_manual(X, Y)
+  preds = coefs[1] + coefs[2]*X
+
+  SSR_reg = sum((preds - mean(Y))^2)
+  SSE_error = sum((Y - preds)^2)
+  SSTO = SSR_reg + SSE_error
+  return(SSTO)
+  
+}
+
+R2_manual = function(sse, ssto){return(paste(round(100 * sse/ssto, 3), "%", sep = ''))}
+```
+
+The absolute magnitude of the reduction in the variation of $Y$ when $X$ is introduced into the regression model is
+```{r}
+SSR(gpa)
+```
+
+and the relative reduction is
+```{r}
+R2_manual(SSR(gpa), SSTO(gpa))
+```
+
 (e) Obtain $r$ and attach the appropriate sign.
 
 Answer: 
+```{r}
+r_manual = function(sse, ssto, sign){return(paste(sign, round(sqrt(sse/ssto), 3)))}
+```
+
+To determine the sign of $r$, look at the plot of $X$ vs $Y$.
+```{r}
+plot(gpa$x, gpa$y)
+```
+
+The association between $X$ and $Y$ appears to be positively linear and and thus $r$ is
+```{r}
+r_manual(SSR(gpa), SSTO(gpa), "+")
+```
 
 (f) Which measure, $R^2$ or $r$ has the more clear-cut operational interpretation? Explain.
 
-Answer: 
+Answer: A more clear-cut operational interpretation can be made from $R^2$ because it tells how much of the variability in $Y$ can be explained by $X$. 
 
 
 ### Problem 24: 
@@ -757,21 +870,78 @@ Refer to *Copier maintenance* Problem 1.20.
 
 Answer: 
 
+The ANOVA table tooks like
+```{r}
+simple_anova(copier)
+```
+
+The sum of squared row is additive as well as degrees of freedom.
+
+```{r}
+modified_anova = function(data){
+  
+  basic_anova = simple_anova(data)
+  
+  SS_correction = nrow(data)*(mean(data$y)^2)
+  df_correction = 1
+  
+  SSTOU = sum((data$y)^2)
+  df_total = nrow(data)
+  
+  mod_anova = basic_anova %>% 
+    add_row(source.of.variation = "Correction for Mean", SS = SS_correction, df = df_correction) %>%
+    add_row(source.of.variation = "Total, uncorrected", SS = SSTOU, df = df_total)
+  
+  return(mod_anova)
+}
+```
+
+
+The modified ANOVA table looks like
+```{r}
+modified_anova(copier)
+```
+
+These two differ such that the modified table shows how much sum of squares was uncorrected as ell as the the correction for the mean sum of squares. 
+
 (b) Conduct an $F$ test to determine whether or not there is a linear association between time spent and number of copiers serviced; use $\alpha=.10$. State the alternatives, decision rule and conclusion.
 
-Answer: 
+Answer: Let the null hypothesis be that there is no linear association between time spent and number of copiers served, and the alternative hypothesis that there is a linear association between the two. Then
+```{r}
+ftest(copier, alpha = .1)
+```
+
+Thus there is a linear association between the two variables.
 
 (c) By how much, relatively, is the total variation in number of minutes spent on a call reduced when the number of copiers servied is introduced into the analysis? Is this a relatively small or large reduction? What is the name of this measure? 
 
-Answer: 
+Answer: The absolute magnitude of the reduction in the variation in number of minutes spent on a call reduced when the number of copiers serviced is introduced into the regression model is
+```{r}
+SSR(copier)
+```
+
+and the relative reduction is
+```{r}
+R2_manual(SSR(copier), SSTO(copier))
+```
+
+This is a large reduction, given by the relative reduction, or coefficient of determination. 
 
 (d) Calculate $r$ and attach the appropriate sign.
 
 Answer: 
+```{r}
+plot(copier$x, copier$y)
+```
+
+Given the correlation between $X$ and $Y$ is positive, the value of $r$ is 
+```{r}
+r_manual(SSR(copier), SSTO(copier), "+")
+```
 
 (e) Which measure, $r$ or $R^2$, has the more clear-cut operational interpretation? 
 
-Answer: 
+Answer: The $R^2$ has the more clear-cut operational interpretation. 
 
 
 ### Problem 25: 
@@ -779,19 +949,54 @@ Refer to *Airfreight breakage* Problem 1.21.
 
 (a) Set up the ANOVA table. Which elements are additive? 
 
-Answer: 
+Answer: The ANOVA table looks like
+```{r}
+simple_anova(airfreight)
+```
+
+The elements that are additive are sum of squares and degrees of freedom.
 
 (b) Conduct an $F$ test to decide whether or not there is a linear association between the number of times a carton is transferred and the number of broken ampules; control the $\alpha$ risk at $.05$. State the alternatives, decision rule and conclusion.
 
-Answer: 
+Answer: Let the null hypothesis be that there is no linear association between the number of times a carton is transferred and the number of broken ampules. Then
+```{r}
+ftest(airfreight, alpha = .05)
+```
+
+Therefore there is a linear association.
 
 (c) Obtain the $t^*$ statistic for the test in part (b) and demonstrate numerically its equivalence to the $F^*$ statistic obtained in part (b)? 
 
-Answer: 
+Answer: The $t^*$ statistic is calculated to be $$ t^* = \frac{b_1 - 0}/{se[b_1]} $$ where $$se[b_1] = \frac{\text{MSE}}{(\sum (X_i - \overline{X})^2)} $$ The $t^*$ statistic for the test in part (b) is
+```{r}
+lm.fit_manual(airfreight$x, airfreight$y)[2]  / ((2.2/ sum((airfreight$x - mean(airfreight$x))^2))^.5)
+```
+
+The relationship between $t^*$ and $F$ is $$ (t^*)^2 = F^* $$
+
+The $t^*$ statistic squared is
+```{r}
+(lm.fit_manual(airfreight$x, airfreight$y)[2]  / ((2.2/ sum((airfreight$x - mean(airfreight$x))^2))^.5))^2
+```
+
+This is the $F^*$ statistic calculated above.
 
 (d) Calculate $R^2$ and $r$. What proportion of the variation in $Y$ is accounted for by introducing $X$ into the regression model? 
 
-Answer: 
+Answer: The $R^2$ is
+```{r}
+R2_manual(SSR(airfreight), SSTO(airfreight))
+```
+This is the proportion of in $Y$ accounted for by introducing $X$ into the regression model.
+
+```{r}
+plot(airfreight$x, airfreight$y)
+```
+
+A plot of the variables shows a positive correlation and so the $r$ value is
+```{r}
+r_manual(SSR(airfreight), SSTO(airfreight), "+")
+```
 
 
 ### Problem 26: 
@@ -799,19 +1004,61 @@ Refer to *Plastic hardness* Problem 1.22.
 
 (a) Set up the ANOVA table.
 
-Answer: 
+Answer: The ANOVA table looks like
+```{r}
+simple_anova(plastic)
+```
 
-(b) Test by means of an $F$ test whether or not there is a  linear association between the hardness of the plastic and the elapsed time. Use $\alpha = .01$. State the alternatives, decision rule and conclusion.
+(b) Test by means of an $F$ test whether or not there is a linear association between the hardness of the plastic and the elapsed time. Use $\alpha = .01$. State the alternatives, decision rule and conclusion.
 
-Answer: 
+Answer: Let the null hypothesis be that there is no linear assoication between the hardness of the plastic and the elapsed time. Let the alternative hypothesis be that there is a linear association between the two. Then the $F$ test reveals that
+```{r}
+ftest(plastic, alpha = .01)
+```
+
+There is a linear association between the two variables. 
 
 (c) Plot the deviations $Y_i - \hat{Y}_i$ against $X_i$ on a graph. Plot the deviations $\hat{Y}_i - \overline{Y}$ against $X_i$ on another graph, using the same scales as for the first graph. From your two graphs, does SSE or SSR appear to be the larger component of SSTO? What does this imply about the magnitude of $R^2$?
 
 Answer: 
+```{r}
+model = lm.fit_manual(plastic$x, plastic$y)
+Yhat = model[1] + model[2]*plastic$x
+Ybar = mean(plastic$y)
+
+dev1 = plastic$y - Yhat
+dev2 = Yhat - Ybar
+
+data.frame(x = plastic$x, dev1, dev2) %>% 
+  gather(dev, val, dev1, dev2) %>% 
+  ggplot(aes(x = x, y = val, color = dev)) + 
+  geom_point() + 
+  scale_color_manual(labels = c("Y - Yhat", "Yhat - Ybar"),
+                       values = c("aquamarine4", "darkblue")) + 
+  labs(x = "x", y = "deviations", 
+       color = "Type", 
+       title = TeX('Deviations Plot of $Y_i - \\hat{Y}_i$ and $\\hat{Y}_i - \\bar{Y}$')) + 
+  theme_classic()
+```
+
+It appears to be that the larger component of SSTO is $\hat{Y} - \overline{Y}$, or SSR. This implies that the magnnitude of $R^2$ is large. 
 
 (d) Calculate $R^2$ and $r$. 
 
-Answer: 
+Answer: he $R^2$ is
+```{r}
+R2_manual(SSR(plastic), SSTO(plastic))
+```
+This is the proportion of in $Y$ accounted for by introducing $X$ into the regression model.
+
+```{r}
+plot(plastic$x, plastic$y)
+```
+
+A plot of the variables shows a positive correlation and so the $r$ value is
+```{r}
+r_manual(SSR(plastic), SSTO(plastic), "+")
+```
 
 
 ### Problem 27: 
@@ -819,16 +1066,34 @@ Refer to *Muscle mass* Problem 1.27.
 
 (a) Conduct a test to decide whether or not there is a negative linear association between amount of muscle mass and age. Control the risk of Type I error at $.05$. State the alternatives, decision rule and conclusion. What is the $P$-value of the test? 
 
-Answer: 
+Answer: Let the null hypothesis be that there there is a positive or zero linear association between amount of muscle mass and age, or $\beta_1 \geq 0$. Let the alternative hypothesis be that there is a negative linear association between the two. Then the $t$ test reveals that
+```{r}
+muscle = read.csv('CH01PR27.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+
+b1_test(muscle, alpha = .05)
+```
+
+According to the $t$ test, the null hypothesis is rejected and there is a negative linear association between the two variables. The $p$ value of the test is
+```{r}
+pt(-13.19326, nrow(muscle)-1)
+```
+
+or $0$. 
 
 (b) The two-sided $P$ value for the test whether $\beta_0 = 0$ is $0+$. Can it now be concluded that $b_0$ provides relevant information on the amount of muscle mass at birth for a female child? 
 
-Answer: 
+Answer: The $b_0$ parameter provides relevant information on the amount of muscle mass at birth for a female child.
 
 (c) Estimate with a $95$ percent confidence interval the difference in expected muscle mass for women whose ages differ by one year. Why is it not necessary to know the specific ages to make this estimate? 
 
 Answer: 
+```{r}
+b1_conf_interval(muscle, alpha = .05)
+```
 
+It is not necessary to know the specific ages to make this estimate because it is only concerned with the change from 1 age to the next. 
 
 ### Problem 28: 
 Refer to *Muscle mass* Problem 1.27.
@@ -836,15 +1101,25 @@ Refer to *Muscle mass* Problem 1.27.
 (a) Obtain a $95$ percent confidence interval for the mean muscle mass for women of age $60$. Interpret your confidence interval.
 
 Answer: 
+```{r}
+Yhat_conf_interval(muscle, Xhat = 60, alpha = .05)
+```
 
 (b) Obtain a $95$ percent prediction interval for the muscle mass of a woman whose age is $60$. Is the prediction interval relatively precise? 
 
 Answer: 
+```{r}
+Yhat_pred_interval(muscle, Xhat = 60, alpha = .05)
+```
 
 (c) Determine the boundary values of the $95$ percent confidence band for the regression line when $X_h = 60$. Is your confidence band wider at this point than the confidence interval in part (a)? Should it be? 
 
 Answer: 
+```{r}
+conf_band_reg(muscle, Xhat=60, alpha = .05)
+```
 
+The confidence band is wider at this point than the confidence interval in part (a), as it should be.
 
 ### Problem 29: 
 Refer to *Muscle mass* Problem 1.27. 
@@ -852,54 +1127,128 @@ Refer to *Muscle mass* Problem 1.27.
 (a) Plot the deviations $Y_i - \hat{Y}_i$ against $X_i$ on one graph. Plot the deviations $\hat{Y}_i - \overline{Y}$ against $X_i$ on another graph, using the same scales as in the first graph. From your two graphs, does SSE or SSR appear to be the larger component of SSTO? What does this imply about the magnitude of $R^2$?
 
 Answer: 
+```{r}
+model = lm.fit_manual(muscle$x, muscle$y)
+Yhat = model[1] + model[2]*muscle$x
+Ybar = mean(muscle$y)
+
+dev1 = muscle$y - Yhat
+dev2 = Yhat - Ybar
+
+data.frame(x = muscle$x, dev1, dev2) %>% 
+  gather(dev, val, dev1, dev2) %>% 
+  ggplot(aes(x = x, y = val, color = dev)) + 
+  geom_point() + 
+  scale_color_manual(labels = c("Y - Yhat", "Yhat - Ybar"),
+                       values = c("aquamarine4", "darkblue")) + 
+  labs(x = "x", y = "deviations", 
+       color = "Type", 
+       title = TeX('Deviations Plot of $Y_i - \\hat{Y}_i$ and $\\hat{Y}_i - \\bar{Y}$')) + 
+  theme_classic()
+```
+
+SSR appears to the be the larger component of SST. This implies that the magnitude of $R^2$ is large. 
+
 
 (b) Set up the ANOVA table.
 
-Answer: 
+Answer: The ANOVA table is
+```{r}
+simple_anova(muscle)
+```
 
 (c) Test whether or not $\beta_1 = 0$ using an $F$ test with $\alpha = .05$. State the alternatives, decision rule and conclusion.
 
-Answer: 
+Answer: Let the null hypothesis be that there is no linear association between $X$ and $Y$. Let the alternative hypothesis be that there is a linear association between $X$ and $Y$. Then by the $F$ test,
+```{r}
+ftest(muscle, alpha = .05)
+```
+
+There is a linear association between $X$ and $Y$.
 
 (d) What proportion of the total variation in muscle mass remains "unexplained" when age is introduced into the analysis? Is this proportion relatively small or large? 
 
-Answer: 
+Answer: The proportion of the total variation in muscle mass remaining "unexplained" when age is introduced into the analysis is $1 - R^2$, or
+```{r}
+r2_muscle = R2_manual(SSR(muscle), SSTO(muscle))
+paste(100 - as.numeric(substr(r2_muscle, 1, nchar(r2_muscle)-1)), "%")
+```
 
 (e) Obtain $R^2$ and $r$. 
 
-Answer: 
+Answer: The $R^2$ is
+```{r}
+r2_muscle
+```
 
+and $r$ is
+```{r}
+r_manual(SSR(muscle), SSTO(muscle), sign = "-")
+```
 
 ### Problem 30: 
 Refer to *Crime rate* Problem 1.28.
 
 (a) Test whether or not there is a linear association between crime rate and percentage of high school graduates, using a $t$ test with $\alpha = .01$. State the alternatives, decision rule and conclusion. What is the $P$-value of the test? 
 
-Answer: 
+Answer: Let the null hypothesis be that there is no linear association between crime rate and percentage of high school graduates. Let the alternative hypothesis be that there is a linear association between the two. Then at an $\alphha$ level of $.01$, the $t$ test says
+```{r}
+crime = read.csv('CH01PR28.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+
+b1_test(crime, alpha = .01)
+```
+
+There is a linear association between crime rate and percentage of high school graduates.
 
 (b) Estimate $b_1$ with a $99$ percent confidence interval. Interpret your interval estimate.
 
 Answer: 
+```{r}
+b1_conf_interval(crime, alpha = .01)
+```
 
+The mean crime rate decreases by somewhere between $280$ and $50$ for  each additional percentage of high school graduate, with confidence coefficient of $.99$. 
 
 ### Problem 31: 
 Refer to *Crime rate* Problem 1.28.
 
 (a) Set up the ANOVA table.
 
-Answer: 
+Answer: The ANOVA table is
+```{r}
+simple_anova(crime)
+```
 
 (b) Carry out the test in Problem 2.30a by means of the $F$ test. Show the numerical equivalence of the two test statistics and decision rules. Is the $P$-value for the $F$ test the same as that for the $t$ test? 
 
-Answer: 
+Answer: The $F$ test shows that 
+```{r}
+ftest(crime, alpha = .01)
+```
+
+The result of this is the same as that for the $t$ test. The $t$ statistic above, squared, is
+```{r}
+(-4.1029)^2
+```
+
+which is the same as the $F$ statistic here. 
 
 (c) By how much is the total variation in crime rate reduced when percentage of high school graduates is introducted into the analysis? Is this a relatively large or small reduction? 
 
-Answer: 
+Answer: The proportion of the total variation in crime rate remaining "unexplained" when percentage of high school graduates is introduced into the analysis is $1 - R^2$, or
+```{r}
+r2_crime = R2_manual(SSR(crime), SSTO(crime))
+paste(100 - as.numeric(substr(r2_crime, 1, nchar(r2_crime)-1)), "%")
+```
 
 (d) Obtain $r$.
 
-Answer: 
+Answer: $r$ is
+```{r}
+r_manual(SSR(crime), SSTO(crime), sign = "-")
+```
 
 
 ### Problem 32: 
@@ -907,31 +1256,70 @@ Refer to *Crime rate* Problems 1.28 and 2.30. Suppose that the test in Problem 2
 
 (a) State the full and reduced models.
 
-Answer: 
+Answer: The full model is $$ Y_i = \beta_0 + \beta_1X_i + \varepsilon_i $$ and the reduced model is $$ Y_i = \beta_0 + \varepsilon_i $$ 
 
 (b) Obtain (1) SSE(F), (2) SSE(R), (3) $\text{df}_F$, (4) $\text{df}_R$, (5) test statistic $F^*$ for the general linear test, (6) decision rule.
 
-Answer: 
+Answer: SSE(F) is simply SSE.
+$$ \text{SSE(F)} = \sum [Y_i - (b_0 + b_1X_i)]^2 = \sum (Y_i - \hat{Y}_i)^2 = \text{SSE} $$ 
+```{r}
+model = lm.fit_manual(crime$x, crime$y)
+Yhat = model[1] + model[2]*crime$x
+SSE_F = sum((Yhat - crime$y)^2)
+SSE_F
+```
+
+SSE(R) is $$ \sum (Y_i - b_0)^2 = \sum (Y_i - \overline{Y})^2 = \text{SSTO} $$ 
+```{r}
+SSE_R = SSTO(crime)
+SSE_R
+```
+
+$\text{df}_F$ is the degrees of freedom associated with the full model, or 
+```{r}
+df_F = nrow(crime)-2
+df_F
+```
+
+$\text{df}_R$ is the degrees of freedom associated with the reduced model, which has $1$ less parameter than the full model, or
+```{r}
+df_R = nrow(crime)-1
+df_R
+```
+
+The test statistic $F^*$ for the general linear test is
+$$ F^* = \frac{\text{SSE(R)} - \text{SSE(F)}}{\text{df}_R - \text{df}_F} / \frac{\text{SSE(F)}}{\text{df}_F} $$ 
+```{r}
+((SSE_R - SSE_F) / (df_R - df_F)) / (SSE_F / df_F)
+```
+
+Now $F(1 - \alpha,\text{df}_R - \text{df}_F, \text{df}_F)$ is
+```{r}
+qf(1 - .01, df_R - df_F, df_F)
+```
+
+which is less than $F^*$ and so the decision is to reject the null hypothesis.
 
 (c) Are the test statistic $F^*$ and the decision rule for the general linear test numerically equivalent to those in Problem 2.30a? 
 
-Answer: 
+Answer: The test statistic $F^*$ and the decision rule for the general linear test are numerically equivalent to those in Problem 2.30a. 
 
 
 ### Problem 33: 
-In developing empirically a cost function from observed data on a complex chemical experiment, an analyst employed a normal error regression. $\beta_0$ was interpreted here as the cost of setting up the experiment. The analyst hypothesized that this cost should be $\$7.5$ thousand and wished to test the hpothesis by means of a general linear test. 
+In developing empirically a cost function from observed data on a complex chemical experiment, an analyst employed a normal error regression. $\beta_0$ was interpreted here as the cost of setting up the experiment. The analyst hypothesized that this cost should be $\$7.5$ thousand and wished to test the hypothesis by means of a general linear test. 
 
 (a) Indicate the alternative conclusions for the test.
 
-Answer: 
+Answer: The null hypothesis is $\beta_0 = 7500$ while the alternative hypothesis is $\beta_0 \neq 7500$. 
 
 (b) Specify the full and reduced models.
 
-Answer: 
+Answer: The full model is $$ Y_i = \beta_0 + \beta_1X_i + \varepsilon_i $$ and the reduced model is 
+$$Y_i = \beta_0 + \varepsilon_i $$ 
 
 (c) Without additional information, can you tell what the quantity $\text{df}_R - \text{df}_F$ will equal in the analyst's test? Explain.
 
-Answer: 
+Answer: The difference, $\text{df}_R - \text{df}_F$, will be $1$ because there is one less parameter being estimated between both models.
 
 
 ### Problem 34: 
@@ -939,63 +1327,73 @@ Refer to *Grade point average* Problem 1.19.
 
 (a) Would it be more reasonable to consider the $X_i$ as known constants or as random variables here? Explain.
 
-Answer: 
+Answer: The $X_i$s are random variables as well since ACT scores for students are not fixed. 
 
 (b) If the $X_i$ were considered to be random variables, would this have any effect on prediction intervals for new applicants? Explain.
 
-Answer: 
+Answer: This would not have any effect on prediction intervals for new applicants because a new $X_i$ would come from the distribution of already existing $X$ values, or a valid score from the ACT score range. 
 
 
 ### Problem 35: 
 Refer to *Copier maintenance* Problems 1.20 and 2.5. How would the meaning of the confidence coefficient in Problem 2.5a change if the predictor variable were considered a random variable and the conditions on page 83 were applicable? 
 
-Answer: 
+Answer: If the predictor variables were considered a random variable, then the interpretation of confidence coefficient change to incorporate that pairs of $X$ and $Y$ are both sampled. 
 
 
 ### Problem 36: 
 A management trainee in a production department wished to study the relation between weight of rough casting and machining time to produce the finished block. The trainee selected castings so that the weights would be spaced equally apart in the sample and then observed the corresponding machining times. Would you recommend that a regression or a correlation model be used? Explain.
 
-Answer: 
+Answer: A regression model should be used because the weight of rough casting does not involve the regression parameters. 
 
 
 ### Problem 37: 
-A social scientist stated: "The conditions for the bivariate normal distribuion are so rarely met in my experience that I feel much safer using a regression model." Comment.
+A social scientist stated: "The conditions for the bivariate normal distribution are so rarely met in my experience that I feel much safer using a regression model." Comment.
 
-Answer: 
+Answer: If the conditions for the bivariate normal distributions are not met, that means $X$ values are known constants. This makes it safe to use the regression model. 
 
 
 ### Problem 38: 
-A student was investigating from a large sample whether variablezs $Y_1$ and $Y_2$ follow a bivariate normal distribution. The student obtained the residuals when regressing $Y_1$ on $Y_2$ and also obtaind the residuals when regressing $Y_2$ on $Y_1$, and then prepared a normal probability plot for each set of residuals. Do these two normal probability plots provide sufficient information for determining whether the two variables follow a bivariate normal distribution? Explain.
+A student was investigating from a large sample whether variables $Y_1$ and $Y_2$ follow a bivariate normal distribution. The student obtained the residuals when regressing $Y_1$ on $Y_2$ and also obtained the residuals when regressing $Y_2$ on $Y_1$, and then prepared a normal probability plot for each set of residuals. Do these two normal probability plots provide sufficient information for determining whether the two variables follow a bivariate normal distribution? Explain.
 
-Answer: 
+Answer: These two normal probability plots will not provide sufficient information for determining whether the two variables follow a bivariate normal distribution without looking at the density of both distributions together, $f(Y_1, Y_2)$, and testing whether the standard deviations of the marginal distributions are nonzero and that the coefficient of correlation is nonzero. 
 
 
 ### Problem 39: 
-For the bivariate normal distribution with paramters $\mu_1 = 50$, $\mu_2 = 100$, $\sigma_1 = 3$, $\sigma_2 = 4$ and $\rho_{12} = .80$. 
+For the bivariate normal distribution with parameters $\mu_1 = 50$, $\mu_2 = 100$, $\sigma_1 = 3$, $\sigma_2 = 4$ and $\rho_{12} = .80$. 
 
 (a) State the characteristics of the marginal distribution of $Y_1$.
 
-Answer: 
+Answer: The marginal distribution of $Y_1$ is normal with mean $\mu_1 = 50$ and standard deviation of $\sigma_1 = 3$. 
 
 (b) State the characteristics of the conditional distribution of $Y_2$ when $Y_1 = 55$.
 
-Answer: 
+Answer: The conditional distribution of $Y_2$ when $Y_1 = 55$ is normal with mean 
+$$ \text{E}[Y_2 ~|~ Y_1 = 55] = \alpha_{2|1} + \beta_{21}Y_1$$ and standard deviation $$\sigma_{2|1} = \sqrt{\sigma^2_{2|1}}$$. Now
+$$ \begin{aligned} \alpha_{2|1} &= \mu_2 - \mu_1\rho_{12} \frac{\sigma_2}{\sigma_1} = 100 - (50)(.80)\frac{4}{3} = 46.667 \\ \beta_{21} &= \rho_{12}\frac{\sigma_2}{\sigma_1} = .8\frac{4}{3} = 1.067 \\ \sigma^2_{2|1} &= \sigma_2^2(1 - \rho^2_{12}) = 4^2(1 - .8^2) = 5.76 \end{aligned} $$ 
+Thus the mean of this conditional distribution is 
+$$ \text{E}[Y_2 ~|~ Y_1 = 55] = 46.667 + 1.067 \cdot 55 = 105.352 $$ 
+and the standard deviation is $$ \sigma_{2|1} = \sqrt{5.76} = 2.4 $$ 
 
 (c) State the characteristics of the conditional distribution of $Y_1$ when $Y_2 = 95$. 
 
-Answer: 
+Answer: The marginal distribution of $Y_1$ is normal with mean 
+$$ \text{E}[Y_1 ~|~ Y_2 = 95] = \alpha_{2|1} + \beta_{21}Y_1 $$ and standard deviation $$ \sigma_{1|2} = \sqrt{\sigma^2_{1|2}} $$ Now
+$$ \begin{aligned} \alpha_{2|1} &= \mu_1 - \mu_2\rho_{12}\frac{\sigma_1}{\sigma_2} = 50 - (100)(.8)\frac{3}{4} = -10 \\ \beta_{12} &= \rho_{12}\frac{\sigma_1}{\sigma_2} = .8\frac{3}{4} = .6 \\ \sigma^2_{1|2} &= \sigma_1^2(1 - \rho^2_{1|2}) = 3^2(1 - .8^2) = 3.24 \end{aligned} $$ 
+
+Thus the mean of this conditional distribution is 
+$$ \text{E}[Y_1 ~|~ Y_2 = 95] = -10 - + .6 \cdot 95 = 47 $$ and the standard deviation is $$ \sigma_{2|1} = \sqrt{3.24} = 1.8 $$ 
 
 
 ### Problem 40: 
 Explain whether any of the following would be affected if the bivariate normal model were employed instead of the normal error regression model with fixed levels of the predictor variable: (1) point estimates of the regression coefficients, (2) confidence limits for the regression coefficients, (3) interpretation of the confidence coefficient.
 
-Answer: 
+Answer: Point estimates of the regression coefficients and confidence limits for the regression coefficients would not be affected if the bivariate normal model was used instead of the normal error regression model since calculations are the same. However, interpretation of the confidence coefficient would change because the predictor variables are also sampled and have randomness. 
 
 
 ### Problem 41: 
 Refer to *Plastic hardness* Problem 1.22. A student was analyzing these data and received the following standard query from the interactive regression and correlation computer package: CALCULATE CONFIDENCE INTERVAL FOR POPULATION CORRELATION COEFFICIENT RHO? ANSWER Y OR N. Would a "yes" response lead to meaningful information here? Explain. 
 
-Answer: 
+Answer: A correlation coefficient does not have any ambiguity in its value since it comes from how closely related the two distributions are to each other. 
 
 
 ### Problem 42: 
@@ -1004,18 +1402,59 @@ Answer:
 (a) Plot the data in a scatter diagram. Does the bivariate normal model appear to be appropriate here? Discuss.
 
 Answer: 
+```{r}
+property = read.csv('CH02PR42.txt', sep = '', header = FALSE, 
+                  col.names = c('Y1', 'Y2'), 
+                  colClasses = c('numeric', 'numeric'))
+property %>% ggplot(aes(x=Y1, y=Y2)) + geom_point() + 
+  labs(x = "assessed values of lands", y = "sales price", 
+       title = "Sales Prices of Land vs Assessed Values of Lands") + theme_minimal()
+```
+
+The bivariate normal model appears to be appropriate here because both variables come from its own distributions. The $X$ values, or assessed value of lands, are not fixed constants. 
 
 (b) Calculate $r_{12}$. What parameter is estimated by $r_{12}$? What is the interpretation of this paramter? 
 
-Answer: 
+Answer: $r_{12}$ is the maximum likelihood estimator of $\rho_{12}$, the correlation coefficient of the two distributions. It is calculated as $$ r_{12} + \frac{ \sum (Y_{i1} - \overline{Y}_1)(Y_{i2} - \overline{Y}_2)}{[\sum (Y_{i1} - \overline{Y}_1)^2 \sum (Y_{i2} - \overline{Y}_2)^2]^{1/2}} $$ 
+It is calculated here below.
+```{r}
+rho12 = function(Y1, Y2){
+  
+  num = sum((Y1 - mean(Y1)) * (Y2 - mean(Y2)))
+  denom = (sum((Y1 - mean(Y1))^2) * sum((Y2 - mean(Y2))^2))^0.5
+  return(num/denom)
+  
+}
+rho12(property$Y1, property$Y2)
+```
 
 (c) Test whether or not $Y_1$ and $Y_2$ are statistically independent in the population, using the test statistic and level of significance $.01$. State the alternatives, decision rule and conclusion. 
 
-Answer: 
+Answer: Let the null hypothesis be that $Y_1$ and $Y_2$ are statistically independent. Let the alternative hypothesis be that $Y_1$ and $Y_2$ are not statistically independent. Then the $t$ test reveals that
+```{r}
+rho12_test = function(Y1, Y2, alpha = .05){
+  
+  num_rho12 = sum((Y1 - mean(Y1)) * (Y2 - mean(2)))
+  dem_rho12 = (sum((Y1 - mean(Y1))^2) * sum((Y2 - mean(Y2))^2))^0.5
+  rho12 = num_rho12 / dem_rho12
+  
+  if(length(Y1) != length(Y2)){return("Sample sizes are not equivalent.")}
+  
+  t_ast = rho12 * sqrt(length(Y1) - 2) / sqrt(1 - rho12^2)
+  t = qt(1 - (alpha/2), length(Y1)-2)
+  
+  if(abs(t_ast) > t){return("Conclude H_A")}
+  else{return("Conclude H_0")}
+}
+
+rho12_test(property$Y1, property$Y2, alpha = .01)
+```
+
+$Y_1$ and $Y_2$ are not statistically independent. 
 
 (d) To test $\rho_{12} = .6$ vs $\rho_{12} \neq .6$, would it be appropriate to use the test statistic? 
 
-Answer: 
+Answer: It would not be appropriate to use the test statistic because it is only determining whether the dependence between two distribution is zero or not. 
 
 
 ### Problem 43: 
@@ -1023,31 +1462,84 @@ Answer:
 
 (a) Test whether or not $Y_1$ and $Y_2$ are statistically independent in the population; use $\alpha=.05$. State the alternatives, decision rule and conclusion. 
 
-Answer: 
+Answer: Let the null hypothesis be that $Y_1$ and $Y_2$ are statistically independent. Let the alternative hypothesis be that $Y_1$ and $Y_2$ are not statistically independent. Then the $t$ test reveals that
+```{r}
+rho12_test_calculated = function(rho12, n, alpha){
+  z_ast = rho12 * sqrt(n - 2) / sqrt(1 - rho12^2)
+  z = qt(1 - (alpha/2), n-2)
+  if(z_ast > z){
+    return("Conclude H_A")
+  } else{
+    return("Conclude H_0")
+  }
+}
+
+rho12_test_calculated(rho12 = .61, n = 84, alpha = .05)
+```
+
+The two variables are not statistically independent from one another.
 
 (b) Estimate $\rho_{12}$ with a $95$ percent confidence interval.
 
 Answer: 
+```{r}
+fisher_z_inv = function(zi){
+  return((exp(2*zi) - 1)/(1 + exp(2 * zi)))
+}
+
+rho12_conf_int = function(rho12, n, alpha){
+  
+  mean = 0.5 * log((1 + rho12)/(1-rho12))
+  sd = sqrt(1 / (n-3))
+  z = qnorm(1 - alpha/2)
+  
+  lower = mean - (z * sd)
+  upper = mean + (z * sd)
+  
+  zeta_lower = fisher_z_inv(lower)
+  zeta_upper = fisher_z_inv(upper)
+  
+  return(round(c(zeta_lower, zeta_upper), 3))
+}
+rho12_conf_int(rho12 = .61, n = 84, alpha = .05)
+```
 
 (c) Convert the confidence interval in part (b) to a $95$ percent confidence interval for $\rho^2_{12}$. Interpret this interval estimate.
 
 Answer: 
+```{r}
+rho12_conf_int(rho12 = .61, n = 84, alpha = .05)^2
+```
 
+The true correleation coefficient between value of contract and profit contribution generated by the contract lies between $0.21$ and $.53$ with $95\%$ confidence. 
 
 ### Problem 44: 
 *Bid preparation*. A building construction consultant studied the relationship between cost of bid preparation ($Y_1$) and amount of bid ($Y_2$) for the consulting firm's clients. In a sample of $103$ bids prepared by clients, $r_{12} = .87$. Assume that the bivariate normal model applies.
 
 (a) Test whether or not $\rho_{12} = 0$; control the risk of Type I error at $.10$. State the alternatives, decision rule, and conclusion. What would be the implication if $\rho_{12} = 0$?
 
-Answer: 
+Answer: Let the null hypothesis be that there is linear independence between cost of bid perparataion and amount of bid. Let the alternative hypothesis be that there is no linear independence between the two. Then the test says to 
+```{r}
+rho12_test_calculated(rho12 = .87, n = 103, alpha = .1)
+```
+
+There is a linear dependence between the two variables.
 
 (b) Obtain a $90$ percent confidence interval for $\rho_{12}$. Interpret this interpret estimate.
 
 Answer: 
+```{r}
+rho12_conf_int(rho12 = .87, n = 103, alpha = .1)
+```
+
+The true correlation coefficient is estimated to lie between $0.824$ and $0.905$ with $90\%$ confidence. 
 
 (c) Convert the confidence interval in part (b) to a $90$ percent confidence interval for $\rho^2_{12}$. 
 
 Answer: 
+```{r}
+rho12_conf_int(rho12 = .87, n = 103, alpha = .1)^2
+```
 
 
 ### Problem 45: 
@@ -1056,10 +1548,18 @@ Answer:
 (a) Obtain a $99$ percent confidence interval for $\rho_{12}$. 
 
 Answer: 
+```{r}
+rho12_conf_int(rho12 = .83, n = 147, alpha = .01)
+```
+
 
 (b) Convert the confidence interval in part (a) to a $99$ percent confidence interval for $\rho^2_{12}$. 
 
 Answer: 
+```{r}
+rho12_conf_int(rho12 = .83, n = 147, alpha = .01)^2
+```
+
 
 
 ### Problem 46: 
@@ -1068,14 +1568,40 @@ Refer to *Property assessments* Problem 2.42. There is some question as to wheth
 (a) Obtain the Spearman rank correlation coefficient $r_s$. 
 
 Answer: 
+```{r}
+spearman_rank_cc = function(Y1, Y2){
+  
+  binded_df = data.frame(cbind(rank(Y1, ties.method = 'average'), rank(Y2, ties.method = 'average')))
+  colnames(binded_df) = c('Y1', 'Y2')
+  cov_matrix = cov(binded_df) / (sd(binded_df$Y1) * sd(binded_df$Y2))
+  return(cov_matrix[[3]])
+}
+spearman_rank_cc(property$Y1, property$Y2)
+```
 
 (b) Test by means of the Spearman rank correlation coefficient whether an association exists between property assessments and sales prices using the test statistic with $\alpha=.01$. State the alternatives, decision rule and conclusion.
 
-Answer: 
+Answer: Let the null hypothesis be that there is no association between property assessments and sales prices. Let the alternative hypothesis be that there is an assoication between the two. Then the $t$ test says
+```{r}
+spearman_rank_test = function(rs, n, alpha = .05){
+  
+  t_ast = rs * sqrt(n-2) / sqrt(1 - rs^2)
+  t = qt(1 - alpha/2, n-2)
+  if(abs(t_ast) > t){
+    return("Conclude H_A")
+  } else{
+    return("Conclude H_0")
+  }
+}
+
+spearman_rank_test(rs = spearman_rank_cc(property$Y1, property$Y2), n = nrow(property), alpha = .01)
+```
+
+At the $\alpha$ level of $0.01$, the decision is to reject the null hypothesis. There is an association between both variables.
 
 (c) How do your estimates and conclusions in part (a) and (b) compare to those obtained in Problem 2.42? 
 
-Answer: 
+Answer: The estimates and conclusions in part (a) and (b) are the same as those obtained in Problem 2.42. 
 
 
 ### Problem 47: 
@@ -1084,22 +1610,38 @@ Refer to *Muscle mass* Problem 1.27. Assume that the normal bivariate model is a
 (a) Compute the Pearson product-moment correlation coefficient $r_{12}$. 
 
 Answer: 
+```{r}
+rho12(muscle$y, muscle$x)
+```
 
 (b) Test whether muscle mass and age are statistically independent in the population; use $\alpha = .05$. State the alternatives, decision rule and conclusion. 
 
-Answer: 
+Answer: Let the null hypothesis be that there is no association between age and muscle mass. Let the alternative hypothesis be that there is an association. Then the $t$ test reveals that
+```{r}
+spearman_rank_test(rho12(muscle$y, muscle$x), nrow(muscle), .05)
+```
+
+The null hypothesis is rejected. There is an association between both variables. 
 
 (c) The bivariate normal model assumption is possibly inappropriate here. Compute the Spearman rank correlation coefficient $r_s$. 
 
 Answer: 
+```{r}
+spearman_rank_cc(muscle$y, muscle$x)
+```
 
 (d) Repeat part (b), this time basing the test of independence on the Spearman rank correlation computed in part (c) and the test statistic. Use $\alpha = .05$. State the alternatives, decision rule and conclusion.
 
-Answer: 
+Answer: Let the null hypothesis be that there is no association between age and muscle mass. Let the alternative hypothesis be that there is an association. Then the $t$ test reveals that
+```{r}
+spearman_rank_test(spearman_rank_cc(muscle$y, muscle$x), nrow(muscle), .05)
+```
+
+The null hypothesis is rejected. There is an association between the two. 
 
 (e) How do your estimates and conclusions in part (a) and (b) compare to those obtained in parts (c) and (d)? 
 
-Answer: 
+Answer: The estimates and conclusions do not differ. 
 
 
 ### Problem 48: 
@@ -1108,14 +1650,22 @@ Refer to *Crime rate* Problems 1.28, 2.30 and 2.31. Assume that the normal bivar
 (a) Compute the Pearson product-moment correlation coefficient $r_{12}$.
 
 Answer: 
+```{r}
+rho12(crime$y, crime$x)
+```
 
 (b) Test whether crime rate and percentage of high school graduates are statistically independent in the population; use $\alpha=.01$. State the alternatives, decision rule and conclusion.
 
-Answer: 
+Answer: Let the null hypothesis be that there is no association between crime rate and percentage of high school graduates. Let the alternative be that there is an association between crime rate and percentage of high school graduates. Then the $t$ test says
+```{r}
+spearman_rank_test(rho12(crime$y, crime$x), nrow(crime), .01)
+```
+
+The null hypothesis is rejected. There is an association between the two variables.
 
 (c) How do your estimates and conclusions in parts (a) and (b) compare to those obtained in 2.31b and 2.30a, respectively? 
 
-Answer: 
+Answer: The estimates and conclusions are the same. 
 
 
 ### Problem 49: 
@@ -1124,17 +1674,24 @@ Refer to *Crime rate* Problems 1.28 and 2.48. The bivariate normal model assumpt
 (a) Compute the Spearman rank correlation coefficient $r_s$.
 
 Answer: 
+```{r}
+spearman_rank_cc(crime$y, crime$x)
+```
 
 (b) Test by means of the Spearman rank correlation coefficient whether an association exists between crime rate and percentage of high school graduates using the test statistic and a level of significance $.01$. State the alternatives, decision rule and conclusion.
 
-Answer: 
+Answer: Let the null hypothesis be that there is no association between crime rate and percentage of high school graduates. Let the alternative hypothesis be that there is an association between the two. Then the $t$ test says that 
+```{r}
+spearman_rank_test(spearman_rank_cc(crime$y, crime$x), nrow(crime), .01)
+```
+
+The null hypothesis is rejected and there is an association between crime rate and percentage of high school graduates.
 
 (c) How do your estimates and conclusions in parts (a) and (b) compare to those obtained in Problems 2.48a and 2.48b, respectively? 
 
-Answer: 
+Answer: The estimates and conclusions do not differ. 
 
-
-#### Problem 50: 
+### Problem 50: 
 Derive the property in (2.6) for the $k_1$.
 
 Answer: 
@@ -1238,13 +1795,62 @@ Answer:
 Refer to the *CDI* data set in Appendix C.2 and Project 1.43. Using $R^2$ as the criterion, which predictor variable accounts for the largest reduction in the variability in the number of active physicians? 
 
 Answer: 
+```{r}
+cdi_cols = c('ID', 'county', 'state', 'area', 'total_pop', 'perc_pop_18to34',
+             'perc_pop_65plus', 'num_physicians', 'num_hosp_beds', 'total_crimes',
+             'perc_hs_grads', 'perc_bach', 'perc_below_poverty', 'perc_unemploy', 
+             'per_capita_income', 'total_personal_income', 'geographic_region')
+cdi_colclasses = c('integer', 'character', 'character', rep('numeric', 13), 'factor')
+cdi = read.csv('APPENC02.txt', sep = '', header = FALSE, 
+                  col.names = cdi_cols, 
+                  colClasses = cdi_colclasses)
+cdi_new = cdi %>% select(-c(num_physicians, county, state))
+r2_list = c()
+for(i in 1:ncol(cdi_new)){
+  data = data.frame(cbind(x = cdi_new[[i]], y = cdi$num_physicians))
+  model = lm.fit_manual(data$x, data$y)
+  preds = model[1] + model[2]*data$x
+  r2 = R2_manual(SSR(data), SSTO(data))
+  r2_list = c(r2_list, as.numeric(substr(r2, 1, nchar(r2)-1)))
+}
+colnames(cdi_new)[[which.max(r2_list)]]
+```
 
+The variable for number of hospital beds results in the largest reduction in the variability in the number of active physicians.
 
 ### Problem 63: 
-Refer to the *CDI* data set in Appendix C.2 and Project 1.44. Obtain a separate interval estimate of $\beta_1$ for each region. Use a $90$ percent confidence coefficeint in each case. Do the regression lines for the different regions appear to have similar slopes? 
+Refer to the *CDI* data set in Appendix C.2 and Project 1.44. Obtain a separate interval estimate of $\beta_1$ for each region. Use a $90$ percent confidence coefficient in each case. Do the regression lines for the different regions appear to have similar slopes? 
 
 Answer: 
 
+```{r}
+cdi_geo = cdi %>% select(perc_bach, per_capita_income, geographic_region)
+lower = c()
+beta0 = c()
+beta1 = c()
+upper = c()
+
+for(i in 1:4){
+  cdi_temp = cdi_geo %>% filter(geographic_region == i)  %>% 
+    mutate(x = perc_bach, y = per_capita_income)
+  lower = c(lower, b1_conf_interval(cdi_temp, alpha = .1)[1])
+  beta0 = c(beta0, lm.fit_manual(cdi_temp$x, cdi_temp$y)[2])
+  beta1 = c(beta1, lm.fit_manual(cdi_temp$x, cdi_temp$y)[2])
+  upper = c(upper, b1_conf_interval(cdi_temp, alpha = .1)[2])
+}
+
+coefs = data.frame(geographic_region = 1:4, lower, beta0, beta1, upper)
+coefs
+```
+
+The regression lines for the different regions appear to have different slopes. 
+```{r}
+cdi %>% ggplot(aes(x = perc_bach, y = per_capita_income, color = geographic_region)) + 
+  geom_point() + 
+  geom_abline(data = coefs, slope = beta1[1], intercept = beta0[1])
+
+
+```
 
 ### Problem 64: 
 Refer to the *SENIC* data set in Appendix C.1 and Project 1.45. Using $R^2$ as the criterion, which predictor variable accounts for the largest reduction in the variability of the average lenfth of stay? 
