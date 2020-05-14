@@ -1694,43 +1694,66 @@ Answer: The estimates and conclusions do not differ.
 ### Problem 50: 
 Derive the property in (2.6) for the $k_1$.
 
-Answer: 
+Answer: Let $$k_i = \frac{X_i - \overline{X})}{\sum (X_i - \overline{X})^2} $$ Then $$ \begin{aligned} 
+\sum k_iX_i &= \sum \frac{X_i - \overline{X}}{\sum (X_i - \overline{X})^2} X_i \\ \sum k_iX_i + \sum \frac{\overline{X}^2 - X_i\overline{X}}{\sum (X_i - \overline{X})^2} &= \sum \frac{X_i^2 - X_i\overline{X}}{\sum (X_i - \overline{X})^2} + \sum \frac{\overline{X}^2 - X_i\overline{X}}{\sum (X_i - \overline{X})^2} \\ \sum k_iX_i + \sum \frac{\overline{X}(X_i - \overline{X})}{\sum (X_i - \overline{X})^2} &= \sum \frac{X_i^2 - 2X_i\overline{X} + \overline{X}^2}{\sum (X_i - \overline{X})^2} \\ \sum k_iX_i + 0 &= \sum \frac{(X_i - \overline{X})^2}{\sum (X_i - \overline{X})^2} \\ \sum k_iX_i &= \frac{\sum (X_i - \overline{X})^2}{\sum (X_i - \overline{X})^2} = 1 \end{aligned} $$ 
 
 
 ### Problem 51: 
 Show that $b_0$ as defined in (2.21) is an unbiased estimator of $\beta_0$.
 
-Answer: 
+Answer: To show that $b_0$ is an unbiased estimator of $\beta_0$, show that $\text{E}[b_0] = \beta_0$. 
+$$ \begin{aligned} \text{E}[b_0] &= \text{E}[\overline{Y} - b_1\overline{X}] \\ &= \text{E}[\overline{Y}] - \overline{X}\text{E}[b_1] \\ &= \frac{1}{n} \text{E}[Y] - \overline{X}\text{E}[b_1] \\ &= \frac{1}{n} \sum (\beta_0 + \beta_1X_i) - \overline{X}\beta_1 \\ &= \left(\frac{1}{n} \sum \beta_0 + \frac{1}{n} \sum \beta_1X_i\right) - \overline{X}\beta_1 \\ &= \frac{1}{n} n\beta_0 + \beta_1 \frac{\sum X_i}{n} - \overline{X}\beta_1 \\ &= \frac{n}{n}\beta_0 + \beta_1\overline{X} - \beta_1\overline{X} \\ &= \beta_0 \end{aligned} $$  
 
 
 ### Problem 52: 
 Derive the expression in (2.22b) for the variance of $b_0$, making use of (2.31). Also explain how variance (2.22b) is a special case of variance (2.29b).
 
-Answer: 
-
+Answer: The expression in (2.22b) is $$ \sigma^2[b_0] = \sigma^2\left[\frac{1}{n} + \frac{\overline{X}^2}{\sum (X_i - \overline{X})^2}\right] $$ 
+First note that $$ \sigma^2[b_0] = \sigma^2[(1)\overline{Y} - b_1\overline{X}] $$ Then 
+$$ \begin{aligned} \sigma^2[b_0] &= 1^2\sigma^2[\overline{Y}] + \overline{X}^2\sigma^2[b_1] - 2(1)(\overline{X})\text{Cov}[\overline{Y}, b_1] \\ &= \sigma^2[\overline{Y}] + \overline{X}^2\sigma^2[b_1] - 2\overline{X}\text{Cov}[\overline{Y}, b_1] \\ &= \frac{\sigma^2}{n} + \overline{X}^2 \frac{\sigma^2}{\sum (X_i - \overline{X})^2} - 2\overline{X}(0) \\ &= \frac{\sigma^2}{n} + \sigma^2\frac{\overline{X}^2}{\sum (X_i - \overline{X})^2} \\ &= \sigma^2 \left( \frac{1}{n} + \frac{\overline{X}^2}{\sum (X_i - \overline{X})^2}\right) \end{aligned} $$ 
 
 ### Problem 53: 
 (Calculus needed.)
 
 (a) Obtain the likelihood function for the sample observations $Y_1,\dots,Y_n$ given $X_1,\dots,X_n$, if the conditions on page 83 apply.
 
-Answer: 
+Answer: The conditions say:
+
+* The conditional distributions of the $Y_i$, given $X_i$, are normal and independent, with conditional means $\beta_0 + \beta_1X_i$ and conditional variance $\sigma^2$
+* The $X_i$ are independent random variables whose probability distribution $g(X_i)$ does not involve the parameters $\beta_0$, $\beta_1$ and $\sigma^2$. 
+
+Let $Y_i = \beta_0 + \beta_1X_i$. Then the conditional distribution of $Y_i$ given $X_i$, with the above conditions, is 
+$$ f(Y_i | X_i) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right) $$ 
+Then the likelihood function, given that $X$ has a probability distribution of $g(X_i)$ is $$ L = \prod_i^n \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left( -\frac{1}{2}\sigma^2(Y_i - \beta_0 - \beta_1X_i)^2\right) \cdot g(X_i) $$ 
 
 (b) Obtain the maximum likelihood estimators of $\beta_0$, $\beta_1$ and $\sigma^2$. Are the estimators of $\beta_0$ and $\beta_1$ the same as those in (1.27) when the $X_i$ are fixed? 
 
-Answer: 
+Answer: To get the MLEs, first take the log of the likelihood function, differentiate the equation (with respect to each variable $\beta_0$, $\beta_1$ and $\sigma^2$) and set them all equal to $0$.
+$$ \begin{aligned} \log L &= -\frac{n}{2} \log (2\pi \sigma^2) - \frac{1}{2\sigma^2}\sum (Y_i - \beta_0 - \beta_1X_i)^2 + \sum \log g(X_i) \\ \frac{\partial \log L}{\partial \beta_0} &= \frac{1}{\sigma^2}\sum (Y_i - \beta_0 - \beta_1X_i) = 0 \\ \frac{\partial \log L}{\partial \beta_1} &= \frac{1}{\sigma^2}\sum (Y_i - \beta_0 - \beta_1X_i) \cdot X_i = 0 \\ \frac{\partial \log L}{\partial \sigma^2} &= -\frac{n}{2}\frac{1}{\sigma^2} + \frac{1}{2}\sum (Y_i - \beta_0 - \beta_1X_i)^2 \cdot\left(\frac{1}{\sigma^2}\right)^2 = 0 \end{aligned} $$ 
+The first equation simplify to:
+$$ \begin{aligned} \sum Y_i - n\beta_0 - \beta_1\sum X_i &= 0 \\ \sum Y_i - nb_0 - b_1\sum X_i &= 0 \\ \sum Y_i &= nb_0 + b_1 \sum X_i \end{aligned} $$ 
+This is one of the least squares normal equations.
 
+The second equation simplify to: 
+$$ \begin{aligned}  \sum Y_iX_i - \beta_0 \sum X_i - \beta_1 \sum X_i^2 &= 0 \\ \sum Y_iX_i - b_0\sum X_i - b_1\sum X_i^2 &= 0 \\ \sum Y_iX_i &= b_0\sum X_i + b_1\sum X_i^2 \end{aligned} $$ 
+This is the other least squares normal equation.
+
+Finally, $$ \begin{aligned} 
+\frac{1}{2} \sum (Y_i - \beta_0 - \beta_1X_i)^2 \cdot \left( \frac{1}{\sigma^2}\right)^2 &= \frac{n}{2\sigma^2} \\ \sigma^2 &= \frac{\sum (Y_i - \beta_0 - \beta_1X_i)^2}{n} \\ &= \frac{\sum (Y_i - b_0 - b_1X_i)^2}{n} \end{aligned} $$ 
+
+All three of these MLEs are the same as the ones in (1.27) when the $X_i$ are fixed.
 
 ### Problem 54: 
 Suppose that the normal error regression model is applicable except that the error variance is not constant; rather the variance is larger, the larger is $X$. Does $\beta_1 = 0$ still imply that there is no linear association between $X$ and $Y$? That there is no association between $X$ and $Y$? Explain.
 
-Answer: 
+Answer: Under this scenario, $\beta_1 = 0$ would still indicate that there is no linear association between $X$ and $Y$ because the association does not take into account of the magnitude of the variance. But it cannot claim that there is no association between $X$ and $Y$ because it is possible the association is nonlinear. 
 
 
 ### Problem 55: 
 Derive the expression for SSR in (2.51). 
 
-Answer: 
+Answer: From the definition, 
+$$ \begin{aligned} \text{SSR} &= \sum (\hat{Y}_i - \overline{Y})^2 \\ &= \sum ((b_0 - b_1X_i) - \overline{Y})^2 \\ &= \sum ((\overline{Y} - b_1\overline{X}) + b_1X_i - \overline{Y})^2 \\ &= \sum (\overline{Y} - b_1\overline{X} + b_1\overline{X} - \overline{Y})^2 \\ &= \sum (b_1X_i - b_1\overline{X})^2 \\ &= b_1^2 \sum (X_i - \overline{X})^2 \end{aligned} $$ 
 
 
 ### Problem 56: 

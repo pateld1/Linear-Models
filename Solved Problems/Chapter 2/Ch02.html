@@ -1832,17 +1832,18 @@ spearman_rank_test(rs = spearman_rank_cc(property$Y1, property$Y2), n = nrow(pro
 <div id="problem-50" class="section level3">
 <h3>Problem 50:</h3>
 <p>Derive the property in (2.6) for the <span class="math inline">\(k_1\)</span>.</p>
-<p>Answer:</p>
+<p>Answer: Let <span class="math display">\[k_i = \frac{X_i - \overline{X})}{\sum (X_i - \overline{X})^2} \]</span> Then <span class="math display">\[ \begin{aligned} 
+\sum k_iX_i &amp;= \sum \frac{X_i - \overline{X}}{\sum (X_i - \overline{X})^2} X_i \\ \sum k_iX_i + \sum \frac{\overline{X}^2 - X_i\overline{X}}{\sum (X_i - \overline{X})^2} &amp;= \sum \frac{X_i^2 - X_i\overline{X}}{\sum (X_i - \overline{X})^2} + \sum \frac{\overline{X}^2 - X_i\overline{X}}{\sum (X_i - \overline{X})^2} \\ \sum k_iX_i + \sum \frac{\overline{X}(X_i - \overline{X})}{\sum (X_i - \overline{X})^2} &amp;= \sum \frac{X_i^2 - 2X_i\overline{X} + \overline{X}^2}{\sum (X_i - \overline{X})^2} \\ \sum k_iX_i + 0 &amp;= \sum \frac{(X_i - \overline{X})^2}{\sum (X_i - \overline{X})^2} \\ \sum k_iX_i &amp;= \frac{\sum (X_i - \overline{X})^2}{\sum (X_i - \overline{X})^2} = 1 \end{aligned} \]</span></p>
 </div>
 <div id="problem-51" class="section level3">
 <h3>Problem 51:</h3>
 <p>Show that <span class="math inline">\(b_0\)</span> as defined in (2.21) is an unbiased estimator of <span class="math inline">\(\beta_0\)</span>.</p>
-<p>Answer:</p>
+<p>Answer: To show that <span class="math inline">\(b_0\)</span> is an unbiased estimator of <span class="math inline">\(\beta_0\)</span>, show that <span class="math inline">\(\text{E}[b_0] = \beta_0\)</span>. <span class="math display">\[ \begin{aligned} \text{E}[b_0] &amp;= \text{E}[\overline{Y} - b_1\overline{X}] \\ &amp;= \text{E}[\overline{Y}] - \overline{X}\text{E}[b_1] \\ &amp;= \frac{1}{n} \text{E}[Y] - \overline{X}\text{E}[b_1] \\ &amp;= \frac{1}{n} \sum (\beta_0 + \beta_1X_i) - \overline{X}\beta_1 \\ &amp;= \left(\frac{1}{n} \sum \beta_0 + \frac{1}{n} \sum \beta_1X_i\right) - \overline{X}\beta_1 \\ &amp;= \frac{1}{n} n\beta_0 + \beta_1 \frac{\sum X_i}{n} - \overline{X}\beta_1 \\ &amp;= \frac{n}{n}\beta_0 + \beta_1\overline{X} - \beta_1\overline{X} \\ &amp;= \beta_0 \end{aligned} \]</span></p>
 </div>
 <div id="problem-52" class="section level3">
 <h3>Problem 52:</h3>
 <p>Derive the expression in (2.22b) for the variance of <span class="math inline">\(b_0\)</span>, making use of (2.31). Also explain how variance (2.22b) is a special case of variance (2.29b).</p>
-<p>Answer:</p>
+<p>Answer: The expression in (2.22b) is <span class="math display">\[ \sigma^2[b_0] = \sigma^2\left[\frac{1}{n} + \frac{\overline{X}^2}{\sum (X_i - \overline{X})^2}\right] \]</span> First note that <span class="math display">\[ \sigma^2[b_0] = \sigma^2[(1)\overline{Y} - b_1\overline{X}] \]</span> Then <span class="math display">\[ \begin{aligned} \sigma^2[b_0] &amp;= 1^2\sigma^2[\overline{Y}] + \overline{X}^2\sigma^2[b_1] - 2(1)(\overline{X})\text{Cov}[\overline{Y}, b_1] \\ &amp;= \sigma^2[\overline{Y}] + \overline{X}^2\sigma^2[b_1] - 2\overline{X}\text{Cov}[\overline{Y}, b_1] \\ &amp;= \frac{\sigma^2}{n} + \overline{X}^2 \frac{\sigma^2}{\sum (X_i - \overline{X})^2} - 2\overline{X}(0) \\ &amp;= \frac{\sigma^2}{n} + \sigma^2\frac{\overline{X}^2}{\sum (X_i - \overline{X})^2} \\ &amp;= \sigma^2 \left( \frac{1}{n} + \frac{\overline{X}^2}{\sum (X_i - \overline{X})^2}\right) \end{aligned} \]</span></p>
 </div>
 <div id="problem-53" class="section level3">
 <h3>Problem 53:</h3>
@@ -1850,21 +1851,30 @@ spearman_rank_test(rs = spearman_rank_cc(property$Y1, property$Y2), n = nrow(pro
 <ol style="list-style-type: lower-alpha">
 <li>Obtain the likelihood function for the sample observations <span class="math inline">\(Y_1,\dots,Y_n\)</span> given <span class="math inline">\(X_1,\dots,X_n\)</span>, if the conditions on page 83 apply.</li>
 </ol>
-<p>Answer:</p>
+<p>Answer: The conditions say:</p>
+<ul>
+<li>The conditional distributions of the <span class="math inline">\(Y_i\)</span>, given <span class="math inline">\(X_i\)</span>, are normal and independent, with conditional means <span class="math inline">\(\beta_0 + \beta_1X_i\)</span> and conditional variance <span class="math inline">\(\sigma^2\)</span></li>
+<li>The <span class="math inline">\(X_i\)</span> are independent random variables whose probability distribution <span class="math inline">\(g(X_i)\)</span> does not involve the parameters <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\sigma^2\)</span>.</li>
+</ul>
+<p>Let <span class="math inline">\(Y_i = \beta_0 + \beta_1X_i\)</span>. Then the conditional distribution of <span class="math inline">\(Y_i\)</span> given <span class="math inline">\(X_i\)</span>, with the above conditions, is <span class="math display">\[ f(Y_i | X_i) = \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left(-\frac{1}{2\sigma^2}(Y_i - \beta_0 - \beta_1X_i)^2\right) \]</span> Then the likelihood function, given that <span class="math inline">\(X\)</span> has a probability distribution of <span class="math inline">\(g(X_i)\)</span> is <span class="math display">\[ L = \prod_i^n \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left( -\frac{1}{2}\sigma^2(Y_i - \beta_0 - \beta_1X_i)^2\right) \cdot g(X_i) \]</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Obtain the maximum likelihood estimators of <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\sigma^2\)</span>. Are the estimators of <span class="math inline">\(\beta_0\)</span> and <span class="math inline">\(\beta_1\)</span> the same as those in (1.27) when the <span class="math inline">\(X_i\)</span> are fixed?</li>
 </ol>
-<p>Answer:</p>
+<p>Answer: To get the MLEs, first take the log of the likelihood function, differentiate the equation (with respect to each variable <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\sigma^2\)</span>) and set them all equal to <span class="math inline">\(0\)</span>. <span class="math display">\[ \begin{aligned} \log L &amp;= -\frac{n}{2} \log (2\pi \sigma^2) - \frac{1}{2\sigma^2}\sum (Y_i - \beta_0 - \beta_1X_i)^2 + \sum \log g(X_i) \\ \frac{\partial \log L}{\partial \beta_0} &amp;= \frac{1}{\sigma^2}\sum (Y_i - \beta_0 - \beta_1X_i) = 0 \\ \frac{\partial \log L}{\partial \beta_1} &amp;= \frac{1}{\sigma^2}\sum (Y_i - \beta_0 - \beta_1X_i) \cdot X_i = 0 \\ \frac{\partial \log L}{\partial \sigma^2} &amp;= -\frac{n}{2}\frac{1}{\sigma^2} + \frac{1}{2}\sum (Y_i - \beta_0 - \beta_1X_i)^2 \cdot\left(\frac{1}{\sigma^2}\right)^2 = 0 \end{aligned} \]</span> The first equation simplify to: <span class="math display">\[ \begin{aligned} \sum Y_i - n\beta_0 - \beta_1\sum X_i &amp;= 0 \\ \sum Y_i - nb_0 - b_1\sum X_i &amp;= 0 \\ \sum Y_i &amp;= nb_0 + b_1 \sum X_i \end{aligned} \]</span> This is one of the least squares normal equations.</p>
+<p>The second equation simplify to: <span class="math display">\[ \begin{aligned}  \sum Y_iX_i - \beta_0 \sum X_i - \beta_1 \sum X_i^2 &amp;= 0 \\ \sum Y_iX_i - b_0\sum X_i - b_1\sum X_i^2 &amp;= 0 \\ \sum Y_iX_i &amp;= b_0\sum X_i + b_1\sum X_i^2 \end{aligned} \]</span> This is the other least squares normal equation.</p>
+<p>Finally, <span class="math display">\[ \begin{aligned} 
+\frac{1}{2} \sum (Y_i - \beta_0 - \beta_1X_i)^2 \cdot \left( \frac{1}{\sigma^2}\right)^2 &amp;= \frac{n}{2\sigma^2} \\ \sigma^2 &amp;= \frac{\sum (Y_i - \beta_0 - \beta_1X_i)^2}{n} \\ &amp;= \frac{\sum (Y_i - b_0 - b_1X_i)^2}{n} \end{aligned} \]</span></p>
+<p>All three of these MLEs are the same as the ones in (1.27) when the <span class="math inline">\(X_i\)</span> are fixed.</p>
 </div>
 <div id="problem-54" class="section level3">
 <h3>Problem 54:</h3>
 <p>Suppose that the normal error regression model is applicable except that the error variance is not constant; rather the variance is larger, the larger is <span class="math inline">\(X\)</span>. Does <span class="math inline">\(\beta_1 = 0\)</span> still imply that there is no linear association between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>? That there is no association between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>? Explain.</p>
-<p>Answer:</p>
+<p>Answer: Under this scenario, <span class="math inline">\(\beta_1 = 0\)</span> would still indicate that there is no linear association between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> because the association does not take into account of the magnitude of the variance. But it cannot claim that there is no association between <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> because it is possible the association is nonlinear.</p>
 </div>
 <div id="problem-55" class="section level3">
 <h3>Problem 55:</h3>
 <p>Derive the expression for SSR in (2.51).</p>
-<p>Answer:</p>
+<p>Answer: From the definition, <span class="math display">\[ \begin{aligned} \text{SSR} &amp;= \sum (\hat{Y}_i - \overline{Y})^2 \\ &amp;= \sum ((b_0 - b_1X_i) - \overline{Y})^2 \\ &amp;= \sum ((\overline{Y} - b_1\overline{X}) + b_1X_i - \overline{Y})^2 \\ &amp;= \sum (\overline{Y} - b_1\overline{X} + b_1\overline{X} - \overline{Y})^2 \\ &amp;= \sum (b_1X_i - b_1\overline{X})^2 \\ &amp;= b_1^2 \sum (X_i - \overline{X})^2 \end{aligned} \]</span></p>
 </div>
 <div id="problem-56" class="section level3">
 <h3>Problem 56:</h3>
