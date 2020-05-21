@@ -19,7 +19,7 @@ library(gridExtra)
 library(wesanderson)
 ```
 
-**NOTE**: Question 59a is lacking answers. The derivation for the MLE of the standard deviations ($\sigma_1$ and $\sigma_2$) and correlation ($\rho_{12}$) of the bivariate normal distribution is yet to be finished. 
+**NOTE**: For the best viewing quality, view the HTML file instead of the PDF output.
 
 ### Problem 1: 
 A student working on a summer internship in the economic research department of a large corporation studied the relation between sales of a product ($Y$, in million dollars) and population ($X$, in million persons) in the firm's $50$ marketing districts. The normal error regresssion model was employed. The student first wished to test whether or not a linear association between $Y$ and $X$ existed. The student assessed a simple linear regression program and obtained the following information on the regression coefficients: 
@@ -1820,63 +1820,52 @@ f(Y_1, Y_2) &= \frac{1}{2\pi\sigma_1\sigma_2 \sqrt{1 - \rho^2_{12}}} \exp\left(-
 
 (a) Obtain the maximum likelihood estimators of the parameters of the bivariate normal distribution.
 
-Answer: The probability density function of the bivariate normal distribution is given in the last problem. Then its likelihood function is $$ L = \prod \frac{1}{2\pi \sqrt{\sigma_1^2\sigma_2^2} \sqrt{1-\rho^2_{12}}} \exp\left( -\frac{1}{2(1 - \rho^2_{12})} \left( \left(\frac{(Y_{1i} - \mu_1)^2}{\sigma_1^2}\right) - 2\rho_{12}\left(\frac{Y_{1i} - \mu_1}{\sqrt{\sigma_1^2}}\right)\left(\frac{Y_{2i} - \mu_2}{\sqrt{\sigma_2^2}}\right) + \left(\frac{(Y_{2i} - \mu_2)^2}{\sigma_2^2}\right)\right)\right) $$ 
+Answer: The probability density function of the bivariate normal distribution is given in the last problem. Then its likelihood function is $$ L = \prod \frac{1}{2\pi \sigma_1\sigma_2 \sqrt{1-\rho^2_{12}}} \exp\left( -\frac{1}{2(1 - \rho^2_{12})} \left( \left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)^2 - 2\rho_{12}\left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)\left(\frac{Y_{2i} - \mu_2}{\sigma_2}\right) + \left(\frac{Y_{2i} - \mu_2}{\sigma_2}\right)^2\right)\right) $$ 
 
 Take the $\log$ of this function. 
-$$ \log L = -n\log(2\pi) - n\log(\sigma_1^2) - n\log(\sigma_2^2) - \frac{n}{2}\log(1-\rho^2_{12}) - \frac{1}{2(1-\rho^2_{12})} \sum \left( \left(\frac{(Y_{1i} - \mu_1)^2}{\sigma_1^2}\right) - 2\rho_{12}\left(\frac{Y_{1i} - \mu_1}{\sqrt{\sigma_1^2}}\right)\left(\frac{Y_{2i} - \mu_2}{\sqrt{\sigma_2^2}}\right) + \left(\frac{(Y_{2i}-\mu_2)^2}{\sigma_2^2}\right)\right) $$ 
+$$ \log L = -n\log(2\pi) - n\log(\sigma_1) - n\log(\sigma_2) - \frac{n}{2}\log(1-\rho^2_{12}) - \frac{1}{2(1-\rho^2_{12})} \sum \left( \left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)^2 - 2\rho_{12}\left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)\left(\frac{Y_{2i} - \mu_2}{\sigma_2}\right) + \left(\frac{Y_{2i}-\mu_2}{\sigma_2}\right)^2\right) $$ 
 
 Differentiate this function with respect to $\mu_1$, $\sigma_1$, $\mu_2$, $\sigma_2$ and $\rho_{12}$: 
 $$ \begin{aligned} 
-\frac{\partial \log L}{\partial \mu_1} &= \frac{1}{\sigma_1^2(1-\rho^2_{12})} \sum (Y_{1i} - \mu_1) - \frac{\rho_{12}}{\sigma_1\sigma_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) \\
-\frac{\partial \log L}{\partial \sigma_1} &= -\frac{n}{\sigma_1} + \frac{1}{(1-\rho_{12})^2} \left(\frac{ \sum (Y_{1i} - \mu_1)^2}{\sigma_1^3} - \frac{\rho_{12} \sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1^2\sigma_2}\right) \\  
-\frac{\partial \log L}{\partial \mu_2} &= \frac{1}{\sigma^2_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) - \frac{\rho_{12}}{\sigma_1\sigma_2(1-\rho^2_{12})}\sum (Y_{1i} - \mu_1) \\
-\frac{\partial \log L}{\partial \sigma_2} &= -\frac{n}{\sigma_2} + \frac{1}{(1 - \rho_{12})^2}\left(\frac{\sum (Y_{2i} - \mu_2)^2}{\sigma_2^3} - \frac{\rho_{12}\sum (Y_{1i} - \mu_1)(Y_{2i}-\mu_2)}{\sigma_1\sigma_2^2}\right) \\ 
-\frac{\partial \log L}{\partial \rho_{12}} &= \frac{n\rho_{12}}{1-\rho^2_{12}} + \frac{1}{1-\rho^2_{12}}\sum \left(\frac{Y_{1i}-\mu_1}{\sigma_1}\right)\left(\frac{Y_{2i}-\mu_2}{\sigma_2}\right) - \frac{\rho_{12}}{(1-\rho_{12}^3)^2} \cdot \sum \left( \left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)^2 - 2\rho_{12} \left(\frac{Y_{1i} -\mu_1}{\sigma_1}\right)\left(\frac{Y_{2i}-\mu_2}{\sigma_2}\right) + \left(\frac{Y_{2i} - \mu_2}{\sigma_2}\right)^2\right)
+\frac{\partial \log L}{\partial \mu_1} &= -\frac{1}{2(1-\rho_{12}^2)} \sum \left( \frac{-2(Y_{1i} - \mu_1)}{\sigma_1^2} + \frac{2\rho_{12}(Y_{2i} - \mu_2)}{\sigma_1\sigma_2}\right) \\
+\frac{\partial \log L}{\partial \sigma_1} &= -\frac{n}{\sigma_1} + \frac{1}{2(1-\rho_{12}^2)} \left(\frac{ 2\sum (Y_{1i} - \mu_1)^2}{\sigma_1^3} - \frac{2\rho_{12} \sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1^2\sigma_2}\right) \\
+\frac{\partial \log L}{\partial \mu_2} &= -\frac{1}{2(1-\rho_{12}^2)} \sum \left( \frac{-2(Y_{2i} - \mu_2)}{\sigma_2^2} + \frac{2\rho_{12}(Y_{1i} - \mu_1)}{\sigma_1\sigma_2}\right) \\
+\frac{\partial \log L}{\partial \sigma_2} &= -\frac{n}{\sigma_2} + \frac{1}{2(1 - \rho_{12}^2)}\left(\frac{2 \sum (Y_{2i} - \mu_2)^2}{\sigma_2^3} - \frac{2\rho_{12}\sum (Y_{1i} - \mu_1)(Y_{2i}-\mu_2)}{\sigma_1\sigma_2^2}\right) \\ 
+\frac{\partial \log L}{\partial \rho_{12}} &= \left(-\frac{n}{2} \cdot \frac{1}{1-\rho_{12}^2} \cdot -2\rho_{12}\right) + \left(-\frac{1}{2(1-\rho_{12}^2)} \cdot -2\left(\sum \frac{(Y_{1i} - \mu_1)}{\sigma_1} \frac{(Y_{2i} - \mu_2)}{\sigma_2}\right)\right) \\ &+ \left(-\frac{1}{2} \cdot \frac{2\rho_{12}}{(1-\rho_{12}^2)^2} \sum \left( \left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)^2 - 2\rho_{12}\left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)\left(\frac{Y_{2i} - \mu_2}{\sigma_2}\right) + \left(\frac{Y_{2i} - \mu_2}{\sigma_2}\right)^2 \right)\right)
 \end{aligned} $$
 
+Note first that 
+$$ \rho_{12} = \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1\sigma_2} = \frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{n\sigma_1\sigma_2} \to n\rho_{12} = \frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{n\sigma_1\sigma_2} $$ 
+
 Now if the derivative for $\frac{\partial \log L}{\partial \mu_1} = 0$, then 
-$$ \begin{aligned}  \frac{1}{\sigma_1^2(1-\rho^2_{12})} \sum (Y_{1i} - \mu_1) - \frac{\rho_{12}}{\sigma_1\sigma_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) &= 0 \\ 
-\frac{1}{\sigma_1^2(1-\rho^2_{12})} \sum (Y_{1i} - \mu_1) - \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1^2\sigma_2^2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) &= 0 \\ 
-\frac{1}{\sigma_1^2(1-\rho^2_{12})} \sum (Y_{1i} - \mu_1) &= \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1^2\sigma_2^2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) \\ 
-\sum (Y_{1i} - \mu_1) &= \frac{\text{Cov}[Y_1, Y_2]}{\sigma_2^2} \sum (Y_{2i} - \mu_2) \\ &= 
-\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{(n-1)\sigma^2_2} \sum (Y_{2i} - \mu_2) \\ &= 
-\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{n-1} \frac{n-1}{\sum (Y_{2i} - \mu_2)^2} \sum (Y_{2i} - \mu_2) \\ &= \frac{(\sum (Y_{2i} - \mu_2))^2 \sum (Y_{1i} - \mu_1)}{\sum (Y_{2i} - \mu_2)^2} \\ &= \sum (Y_{1i} - \mu_1) \\ (\sum Y_{1i}) - n\mu_1 &= n\overline{Y}_1 - n\mu_1 \\ \overline{Y}_1 - \mu_1 &= \overline{Y}_1 - \mu_1 \\ \hat{\mu}_1 &= \overline{Y}_1 \end{aligned} $$ 
+$$ \begin{aligned}  -\frac{1}{2(1-\rho_{12}^2)} \sum \left( \frac{-2(Y_{1i} - \mu_1)}{\sigma_1^2} + \frac{2\rho_{12}(Y_{2i} - \mu_2)}{\sigma_1\sigma_2}\right) &= 0 \\
+\frac{2\sum (Y_{1i} - \mu_1)}{2(1-\rho_{12}^2)\sigma_1^2} - \frac{2\rho_{12} \sum (Y_{2i} - \mu_2)}{2 \sigma_1\sigma_2 (1-\rho_{12}^2)} &= 0 \\ \frac{\sum (Y_{1i} - \mu_1)}{\sigma_1^2(1-\rho_{12}^2)} - \frac{\rho_{12}\sum (Y_{2i} - \mu_2)}{\sigma_1\sigma_2(1-\rho_{12}^2)} &= 0 \\ \frac{1}{1-\rho_{12}^2}\left( \frac{\sum (Y_{1i}-\mu_1)}{\sigma_1^2} - \frac{\rho_{12}\sum (Y_{2i} - \mu_2)}{\sigma_1\sigma_2}\right) &= 0 \\ \frac{\sum (Y_{1i} - \mu_1)}{\sigma_1^2} - \frac{\rho_{12}\sum (Y_{2i} - \mu_2)}{\sigma_1\sigma_2} &= 0 \\ \sum (Y_{1i} - \mu_1) - \frac{\rho_{12} \sigma_1 \sum (Y_{2i} - \mu_2)}{\sigma_2} &= 0 \\ \sum (Y_{1i} - \mu_1) - \frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{n\sigma_1\sigma_2} \cdot \frac{\sigma_1 \sum (Y_{2i} - \mu_2)}{\sigma_2} &= 0 \\ \sum (Y_{1i} - \mu_1) - \frac{\sum (Y_{1i} - \mu_1) \sum (Y_{2i} - \mu_2)^2}{n\sigma_2^2} &= 0 \\ \sum (Y_{1i} - \mu_1) - \frac{n\sigma_2^2\sum (Y_{1i} - \mu_1)}{n\sigma_2^2} &= 0 \\ \sum (Y_{1i} - \mu_1) - \sum (Y_{1i} - \mu_1) &= 0 \\ \sum (Y_{1i} - \mu_1) &= \sum (Y_{1i} - \mu_1) \\ n(\overline{Y}_1 - \mu_1) &= n(\overline{Y}_1 - \mu_1) \\ \mu_1 &= \overline{Y}_1 \\ \hat{\mu}_1 &= \overline{Y}_1 \end{aligned} $$ 
 
 Similarly, if the derivative for $\frac{\partial \log L}{\partial \mu_2} = 0$, then
-$$ \begin{aligned} \frac{1}{\sigma^2_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) - \frac{\rho_{12}}{\sigma_1\sigma_2(1-\rho^2_{12})}\sum (Y_{1i} - \mu_1) &= 0 \\ 
-\frac{1}{\sigma^2_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) - \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1^2\sigma_2^2(1-\rho^2_{12})}\sum (Y_{1i} - \mu_1) &= 0 \\ 
-\frac{1}{\sigma^2_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) &= \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1^2\sigma_2^2(1-\rho^2_{12})}\sum (Y_{1i} - \mu_1) \\ 
-\sum (Y_{2i} - \mu_2) &= \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1^2}\sum (Y_{1i} - \mu_1) \\ 
-&= \frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{(n-1)\sigma^2_1} \sum (Y_{1i} - \mu_1) \\ &= 
-\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{n-1} \frac{n-1}{\sum (Y_{1i} - \mu_1)^2} \sum (Y_{1i} - \mu_1) \\ &= \frac{(\sum (Y_{1i} - \mu_1))^2 \sum (Y_{2i} - \mu_2)}{\sum (Y_{1i} - \mu_1)^2} \\ &= \sum (Y_{2i} - \mu_2) \\ (\sum Y_{2i}) - n\mu_2 &= n\overline{Y}_2 - n\mu_2 \\ \overline{Y}_2 - \mu_2 &= \overline{Y}_2 - \mu_2 \\ \hat{\mu}_2 &= \overline{Y}_2
-\end{aligned} $$ 
+$$ \begin{aligned}  -\frac{1}{2(1-\rho_{12}^2)} \sum \left( \frac{-2(Y_{2i} - \mu_2)}{\sigma_2^2} + \frac{2\rho_{12}(Y_{1i} - \mu_1)}{\sigma_1\sigma_2}\right) &= 0 \\
+\frac{2\sum (Y_{2i} - \mu_2)}{2(1-\rho_{12}^2)\sigma_2^2} - \frac{2\rho_{12} \sum (Y_{1i} - \mu_1)}{2 \sigma_1\sigma_2 (1-\rho_{12}^2)} &= 0 \\ \frac{\sum (Y_{2i} - \mu_2)}{\sigma_2^2(1-\rho_{12}^2)} - \frac{\rho_{12}\sum (Y_{1i} - \mu_1)}{\sigma_1\sigma_2(1-\rho_{12}^2)} &= 0 \\ \frac{1}{1-\rho_{12}^2}\left( \frac{\sum (Y_{2i}-\mu_2)}{\sigma_2^2} - \frac{\rho_{12}\sum (Y_{1i} - \mu_1)}{\sigma_1\sigma_2}\right) &= 0 \\ \frac{\sum (Y_{2i} - \mu_2)}{\sigma_2^2} - \frac{\rho_{12}\sum (Y_{1i} - \mu_1)}{\sigma_1\sigma_2} &= 0 \\ \sum (Y_{2i} - \mu_2) - \frac{\rho_{12} \sigma_2 \sum (Y_{1i} - \mu_1)}{\sigma_1} &= 0 \\ \sum (Y_{2i} - \mu_2) - \frac{\sum (Y_{2i} - \mu_2)(Y_{1i} - \mu_1)}{n\sigma_1\sigma_2} \cdot \frac{\sigma_2 \sum (Y_{1i} - \mu_1)}{\sigma_1} &= 0 \\ \sum (Y_{2i} - \mu_2) - \frac{\sum (Y_{2i} - \mu_2) \sum (Y_{1i} - \mu_1)^2}{n\sigma_1^2} &= 0 \\ \sum (Y_{2i} - \mu_2) - \frac{n\sigma_1^2\sum (Y_{2i} - \mu_2)}{n\sigma_1^2} &= 0 \\ \sum (Y_{2i} - \mu_2) - \sum (Y_{2i} - \mu_2) &= 0 \\ \sum (Y_{2i} - \mu_2) &= \sum (Y_{2i} - \mu_2) \\ n(\overline{Y}_2 - \mu_2) &= n(\overline{Y}_2 - \mu_2) \\ \mu_2 &= \overline{Y}_2 \\ \hat{\mu}_2 &= \overline{Y}_2 \end{aligned} $$ 
 
 Thus the MLE for $\mu_1$ and $\mu_2$ are $$ \begin{aligned} \hat{\mu}_1 &= \overline{Y}_1 \\ \hat{\mu}_2 &= \overline{Y}_2 \end{aligned} $$ 
 
 Now if the derivative for $\frac{\partial \log L}{\partial \sigma_1} = 0$, and with the above results, then
 
-When simplified, this looks like 
-$$ \frac{\sum (Y_{1i} - \hat{\mu}_1)^2}{\hat{\sigma}_1^2} - \hat{\rho}_{12} \frac{\sum (Y_{1i} - \hat{\mu}_1)(Y_{2i} - \hat{\mu}_2)}{\hat{\sigma}_1\hat{\sigma}_2} - n(1 - \hat{\rho}_{12}^2) = 0 $$ 
-
-TO-DO
+$$ \begin{aligned} -\frac{n}{\sigma_1} + \frac{1}{2(1-\rho_{12}^2)} \left(\frac{ 2\sum (Y_{1i} - \mu_1)^2}{\sigma_1^3} - \frac{2\rho_{12} \sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1^2\sigma_2}\right) &= 0 \\ -\frac{n}{\sigma_1} + \frac{1}{2(1-\rho_{12}^2)} \left(\frac{2\sum (Y_{1i} - \mu_1)^2}{\sigma_1^3} - \frac{2n\rho_{12}^2}{\sigma_1} \right) &= 0 \\ -\frac{n}{\sigma_1} + \frac{1}{1-\rho^2_{12}} \left(\frac{\sum (Y_{1i} - \mu_1)^2}{\sigma_1^3} - \frac{n\rho_{12}^2}{\sigma_1} \right) &= 0 \\ 
+-n + \frac{1}{1 - \rho^2_{12}}\left( \frac{ \sum (Y_{1i} - \mu_1)^2}{\sigma_1^2} - n\rho^2_{12} \right) &= 0 \\ \frac{1}{1 - \rho^2_{12}}\left( \frac{ \sum (Y_{1i} - \mu_1)^2}{\sigma_1^2} - n\rho^2_{12} \right) &= n \\ \frac{\sum (Y_{1i} - \mu_1)^2}{\sigma_1^2} - n\rho^2_{12} &= n(1-\rho^2_{12}) = n - n\rho^2_{12} \\ 
+\frac{\sum (Y_{1i} - \mu_1)}{\sigma_1^2} - n\rho^2_{12} -n + n\rho_{12}^2 &= 0 \\ \frac{\sum (Y_{1i} - \mu_1)^2}{\sigma_1^2} - n &= 0 \\ \frac{\sum (Y_{1i} - \mu_1)^2}{\sigma_1^2} &= n \\ \frac{\sum (Y_{1i} - \mu_1)^2}{n} &= \sigma_1^2 \\ \sqrt{\frac{\sum (Y_{1i} - \mu_1)^2}{n}} &= \sigma_1 \\ \sqrt{\frac{\sum (Y_{1i} - \overline{Y}_1)^2}{n}} &= \hat{\sigma}_1 \end{aligned} $$ 
 
 Similarly, if the derivative for $\frac{\partial \log L}{\partial \sigma_2} = 0$, and with the above results, then 
 
-When simplified, this looks like 
-$$ \frac{\sum (Y_{2i} - \hat{\mu}_2)^2}{\hat{\sigma}_2^2} - \hat{\rho}_{12} \frac{\sum (Y_{1i} - \hat{\mu}_1)(Y_{2i} - \hat{\mu}_2)}{\hat{\sigma}_1\hat{\sigma}_2} - n(1 - \hat{\rho}_{12}^2) = 0 $$ 
-
-TO-DO
+$$ \begin{aligned} -\frac{n}{\sigma_2} + \frac{1}{2(1-\rho_{12}^2)} \left(\frac{ 2\sum (Y_{2i} - \mu_2)^2}{\sigma_2^3} - \frac{2\rho_{12} \sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2^2}\right) &= 0 \\ -\frac{n}{\sigma_2} + \frac{1}{2(1-\rho_{12}^2)} \left(\frac{2\sum (Y_{2i} - \mu_2)^2}{\sigma_2^3} - \frac{2n\rho_{12}^2}{\sigma_2} \right) &= 0 \\ -\frac{n}{\sigma_2} + \frac{1}{1-\rho^2_{12}} \left(\frac{\sum (Y_{2i} - \mu_2)^2}{\sigma_2^3} - \frac{n\rho_{12}^2}{\sigma_2} \right) &= 0 \\ 
+-n + \frac{1}{1 - \rho^2_{12}}\left( \frac{ \sum (Y_{2i} - \mu_2)^2}{\sigma_2^2} - n\rho^2_{12} \right) &= 0 \\ \frac{1}{1 - \rho^2_{12}}\left( \frac{ \sum (Y_{2i} - \mu_2)^2}{\sigma_2^2} - n\rho^2_{12} \right) &= n \\ \frac{\sum (Y_{2i} - \mu_2)^2}{\sigma_2^2} - n\rho^2_{12} &= n(1-\rho^2_{12}) = n - n\rho^2_{12} \\ 
+\frac{\sum (Y_{2i} - \mu_2)}{\sigma_2^2} - n\rho^2_{12} -n + n\rho_{12}^2 &= 0 \\ \frac{\sum (Y_{2i} - \mu_2)^2}{\sigma_2^2} - n &= 0 \\ \frac{\sum (Y_{2i} - \mu_2)^2}{\sigma_2^2} &= n \\ \frac{\sum (Y_{2i} - \mu_2)^2}{n} &= \sigma_2^2 \\ \sqrt{\frac{\sum (Y_{2i} - \mu_2)^2}{n}} &= \sigma_2 \\ \sqrt{\frac{\sum (Y_{2i} - \overline{Y}_2)^2}{n}} &= \hat{\sigma}_2 \end{aligned} $$ 
 
 The MLE for $\sigma_1$ and $\sigma_2$ are $$ \begin{aligned} \hat{\sigma}_1 &= \sqrt{\frac{\sum (Y_{1i} - \overline{Y}_1)^2}{n}} \\ \hat{\sigma}_2 &= \sqrt{ \frac{ \sum (Y_{2i} - \overline{Y}_2)^2}{n}} \end{aligned} $$ 
 
 If the derivative for $\frac{\partial \log L}{\partial \rho_{12}} = 0$, then
 
-TO-DO
+$$ \begin{aligned} \left(-\frac{n}{2} \cdot \frac{1}{1-\rho_{12}^2} \cdot -2\rho_{12}\right) + \left(-\frac{1}{2(1-\rho_{12}^2)} \cdot -2\left(\sum \frac{(Y_{1i} - \mu_1)}{\sigma_1}\frac{(Y_{2i} - \mu_2)}{\sigma_2}\right)\right) + \left(-\frac{1}{2} \cdot \frac{2\rho_{12}}{(1-\rho_{12}^2)^2} \sum \left( \left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)^2 - 2\rho_{12}\left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)\left(\frac{Y_{2i} - \mu_2}{\sigma_2}\right) + \left(\frac{Y_{2i} - \mu_2}{\sigma_2}\right)^2 \right)\right) &= 0 \\ \frac{n\rho_{12}}{1-\rho_{12}^2} + \frac{1}{1-\rho_{12}^2} \frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} - \frac{\rho_{12}}{(1-\rho_{12}^2)^2} \sum \left( \left( \frac{Y_{1i} - \mu_1)}{\sigma_1}\right)^2 - 2\rho_{12}\left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)\left(\frac{Y_{2i}-\mu_2}{\sigma_2}\right) + \left(\frac{Y_{2i}-\mu_2}{\sigma_2}\right)^2\right) &= 0 \\ \frac{n\rho_{12}}{1-\rho_{12}^2} + \frac{1}{1-\rho_{12}^2}\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} - \frac{\rho_{12}}{(1-\rho_{12}^2)^2}\frac{\sum (Y_{1i} - \mu_1)^2}{\sigma_1^2} + \frac{2\rho_{12}^2}{(1-\rho_{12})^2}\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} - \frac{\rho_{12}}{(1-\rho_{12}^2)^2}\frac{\sum (Y_{2i} - \mu_2)^2}{\sigma_2^2} &= 0 \\ n\rho_{12}(1-\rho_{12}^2) + (1-\rho_{12}^2)\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} - \rho_{12}\frac{\sum (Y_{1i} - \mu_1)^2}{\sigma_1^2} + 2\rho_{12}^2\frac{\sum (Y_{1i} - \mu_1)(Y_{2i}-\mu_2)}{\sigma_1\sigma_2} - \rho_{12}\frac{\sum (Y_{2i} - \mu_2)^2}{\sigma_2^2} &= 0 \\ n\rho_{12}(1-\rho_{12}^2) + (1 + \rho_{12}^2)\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} - \rho_{12}\frac{\sum (Y_{1i} - \mu_1)^2}{\sigma_1^2} - \rho_{12}\frac{\sum (Y_{2i} - \mu_2)^2}{\sigma_2^2} &= 0 \\ n\rho_{12}(1-\rho_{12}^2) + (1+\rho_{12}^2)\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} - \rho_{12}\left(\frac{\sum (Y_{1i} - \mu_1)^2}{\sigma_1^2} + \frac{\sum (Y_{2i} - \mu_2)^2}{\sigma_2^2}\right) &= 0 \\ n\rho_{12}(1-\rho_{12}^2) + (1+\rho_{12}^2)\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} - 2n\rho_{12} &= 0 \\ n\rho_{12} - n\rho_{12}^3 + (1+\rho_{12}^2)\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} - 2n\rho_{12} &= 0 \\ -n\rho_{12} - n\rho_{12}^3 + (1 + \rho_{12}^2)\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} &= 0 \\ -n\rho_{12} - n\rho_{12}^3 + \frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} + \rho_{12}^2\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} &= 0 \\ -n\rho_{12} - n\rho_{12}^3 + n\rho_{12} + \rho_{12}^2\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1\sigma_2} &= 0 \\ -n\rho_{12}^3 + \rho_{12}^2\frac{\sum (Y_{1i} - \mu_1)(Y_{2i}-\mu_2)}{\sigma_1\sigma_2} &= 0 \\ \rho_{12}^2\frac{\sum (Y_{1i}-\mu_1)(Y_{2i}-\mu_2)}{\sigma_1\sigma_2} &= n\rho_{12}^3 \\ \frac{\sum (Y_{1i} - \mu_1)(Y_{2i}-\mu_1)}{\sigma_1\sigma_2} &= n\rho_{12} \\ \frac{\sum (Y_{1i} - \mu_1)(Y_{2i}-\mu_2)}{n\sigma_1\sigma_2} &= \rho_{12} \\ \frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sum (Y_{1i} - \mu_1)\sum(Y_{2i} - \mu_2)} &= \rho_{12} \\ \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{\sum (Y_{1i} - \overline{Y}_1)\sum(Y_{2i} - \overline{Y}_2)} &= \hat{\rho}_{12} \end{aligned} $$ 
 
-When simplied, this looks like 
-$$ n\hat{\rho}_{12} + (1 + \hat{\rho}^2_{12} \sum \left( \frac{Y_{1i} - \hat{\mu}_1}{\hat{\sigma}_1}\right) \left(\frac{Y_{2i} - \hat{\mu}_2}{\hat{\sigma}_2}\right) - \hat{\rho}_{12}\sum \left( \left( \frac{Y_{1i} - \hat{\mu}_1}{\hat{\sigma}_1}\right)^2 + \left(\frac{Y_{2i} - \hat{\mu}_2}{\hat{\sigma}_2}\right)^2\right) = 0$$ 
-
-The MLE for $\rho_{12}$ is $$ \hat{\rho}_{12} = \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{ (\sum (Y_{1i} - \overline{Y}_1)^2)^{\frac{1}{2}}(\sum (Y_{2i} - \overline{Y}_2)^2)^{\frac{1}{2}}} $$ 
+The MLE for $\rho_{12}$ is $$ \hat{\rho}_{12} = \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{ \sum (Y_{1i} - \overline{Y}_1)(\sum (Y_{2i} - \overline{Y}_2)} $$ 
 
 
 (b) Using the results in part (a), obtain the maximum likelihood estimators of the parameters of the conditional probability distribution of $Y_1$ for any value of $Y_2$ in (2.80).
