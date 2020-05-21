@@ -1,9 +1,11 @@
 ---
 title: 'ALSM: Chapter 2'
-subtitle: 'Inferences in Regression and Correlaion Analysis'
 author: "Darshan Patel"
-date: "1/19/2020"
-output: html_document
+date: "5/19/2020"
+output:
+  pdf_document: default
+  html_document: default
+subtitle: Inferences in Regression and Correlaion Analysis
 ---
 
 ```{r setup, include=FALSE}
@@ -17,6 +19,7 @@ library(gridExtra)
 library(wesanderson)
 ```
 
+**NOTE**: Question 59a is lacking answers. The derivation for the MLE of the standard deviations ($\sigma_1$ and $\sigma_2$) and correlation ($\rho_{12}$) of the bivariate normal distribution is yet to be finished. 
 
 ### Problem 1: 
 A student working on a summer internship in the economic research department of a large corporation studied the relation between sales of a product ($Y$, in million dollars) and population ($X$, in million persons) in the firm's $50$ marketing districts. The normal error regresssion model was employed. The student first wished to test whether or not a linear association between $Y$ and $X$ existed. The student assessed a simple linear regression program and obtained the following information on the regression coefficients: 
@@ -1191,7 +1194,7 @@ Refer to *Crime rate* Problem 1.28.
 
 (a) Test whether or not there is a linear association between crime rate and percentage of high school graduates, using a $t$ test with $\alpha = .01$. State the alternatives, decision rule and conclusion. What is the $P$-value of the test? 
 
-Answer: Let the null hypothesis be that there is no linear association between crime rate and percentage of high school graduates. Let the alternative hypothesis be that there is a linear association between the two. Then at an $\alphha$ level of $.01$, the $t$ test says
+Answer: Let the null hypothesis be that there is no linear association between crime rate and percentage of high school graduates. Let the alternative hypothesis be that there is a linear association between the two. Then at an $\alpha$ level of $.01$, the $t$ test says
 ```{r}
 crime = read.csv('CH01PR28.txt', sep = '', header = FALSE, 
                   col.names = c('y', 'x'), 
@@ -1757,33 +1760,59 @@ $$ \begin{aligned} \text{SSR} &= \sum (\hat{Y}_i - \overline{Y})^2 \\ &= \sum ((
 
 
 ### Problem 56: 
-In a small-scale regression study, five observations on $Y$ were obtained corresponding to $X=1$, $4$, $10$, $11$ and $14$. Assume that $\sigma = .5$, $\beta_0=5$ and $\beta_1 = 3$.
+In a small-scale regression study, five observations on $Y$ were obtained corresponding to $X=1$, $4$, $10$, $11$ and $14$. Assume that $\sigma = .6$, $\beta_0=5$ and $\beta_1 = 3$.
 
 (a) What are the expected values of MSR and MSE here? 
 
-Answer: 
+Answer: The expected value of MSR is $$ \text{E[MSR]} = \sigma^2 + \beta_1^2 \sum (X_i - \overline{X})^2 $$ or
+```{r}
+x = c(1, 4, 10, 11, 14)
+sigma = .6
+beta0 = 5
+beta1 = 3
+
+sigma^2 + (beta1^2 * sum((x - mean(x))^2))
+```
+
+Similarly, the expected value of MSE is $$ \text{E[MSE]} = \sigma^2 $$ 
+or 
+```{r}
+sigma^2
+```
 
 (b) For determining whether or not a regression relation exists, would it have been better or worse to have made the five observations at $X=6$, $7$, $8$, $9$ and $10$? Why? Would the same answer apply if the principal purpose were to estimate the mean response for $X=8$? Discuss.
 
-Answer: 
+Answer: Using these $X_i$ values, the expected value of the MSR should be different from above since all the $X_i$s are different. The expected value of MSE should remain the same since it only depends on $\sigma$. 
 
+The expected value of MSR is 
+```{r}
+x = 6:10
+sigma^2 + (beta1^2 * sum((x - mean(x))^2))
+```
+
+and the expected value of MSE is
+```{r}
+sigma^2
+```
 
 ### Problem 57: 
 The normal error regression model is assumed to be applicable.
 
 (a) When testing $H_0: \beta_1 = 5$ vs $H_A: \beta_1 \neq 5$ by means of a general linear test, what is the reduced model? What are the degrees of freedom $\text{df}_R$? 
 
-Answer: 
+Answer: The reduced model is $$ Y_i - 5 = \beta_0 + \varepsilon_i $$ and the degrees of freedom $\text{df}_R$ is $n-1$. 
 
 (b) When testing $H_0: \beta_0 = 2$, $\beta_1 = 5$ vs $H_A:$ not both $\beta_0=2$ and $\beta_1 = 5$ by means of a general linear test, what is the reduced model? What are the degrees of freedom $\text{df}_R$? 
 
-Answer: 
+Answer: The reduced model is $$ Y_i - 5X_i - 2 = \varepsilon_i $$ and the degrees of freedom $\text{df}_R$ is $n$. 
 
 
 ### Problem 58: 
 The random variables $Y_1$ and $Y_2$ follow the bivariate normal distribution. Show that if $\rho_{12} = 0$, $Y_1$ and $Y_2$ are independent random variables.
 
-Answer: 
+Answer: If $\rho_{12}$, then 
+$$ \begin{aligned} 
+f(Y_1, Y_2) &= \frac{1}{2\pi\sigma_1\sigma_2 \sqrt{1 - \rho^2_{12}}} \exp\left(-\frac{1}{2(1 - \rho^2_{12})} \left[\left(\frac{Y_i - \mu_1}{\sigma_1}\right)^2 - 2\rho_{12}\left(\frac{Y_1 - \mu_1}{\sigma_1}\right)\left(\frac{Y_2 - \mu_2}{\sigma_2}\right) + \left(\frac{Y_2 - \mu_2}{\sigma_2}\right)^2\right]\right) \\ &= \frac{1}{2\pi\sigma_1\sigma_2 \sqrt{1 - 0}} \exp\left(-\frac{1}{2(1 - 0)} \left[\left(\frac{Y_i - \mu_1}{\sigma_1}\right)^2 - 2 \cdot 0 \cdot \left(\frac{Y_1 - \mu_1}{\sigma_1}\right)\left(\frac{Y_2 - \mu_2}{\sigma_2}\right) + \left(\frac{Y_2 - \mu_2}{\sigma_2}\right)^2\right]\right) \\ &= \frac{1}{2\pi\sigma_1\sigma_2}\exp\left(-\frac{1}{2} \left[\left(\frac{Y_1-\mu_1}{\sigma_1}\right)^2 + \left(\frac{Y_2-\mu_2}{\sigma_2}\right)^2\right]\right) \\ &= \left(\frac{1}{\sqrt{2\pi}\sigma_1}\exp\left(-\frac{1}{2}\left(\frac{Y_1-\mu_1}{\sigma_1}\right)^2\right)\right) \cdot \left(\frac{1}{\sqrt{2\pi}\sigma_2}\exp\left(-\frac{1}{2}\left(\frac{Y_2-\mu_2}{\sigma_2}\right)^2\right)\right) \\ &= f_1(Y_1) \cdot f_2(Y_2) \end{aligned} $$ 
 
 
 ### Problem 59: 
@@ -1791,27 +1820,118 @@ Answer:
 
 (a) Obtain the maximum likelihood estimators of the parameters of the bivariate normal distribution.
 
-Answer: 
+Answer: The probability density function of the bivariate normal distribution is given in the last problem. Then its likelihood function is $$ L = \prod \frac{1}{2\pi \sqrt{\sigma_1^2\sigma_2^2} \sqrt{1-\rho^2_{12}}} \exp\left( -\frac{1}{2(1 - \rho^2_{12})} \left( \left(\frac{(Y_{1i} - \mu_1)^2}{\sigma_1^2}\right) - 2\rho_{12}\left(\frac{Y_{1i} - \mu_1}{\sqrt{\sigma_1^2}}\right)\left(\frac{Y_{2i} - \mu_2}{\sqrt{\sigma_2^2}}\right) + \left(\frac{(Y_{2i} - \mu_2)^2}{\sigma_2^2}\right)\right)\right) $$ 
+
+Take the $\log$ of this function. 
+$$ \log L = -n\log(2\pi) - n\log(\sigma_1^2) - n\log(\sigma_2^2) - \frac{n}{2}\log(1-\rho^2_{12}) - \frac{1}{2(1-\rho^2_{12})} \sum \left( \left(\frac{(Y_{1i} - \mu_1)^2}{\sigma_1^2}\right) - 2\rho_{12}\left(\frac{Y_{1i} - \mu_1}{\sqrt{\sigma_1^2}}\right)\left(\frac{Y_{2i} - \mu_2}{\sqrt{\sigma_2^2}}\right) + \left(\frac{(Y_{2i}-\mu_2)^2}{\sigma_2^2}\right)\right) $$ 
+
+Differentiate this function with respect to $\mu_1$, $\sigma_1$, $\mu_2$, $\sigma_2$ and $\rho_{12}$: 
+$$ \begin{aligned} 
+\frac{\partial \log L}{\partial \mu_1} &= \frac{1}{\sigma_1^2(1-\rho^2_{12})} \sum (Y_{1i} - \mu_1) - \frac{\rho_{12}}{\sigma_1\sigma_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) \\
+\frac{\partial \log L}{\partial \sigma_1} &= -\frac{n}{\sigma_1} + \frac{1}{(1-\rho_{12})^2} \left(\frac{ \sum (Y_{1i} - \mu_1)^2}{\sigma_1^3} - \frac{\rho_{12} \sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{\sigma_1^2\sigma_2}\right) \\  
+\frac{\partial \log L}{\partial \mu_2} &= \frac{1}{\sigma^2_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) - \frac{\rho_{12}}{\sigma_1\sigma_2(1-\rho^2_{12})}\sum (Y_{1i} - \mu_1) \\
+\frac{\partial \log L}{\partial \sigma_2} &= -\frac{n}{\sigma_2} + \frac{1}{(1 - \rho_{12})^2}\left(\frac{\sum (Y_{2i} - \mu_2)^2}{\sigma_2^3} - \frac{\rho_{12}\sum (Y_{1i} - \mu_1)(Y_{2i}-\mu_2)}{\sigma_1\sigma_2^2}\right) \\ 
+\frac{\partial \log L}{\partial \rho_{12}} &= \frac{n\rho_{12}}{1-\rho^2_{12}} + \frac{1}{1-\rho^2_{12}}\sum \left(\frac{Y_{1i}-\mu_1}{\sigma_1}\right)\left(\frac{Y_{2i}-\mu_2}{\sigma_2}\right) - \frac{\rho_{12}}{(1-\rho_{12}^3)^2} \cdot \sum \left( \left(\frac{Y_{1i} - \mu_1}{\sigma_1}\right)^2 - 2\rho_{12} \left(\frac{Y_{1i} -\mu_1}{\sigma_1}\right)\left(\frac{Y_{2i}-\mu_2}{\sigma_2}\right) + \left(\frac{Y_{2i} - \mu_2}{\sigma_2}\right)^2\right)
+\end{aligned} $$
+
+Now if the derivative for $\frac{\partial \log L}{\partial \mu_1} = 0$, then 
+$$ \begin{aligned}  \frac{1}{\sigma_1^2(1-\rho^2_{12})} \sum (Y_{1i} - \mu_1) - \frac{\rho_{12}}{\sigma_1\sigma_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) &= 0 \\ 
+\frac{1}{\sigma_1^2(1-\rho^2_{12})} \sum (Y_{1i} - \mu_1) - \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1^2\sigma_2^2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) &= 0 \\ 
+\frac{1}{\sigma_1^2(1-\rho^2_{12})} \sum (Y_{1i} - \mu_1) &= \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1^2\sigma_2^2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) \\ 
+\sum (Y_{1i} - \mu_1) &= \frac{\text{Cov}[Y_1, Y_2]}{\sigma_2^2} \sum (Y_{2i} - \mu_2) \\ &= 
+\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{(n-1)\sigma^2_2} \sum (Y_{2i} - \mu_2) \\ &= 
+\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{n-1} \frac{n-1}{\sum (Y_{2i} - \mu_2)^2} \sum (Y_{2i} - \mu_2) \\ &= \frac{(\sum (Y_{2i} - \mu_2))^2 \sum (Y_{1i} - \mu_1)}{\sum (Y_{2i} - \mu_2)^2} \\ &= \sum (Y_{1i} - \mu_1) \\ (\sum Y_{1i}) - n\mu_1 &= n\overline{Y}_1 - n\mu_1 \\ \overline{Y}_1 - \mu_1 &= \overline{Y}_1 - \mu_1 \\ \hat{\mu}_1 &= \overline{Y}_1 \end{aligned} $$ 
+
+Similarly, if the derivative for $\frac{\partial \log L}{\partial \mu_2} = 0$, then
+$$ \begin{aligned} \frac{1}{\sigma^2_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) - \frac{\rho_{12}}{\sigma_1\sigma_2(1-\rho^2_{12})}\sum (Y_{1i} - \mu_1) &= 0 \\ 
+\frac{1}{\sigma^2_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) - \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1^2\sigma_2^2(1-\rho^2_{12})}\sum (Y_{1i} - \mu_1) &= 0 \\ 
+\frac{1}{\sigma^2_2(1-\rho^2_{12})}\sum (Y_{2i} - \mu_2) &= \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1^2\sigma_2^2(1-\rho^2_{12})}\sum (Y_{1i} - \mu_1) \\ 
+\sum (Y_{2i} - \mu_2) &= \frac{\text{Cov}[Y_1, Y_2]}{\sigma_1^2}\sum (Y_{1i} - \mu_1) \\ 
+&= \frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{(n-1)\sigma^2_1} \sum (Y_{1i} - \mu_1) \\ &= 
+\frac{\sum (Y_{1i} - \mu_1)(Y_{2i} - \mu_2)}{n-1} \frac{n-1}{\sum (Y_{1i} - \mu_1)^2} \sum (Y_{1i} - \mu_1) \\ &= \frac{(\sum (Y_{1i} - \mu_1))^2 \sum (Y_{2i} - \mu_2)}{\sum (Y_{1i} - \mu_1)^2} \\ &= \sum (Y_{2i} - \mu_2) \\ (\sum Y_{2i}) - n\mu_2 &= n\overline{Y}_2 - n\mu_2 \\ \overline{Y}_2 - \mu_2 &= \overline{Y}_2 - \mu_2 \\ \hat{\mu}_2 &= \overline{Y}_2
+\end{aligned} $$ 
+
+Thus the MLE for $\mu_1$ and $\mu_2$ are $$ \begin{aligned} \hat{\mu}_1 &= \overline{Y}_1 \\ \hat{\mu}_2 &= \overline{Y}_2 \end{aligned} $$ 
+
+Now if the derivative for $\frac{\partial \log L}{\partial \sigma_1} = 0$, and with the above results, then
+
+TO-DO
+
+Similarly, if the derivative for $\frac{\partial \log L}{\partial \sigma_2} = 0$, and with the above results, then 
+
+TO-DO
+
+The MLE for $\sigma_1$ and $\sigma_2$ are $$ \begin{aligned} \hat{\sigma}_1 &= \sqrt{\frac{\sum (Y_{1i} - \overline{Y}_1)^2}{n}} \\ \hat{\sigma}_2 &= \sqrt{ \frac{ \sum (Y_{2i} - \overline{Y}_2)^2}{n}} \end{aligned} $$ 
+
+If the derivative for $\frac{\partial \log L}{\partial \rho_{12}} = 0$, then
+
+TO-DO
+
+The MLE for $\rho_{12}$ is $$ \hat{\rho}_{12} = \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{ (\sum (Y_{1i} - \overline{Y}_1)^2)^{\frac{1}{2}}(\sum (Y_{2i} - \overline{Y}_2)^2)^{\frac{1}{2}}} $$ 
+
+
 
 (b) Using the results in part (a), obtain the maximum likelihood estimators of the parameters of the conditional probability distribution of $Y_1$ for any value of $Y_2$ in (2.80).
 
-Answer: 
+Answer: In (2.80), the following is given, $$ \begin{aligned} 
+\alpha_{1|2} &= \mu_1 - \mu_2\rho_{12}\frac{\sigma_1}{\sigma_2} \\ 
+\beta_{12} &= \rho_{12} \frac{\sigma_1}{2} \\ 
+\sigma^2_{1|2} &= \sigma^2_1(1 - \rho^2_{12}) \end{aligned} $$ 
+
+Using the results from above, the MLEs are subsituted to form the following: 
+$$ \begin{aligned} 
+\hat{\alpha}_{1|2} &= \hat{\mu}_1 - \hat{\mu}_2\hat{\rho}_{12}\frac{\hat{\sigma}_1}{\hat{\sigma}_2} \\ 
+&= \hat{Y}_1 - \hat{Y}_2\left( \frac{ \sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{\left( \sum (Y_{1i} - \overline{Y}_1)^2\right)^\frac{1}{2}}\right) \left( \frac{\sqrt{ \frac{1}{n} \sum (Y_{1i} - \overline{Y}_1})^2}{\sqrt{ \frac{1}{n} \sum (Y_{2i} - \overline{Y}_2})^2}\right) \\
+&= \overline{Y}_1 - \overline{Y}_2 \left( \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{\sum (Y_{2i} - \overline{Y}_2)^2}\right) \\
+\hat{\beta}_{12} &= \hat{\rho}_{12} \frac{\hat{\sigma}_1}{\hat{\sigma}_2} \\ 
+&= \left( \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{(\sum (Y_{1i} - \overline{Y}_1)^2)^{\frac{1}{2}}(\sum (Y_{2i} - \overline{Y}_2)^2)^{\frac{1}{2}}}\right) \left( \frac{\sqrt{ \frac{1}{n} \sum (Y_{1i} - \overline{Y}_1)^2}}{\sqrt{\frac{1}{n} \sum (Y_{2i} - \overline{Y}_2)^2}}\right) \\ &= \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{\sum (Y_{2i} - \overline{Y}_2)^2} \\ 
+\hat{\sigma}^2_{1|2} &= \hat{\sigma}^2_1(1 - \hat{\rho}^2_{12}) \\ 
+&= \frac{\sum (Y_{1i} - \overline{Y}_1)^2}{n} \left( 1 - \frac{(\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2))^2}{\sum (Y_{1i} - \overline{Y}_1)^2 \sum(Y_{2i} - \overline{Y}_2)^2}\right) \\ 
+&= \frac{\sum (Y_{1i} - \overline{Y}_1)^2}{n} - \frac{(\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2))^2}{n \sum (Y_{2i} - \overline{Y}_2)^2} \end{aligned} $$ 
 
 (c) Show that the maximum likelihood estimators of $\alpha_{1|2}$ and $\beta_{12}$ obtained in part (b) are the same as the least squares estimators for the regression coefficients in the simple linear regression model. 
 
-Answer: 
+Answer: Let $X_i = Y_{2i}$ and $Y_i = Y_{1i}$. Then
+$$ \begin{aligned} 
+\hat{\alpha}_{1|2} &= \overline{Y}_1 - \overline{Y}_2 \left( \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{\sum (Y_{2i} - \overline{Y}_2)^2}\right) \\ &= \overline{Y} - \overline{X}\left(\frac{\sum (Y_i - \overline{Y})(X_i - \overline{X})}{\sum (X_i - \overline{X})^2} \right) \\
+\hat{\beta}_{12} &= \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{\sum (Y_{2i} - \overline{Y}_2)^2} \\ &= \frac{\sum (Y_i - \overline{Y})(X_i - \overline{X})}{\sum (X_i - \overline{X})^2} \end{aligned} $$ 
 
+These results are the same as the least squares estimators, $\hat{\beta}_0$ and $\hat{\beta}_1$, for the regression coefficients in the simple linear regression model. 
 
 ### Problem 60: 
 Show that test statistic (2.17) and (2.87) are equivalent.
 
-Answer: 
+Answer: The test statistic in (2.17) is $$ t^* = \frac{b_1}{\text{s}[b_1]}$$ and the test statistic in (2.87) is $$ t^* = \frac{r_{12}\sqrt{n-2}}{\sqrt{1-r^2_{12}}} $$ 
 
+Note the following properties: $$ \begin{aligned} b_1 &= \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sum (X_i - \overline{X})^2} \\ \text{SSR} &= b_1^2 \sum (X_i - \overline{X})^2 \end{aligned} $$ 
+
+Begin with the equation for SSTO. 
+$$ \begin{aligned} 
+\text{SSTO} &= \text{SSR} + \text{SSE} \\ \text{SSE} &= \text{SSTO} - \text{SSR} \\ &= \sum (Y_i - \overline{Y})^2 - b_1^2 \sum (X_i - \overline{X})^2 \\ &= \sum (Y_i - \overline{Y})^2 - \left(\frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sum (X_i - \overline{X})^2}\right)^2 \sum (X_i - \overline{X})^2 \\ &= \sum (Y_i - \overline{Y})^2 - \frac{\left( \sum (X_i - \overline{X})(Y_i - \overline{Y})\right)^2}{\sum (X_i - \overline{X})^2}
+\end{aligned} $$ 
+
+To break this apart, note that $$ \begin{aligned} s_x^2 &= \frac{\sum (X_i - \overline{X})^2}{n-1} &\to \sum (X_i - \overline{X})^2 &= (n-1)s_x^2 \\ s_y^2 &= \frac{\sum (Y_i - \overline{Y})^2}{n-1} &\to \sum (Y_i - \overline{Y})^2 &= (n-1)s_y^2 \end{aligned} $$ 
+
+Now, if $X = Y_{i1}$ and $Y = Y_{i2}$, then $$ r_{12} = \frac{ \sum (X - \overline{X})(Y - \overline{Y})}{\left( \sum (X - \overline{X})^2 \sum (Y - \overline{Y})^2\right)^\frac{1}{2}} $$ 
+and if
+$$ b_1 = r_{12}\frac{s_y}{s_x} = r_{12}\left( \frac{\sum (Y_i - \overline{Y})^2}{\sum (X_i - \overline{X})^2}\right)^\frac{1}{2} $$ 
+
+Then $$ \begin{aligned} 
+\text{SSE} &= \sum (Y_i - \overline{Y})^2 - \frac{\left( \sum (X_i - \overline{X})(Y_i - \overline{Y})\right)^2}{\sum (X_i - \overline{X})^2} \\ &= \sum (Y_i - \overline{Y})^2 - \left(\frac{ \sum (X - \overline{X})(Y - \overline{Y})}{\left( \sum (X - \overline{X})^2 \sum (Y - \overline{Y})^2\right)^\frac{1}{2}}\right)^2 \cdot \sum (Y_i - \overline{Y})^2 \\ &= (n-1)s_y^2 - r^2_{12}(n-1)s_y^2 \\ &= (n-1)s_y^2(1 - r^2_{12}) 
+\end{aligned} $$ 
+
+Use this result in the standard deviation of $b_1$.
+$$ \begin{aligned} \text{s}^2[b_1] &= \frac{\text{MSE}}{\sum (X_i - \overline{X})^2} \\ &= \frac{\frac{\text{SSE}}{n-2}}{\sum (X_i - \overline{X})^2} \\ &= \frac{\frac{(n-1)s_y^2(1 - r^2_{12}) }{n-2}}{\sum (X_i - \overline{X})^2} \\ &=  \frac{\frac{(n-1)s_y^2(1 - r^2_{12}) }{n-2}}{(n-1)s_x^2} \\ &= \frac{(n-1)s_y^2(1-r^2_{12})}{(n-1)(n-2)s_x^2} \\ &= \frac{1-r^2_{12}}{n-2}\frac{s_y^2}{s_x^2} \end{aligned} $$ 
+
+Thus
+$$ \begin{aligned} \frac{b_1}{\text{s}[b_1]} &= r_{12}\frac{s_y}{s_x} \cdot \frac{s_x\sqrt{n-2}}{s_y\sqrt{1-r^2_{12}}} \\ &= \frac{r_{12}\sqrt{n-2}}{\sqrt{1-r^2_{12}}} \\ &= t^*
+\end{aligned} $$ 
 
 ### Problem 61: 
-Show that the ratio $ \frac{\text{SSR}}{\text{SSTO}}$ is the same whether $Y_1$ is regressed on $Y_2$ or $Y_2$ is regressed on $Y_1$. [Hint: Use (1.10a) and (2.51).]
+Show that the ratio $\frac{\text{SSR}}{\text{SSTO}}$ is the same whether $Y_1$ is regressed on $Y_2$ or $Y_2$ is regressed on $Y_1$. [Hint: Use (1.10a) and (2.51).]
 
-Answer: 
+Answer: If $Y_1$ is regressed on $Y_2$, then $$ \begin{aligned} \frac{\text{SSR}(Y_1)}{\text{SSTO}} &= \frac{ \left(\frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i}-\overline{Y}_2)}{\sum (Y_{1i} - \overline{Y}_1)^2}\right)^2 \left( \sum (Y_{1i} - \overline{Y}_1)^2\right)}{\sum (Y_{2i} - \overline{Y}_2)^2} \\ &= \frac{\left(\sum (Y_{1i} - \overline{Y}_1)(Y_{2i}-\overline{Y}_2)\right)^2}{\sum (Y_{1i} - \overline{Y}_1)^2 \sum (Y_{2i} - \overline{Y}_2)^2} \end{aligned} $$ 
+Similarly, $$ \begin{aligned} \frac{\text{SSR}(Y_2)}{\text{SSTO}} &= \frac{\left(\frac{\sum (Y_{2i} - \overline{Y}_2)(Y_{1i} - \overline{Y}_1)}{\sum (Y_{2i} - \overline{Y}_2)}\right)^2 \left(\sum (Y_{2i} - \overline{Y}_2)\right)^2}{\sum (Y_{1i} - \overline{Y}_1)^2} \\ &= \frac{\left(\sum (Y_{2i} - \overline{Y}_2)(Y_{1i} - \overline{Y}_1)\right)^2}{\sum (Y_{1i} - \overline{Y}_1)^2 \sum (Y_{2i} - \overline{Y}_2)^2} \end{aligned} $$ These two quantites are equal in nature where the term in the numerator is swapped in both equations. 
 
 
 ### Problem 62: 
@@ -1836,7 +1956,7 @@ for(i in 1:ncol(cdi_new)){
   r2 = R2_manual(SSR(data), SSTO(data))
   r2_list = c(r2_list, as.numeric(substr(r2, 1, nchar(r2)-1)))
 }
-colnames(cdi_new)[[which.max(r2_list)]]
+data.frame("var" = colnames(cdi_new), "r2" = r2_list) %>% arrange(desc(r2))
 ```
 
 The variable for number of hospital beds results in the largest reduction in the variability in the number of active physicians.
@@ -1855,11 +1975,14 @@ upper = c()
 
 for(i in 1:4){
   cdi_temp = cdi_geo %>% filter(geographic_region == i)  %>% 
-    mutate(x = perc_bach, y = per_capita_income)
-  lower = c(lower, b1_conf_interval(cdi_temp, alpha = .1)[1])
-  beta0 = c(beta0, lm.fit_manual(cdi_temp$x, cdi_temp$y)[2])
-  beta1 = c(beta1, lm.fit_manual(cdi_temp$x, cdi_temp$y)[2])
-  upper = c(upper, b1_conf_interval(cdi_temp, alpha = .1)[2])
+    select(x = perc_bach, y = per_capita_income)
+  model = lm.fit_manual(cdi_temp$x, cdi_temp$y)
+  conf_int = b1_conf_interval(cdi_temp, alpha = .1)
+  
+  beta0 = c(beta0, model[1])
+  beta1 = c(beta1, model[2])
+  lower = c(lower, conf_int[1])
+  upper = c(upper, conf_int[2])
 }
 
 coefs = data.frame(geographic_region = 1:4, lower, beta0, beta1, upper)
@@ -1870,21 +1993,83 @@ The regression lines for the different regions appear to have different slopes.
 ```{r}
 cdi %>% ggplot(aes(x = perc_bach, y = per_capita_income, color = geographic_region)) + 
   geom_point() + 
-  geom_abline(data = coefs, slope = beta1[1], intercept = beta0[1])
-
-
+  scale_color_manual(values = wes_palette("IsleofDogs1", 4)) + 
+  facet_grid(~ geographic_region) + 
+  geom_abline(data = coefs, aes(slope = beta1, intercept = beta0), linetype = "dashed") + 
+  labs(x = "% of People with a Bachelors Degree",
+       y = "Per Capita Income", 
+       title = "Predicting Per Capita Income using Education") + 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
 ```
 
 ### Problem 64: 
-Refer to the *SENIC* data set in Appendix C.1 and Project 1.45. Using $R^2$ as the criterion, which predictor variable accounts for the largest reduction in the variability of the average lenfth of stay? 
+Refer to the *SENIC* data set in Appendix C.1 and Project 1.45. Using $R^2$ as the criterion, which predictor variable accounts for the largest reduction in the variability of the average length of stay? 
 
 Answer: 
+```{r}
+senic_cols = c('ID', 'length_stay', 'age', 'infection_risk', 'culturing_ratio',
+               'chest_xray_ratio', 'num_beds', 'med_school_aff', 'region', 
+               'avg_daily_census', 'num_nurses', 'available_facilities')
+senic_colclasses = c(rep('numeric', 6), rep('factor', 2), rep('numeric', 3))
+senic = read.csv('APPENC01.txt', sep = '', header = FALSE, 
+                  col.names = senic_cols, 
+                  colClasses = senic_colclasses) %>% select(-ID)
+senic_new = senic %>% select(-length_stay)
+r2_list = c()
+for(i in 1:ncol(senic_new)){
+  data = data.frame(cbind(x = senic_new[[i]], y = senic$length_stay))
+  model = lm.fit_manual(data$x, data$y)
+  preds = model[1] + model[2]*data$x
+  r2 = R2_manual(SSR(data), SSTO(data))
+  r2_list = c(r2_list, as.numeric(substr(r2, 1, nchar(r2)-1)))
+}
+data.frame("var" = colnames(senic_new), "r2" = r2_list) %>% arrange(desc(r2))
 
+```
+
+The predictor variable that accounts for the largest reduction in the variability of the average length of stay is infection rate.
 
 ### Problem 65: 
 Refer to the *SENIC* data set in Appendix C.1 and Project 1.46. Obtain a separate interval estimate of $\beta_1$ for each region. Use a $95$ percent confidence coefficient in each case. Do the regression lines for the different regions appear to have similar slopes? 
 
 Answer: 
+```{r}
+senic_geo = senic %>% select(infection_risk, length_stay, region)
+lower = c()
+beta0 = c()
+beta1 = c()
+upper = c()
+
+for(i in 1:4){
+  senic_temp = senic_geo %>% filter(region == i)  %>% 
+    select(x = infection_risk, y = length_stay)
+  model = lm.fit_manual(senic_temp$x, senic_temp$y)
+  conf_int = b1_conf_interval(senic_temp, alpha = .1)
+  
+  beta0 = c(beta0, model[1])
+  beta1 = c(beta1, model[2])
+  lower = c(lower, conf_int[1])
+  upper = c(upper, conf_int[2])
+}
+
+coefs = data.frame(region = 1:4, lower, beta0, beta1, upper)
+coefs
+```
+
+The regression lines for the different regions do not have similar slopes. 
+```{r}
+senic %>% ggplot(aes(x = infection_risk, y = length_stay, color = factor(region))) + 
+  geom_point() + 
+  scale_color_manual(values = wes_palette("IsleofDogs1", 4), name = "Region") + 
+  facet_grid(~ region) + 
+  geom_abline(data = coefs, aes(slope = beta1, intercept = beta0), linetype = "dashed") + 
+  labs(x = "Infection Risk",
+       y = "Length of Stay", 
+       title = "Predicting Length of Stay in Hospital using Infection Risk") + 
+  theme_minimal() + 
+  theme(legend.position = "bottom")
+```
 
 
 ### Problem 66: 
@@ -1893,18 +2078,78 @@ Five observations on $Y$ are to be taken when $X=4$, $8$, $12$, $16$ and $20$ re
 (a) Generate five normal random numbers, with mean $0$ and variance $25$. Consider these random numbers as the error terms for the five $Y$ observations at $X=4$, $8$, $12$, $16$ and $20$ and calculate $Y_1$, $Y_2$, $Y_3$, $Y_4$ and $Y_5$. Obtain the least squares estimates $b_0$ and $b_1$ when fitting a straight line to the five cases. Also calculate $\hat{Y}_h$ when $X_h = 10$ and obtain a $95$ percent confidence interval for $E[Y_h]$ when $X_h = 10$.
 
 Answer: 
+```{r}
+set.seed(2020)
+X = seq(4, 20, by = 4)
+error = rnorm(5, mean = 0, sd = sqrt(25))
+Y = 20 + (4*X) + error
+```
+
+The least squares estimators $b_0$ and $b_1$, respectively, are
+```{r}
+model = lm.fit_manual(X, Y)
+model
+```
+
+$\hat{Y}_h$ when $X_h = 10$ is
+```{r}
+model[1] + model[2]*10
+```
+
+The $95\%$ confidence interval for $\text{E}[Y_h]$ when $X_h = 10$ is
+```{r}
+Yhat_conf_interval(data.frame(x=X, y=Y), Xhat = 10, alpha = .05)
+```
 
 (b) Repeat part (a) $200$ times, generating random numbers each time.
 
-Answer: 
+Answer: For the next part of this question, retain the $b_0$ and $b_1$ estimates as well as the $95\%$ confidence bounds for $\text{E}[Y_h]$ when $X_h=10$.
+```{r}
+b0 = c()
+b1 = c()
+cb_lower = c()
+cb_upper = c()
+n = 200
+for(i in 1:n){
+  X = seq(4, 20, by = 4)
+  error = rnorm(5, mean = 0, sd = sqrt(25))
+  Y = 20 + (4*X) + error
+  model = lm.fit_manual(X, Y)
+  b0 = c(b0, model[1])
+  b1 = c(b1, model[2])
+  Yhat_conf_int = Yhat_conf_interval(data.frame(x=X, y=Y), Xhat = 10, alpha = .05)
+  cb_lower = c(cb_lower, Yhat_conf_int[1])
+  cb_upper = c(cb_upper, Yhat_conf_int[2])
+}
+```
 
 (c) Make a frequency distribution of the $200$ estimates $b_1$. Calculate the mean and standard deviation of the $200$ estimates $b_1$. Are the results consistent with theoretical expectations? 
 
-Answer: 
+Answer: The frequency distribution of the $200$ estimates of $b_1$ is as seen below.
+```{r}
+ggplot(data.frame(x=b1), aes(x=x)) + 
+  geom_histogram(bins = 25, color = "black", fill = "darkgreen") + 
+  labs(x = "b1 estimate", y = "count", title = "Frequency Distribution of b1 Estimates") + 
+  theme_minimal()
+```
+
+The mean and standard deviations of the $b_1$ estimates, respectively, are
+```{r}
+mean(b1)
+sd(b1)
+```
+
+The mean estimate is consistent with the given value of $\beta_1$. The standard deviation is close to the standar deviation of the error terms. 
 
 (d) What proportion of the $200$ confidence intervals for $E[Y_h]$ when $X_h=10$ include $E[Y_h]$? Is this result consistent with theoretical expectations? 
 
-Answer: 
+Answer: When $X_h = 10$, $Y_h = 60$. The proportion of confidence intervals containing $60$ is
+```{r}
+data.frame(cb_lower, cb_upper) %>% 
+  filter(cb_lower < 60 & cb_upper > 60) %>% 
+  nrow/200
+```
+The expected proportion is $.95$, which is close. 
 
 
 ### Problem 67: 
@@ -1913,11 +2158,40 @@ Refer to *Grade point average* Problem 1.19.
 (a) Plot the data, with the least squares regression line for ACT scores between $20$ and $30$ superimposed.
 
 Answer: 
+```{r}
+gpa_new = gpa %>% filter(x %in% 20:30)
+model = lm.fit_manual(gpa_new$x, gpa_new$y) 
+
+ggplot(gpa, aes(x=x,y=y)) + geom_point(color = "deepskyblue4") + 
+  geom_abline(intercept = model[1], slope = model[2], linetype = "dashed") + 
+  labs(x = "ACT Score", y = "GPA", title = "Predicting GPA using ACT Scores") + 
+  theme_minimal()
+```
 
 (b) On the plot in part (a), superimpose a plot of the $95$ percent confidence band for the true regression line for ACT scores between $20$ and $30$. Does the confidence band suggest that the true regression relation has been precisely estimated? Discuss.
 
 Answer: 
+```{r}
+lower = c()
+upper = c()
+for(i in 20:30){
+  conf_band = conf_band_reg(gpa_new, Xhat = i, alpha = .05)
+  lower = c(lower, conf_band[1])
+  upper = c(upper, conf_band[2])
+}
+conf_band_lower = data.frame(x = 20:30, y = lower)
+conf_band_upper = data.frame(x = 20:30, y = upper)
 
+ggplot(gpa, aes(x=x,y=y)) + geom_point(color = "deepskyblue4", alpha = .2) + 
+  geom_line(data = conf_band_lower, color = "firebrick2") + 
+  geom_line(data = conf_band_upper, color = "springgreen4") + 
+  geom_abline(intercept = model[1], slope = model[2], linetype = "dashed") + 
+  labs(x = "ACT Score", y = "GPA", title = "Predicting GPA using ACT Scores",
+       subtitle = "with Confidence Band for ACT Scores between 20 and 30") + 
+  theme_minimal()
+```
+
+The confidence band suggests that the true regression relation has been precisely estimated for where there is more data and less precise for where there is less data. 
 
 ### Problem 68: 
 Refer to *Copier maintenance* Problem 1.20.
@@ -1925,9 +2199,40 @@ Refer to *Copier maintenance* Problem 1.20.
 (a) Plot the data, with the least squares regression line for number of copiers serviced between $1$ and $8$ superimposed.
 
 Answer: 
+```{r}
+copier_new = copier %>% filter(x %in% 1:8)
+model = lm.fit_manual(copier_new$x, copier_new$y) 
+
+ggplot(copier, aes(x=x,y=y)) + geom_point(color = "deepskyblue4") + 
+  geom_abline(intercept = model[1], slope = model[2], linetype = "dashed") + 
+  labs(x = "Number of Copiers", y = "Service Time, in Minutes", 
+       title = "Predicting Length of Service Time using Number of Available Copiers") + 
+  theme_minimal()
+```
 
 (b) On the plot in part (a), superimpose a plot of the $90$ percent confidence band for the true regression line for number of copiers serviced between $1$ and $8$. Does the confidence band suggest that the true regression relation has been precisely estimated? Discuss.
 
 Answer: 
+```{r}
+lower = c()
+upper = c()
+for(i in 1:8){
+  conf_band = conf_band_reg(copier_new, Xhat = i, alpha = .1)
+  lower = c(lower, conf_band[1])
+  upper = c(upper, conf_band[2])
+}
+conf_band_lower = data.frame(x = 1:8, y = lower)
+conf_band_upper = data.frame(x = 1:8, y = upper)
 
+ggplot(copier, aes(x=x,y=y)) + geom_point(color = "deepskyblue4", alpha = .2) + 
+  geom_line(data = conf_band_lower, color = "firebrick2") + 
+  geom_line(data = conf_band_upper, color = "springgreen4") + 
+  geom_abline(intercept = model[1], slope = model[2], linetype = "dashed") + 
+  labs(x = "Number of Copiers", y = "Service Time, in Minutes", 
+       title = "Predicting Length of Service Time using Number of Available Copiers",
+       subtitle = "with Confidence Band for Number of Copiers between 1 and 8") + 
+  theme_minimal()
+```
+
+The confidence band suggests that the true regression relation has been precisely estimated for the entire region. 
 
