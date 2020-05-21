@@ -3,8 +3,8 @@ title: 'ALSM: Chapter 2'
 author: "Darshan Patel"
 date: "5/19/2020"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 subtitle: Inferences in Regression and Correlaion Analysis
 ---
 
@@ -1855,9 +1855,15 @@ Thus the MLE for $\mu_1$ and $\mu_2$ are $$ \begin{aligned} \hat{\mu}_1 &= \over
 
 Now if the derivative for $\frac{\partial \log L}{\partial \sigma_1} = 0$, and with the above results, then
 
+When simplified, this looks like 
+$$ \frac{\sum (Y_{1i} - \hat{\mu}_1)^2}{\hat{\sigma}_1^2} - \hat{\rho}_{12} \frac{\sum (Y_{1i} - \hat{\mu}_1)(Y_{2i} - \hat{\mu}_2)}{\hat{\sigma}_1\hat{\sigma}_2} - n(1 - \hat{\rho}_{12}^2) = 0 $$ 
+
 TO-DO
 
 Similarly, if the derivative for $\frac{\partial \log L}{\partial \sigma_2} = 0$, and with the above results, then 
+
+When simplified, this looks like 
+$$ \frac{\sum (Y_{2i} - \hat{\mu}_2)^2}{\hat{\sigma}_2^2} - \hat{\rho}_{12} \frac{\sum (Y_{1i} - \hat{\mu}_1)(Y_{2i} - \hat{\mu}_2)}{\hat{\sigma}_1\hat{\sigma}_2} - n(1 - \hat{\rho}_{12}^2) = 0 $$ 
 
 TO-DO
 
@@ -1867,8 +1873,10 @@ If the derivative for $\frac{\partial \log L}{\partial \rho_{12}} = 0$, then
 
 TO-DO
 
-The MLE for $\rho_{12}$ is $$ \hat{\rho}_{12} = \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{ (\sum (Y_{1i} - \overline{Y}_1)^2)^{\frac{1}{2}}(\sum (Y_{2i} - \overline{Y}_2)^2)^{\frac{1}{2}}} $$ 
+When simplied, this looks like 
+$$ n\hat{\rho}_{12} + (1 + \hat{\rho}^2_{12} \sum \left( \frac{Y_{1i} - \hat{\mu}_1}{\hat{\sigma}_1}\right) \left(\frac{Y_{2i} - \hat{\mu}_2}{\hat{\sigma}_2}\right) - \hat{\rho}_{12}\sum \left( \left( \frac{Y_{1i} - \hat{\mu}_1}{\hat{\sigma}_1}\right)^2 + \left(\frac{Y_{2i} - \hat{\mu}_2}{\hat{\sigma}_2}\right)^2\right) = 0$$ 
 
+The MLE for $\rho_{12}$ is $$ \hat{\rho}_{12} = \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{ (\sum (Y_{1i} - \overline{Y}_1)^2)^{\frac{1}{2}}(\sum (Y_{2i} - \overline{Y}_2)^2)^{\frac{1}{2}}} $$ 
 
 
 (b) Using the results in part (a), obtain the maximum likelihood estimators of the parameters of the conditional probability distribution of $Y_1$ for any value of $Y_2$ in (2.80).

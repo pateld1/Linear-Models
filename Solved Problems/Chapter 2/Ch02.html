@@ -1400,7 +1400,7 @@ paste(100 - as.numeric(substr(r2_muscle, 1, nchar(r2_muscle)-1)), &quot;%&quot;)
 <ol style="list-style-type: lower-alpha">
 <li>Test whether or not there is a linear association between crime rate and percentage of high school graduates, using a <span class="math inline">\(t\)</span> test with <span class="math inline">\(\alpha = .01\)</span>. State the alternatives, decision rule and conclusion. What is the <span class="math inline">\(P\)</span>-value of the test?</li>
 </ol>
-<p>Answer: Let the null hypothesis be that there is no linear association between crime rate and percentage of high school graduates. Let the alternative hypothesis be that there is a linear association between the two. Then at an <span class="math inline">\(\alphha\)</span> level of <span class="math inline">\(.01\)</span>, the <span class="math inline">\(t\)</span> test says</p>
+<p>Answer: Let the null hypothesis be that there is no linear association between crime rate and percentage of high school graduates. Let the alternative hypothesis be that there is a linear association between the two. Then at an <span class="math inline">\(\alpha\)</span> level of <span class="math inline">\(.01\)</span>, the <span class="math inline">\(t\)</span> test says</p>
 <pre class="r"><code>crime = read.csv('CH01PR28.txt', sep = '', header = FALSE, 
                   col.names = c('y', 'x'), 
                   colClasses = c('numeric', 'numeric'))
@@ -1954,12 +1954,15 @@ f(Y_1, Y_2) &amp;= \frac{1}{2\pi\sigma_1\sigma_2 \sqrt{1 - \rho^2_{12}}} \exp\le
 \end{aligned} \]</span></p>
 <p>Thus the MLE for <span class="math inline">\(\mu_1\)</span> and <span class="math inline">\(\mu_2\)</span> are <span class="math display">\[ \begin{aligned} \hat{\mu}_1 &amp;= \overline{Y}_1 \\ \hat{\mu}_2 &amp;= \overline{Y}_2 \end{aligned} \]</span></p>
 <p>Now if the derivative for <span class="math inline">\(\frac{\partial \log L}{\partial \sigma_1} = 0\)</span>, and with the above results, then</p>
+<p>When simplified, this looks like <span class="math display">\[ \frac{\sum (Y_{1i} - \hat{\mu}_1)^2}{\hat{\sigma}_1^2} - \hat{\rho}_{12} \frac{\sum (Y_{1i} - \hat{\mu}_1)(Y_{2i} - \hat{\mu}_2)}{\hat{\sigma}_1\hat{\sigma}_2} - n(1 - \hat{\rho}_{12}^2) = 0 \]</span></p>
 <p>TO-DO</p>
 <p>Similarly, if the derivative for <span class="math inline">\(\frac{\partial \log L}{\partial \sigma_2} = 0\)</span>, and with the above results, then</p>
+<p>When simplified, this looks like <span class="math display">\[ \frac{\sum (Y_{2i} - \hat{\mu}_2)^2}{\hat{\sigma}_2^2} - \hat{\rho}_{12} \frac{\sum (Y_{1i} - \hat{\mu}_1)(Y_{2i} - \hat{\mu}_2)}{\hat{\sigma}_1\hat{\sigma}_2} - n(1 - \hat{\rho}_{12}^2) = 0 \]</span></p>
 <p>TO-DO</p>
 <p>The MLE for <span class="math inline">\(\sigma_1\)</span> and <span class="math inline">\(\sigma_2\)</span> are <span class="math display">\[ \begin{aligned} \hat{\sigma}_1 &amp;= \sqrt{\frac{\sum (Y_{1i} - \overline{Y}_1)^2}{n}} \\ \hat{\sigma}_2 &amp;= \sqrt{ \frac{ \sum (Y_{2i} - \overline{Y}_2)^2}{n}} \end{aligned} \]</span></p>
 <p>If the derivative for <span class="math inline">\(\frac{\partial \log L}{\partial \rho_{12}} = 0\)</span>, then</p>
 <p>TO-DO</p>
+<p>When simplied, this looks like <span class="math display">\[ n\hat{\rho}_{12} + (1 + \hat{\rho}^2_{12} \sum \left( \frac{Y_{1i} - \hat{\mu}_1}{\hat{\sigma}_1}\right) \left(\frac{Y_{2i} - \hat{\mu}_2}{\hat{\sigma}_2}\right) - \hat{\rho}_{12}\sum \left( \left( \frac{Y_{1i} - \hat{\mu}_1}{\hat{\sigma}_1}\right)^2 + \left(\frac{Y_{2i} - \hat{\mu}_2}{\hat{\sigma}_2}\right)^2\right) = 0\]</span></p>
 <p>The MLE for <span class="math inline">\(\rho_{12}\)</span> is <span class="math display">\[ \hat{\rho}_{12} = \frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i} - \overline{Y}_2)}{ (\sum (Y_{1i} - \overline{Y}_1)^2)^{\frac{1}{2}}(\sum (Y_{2i} - \overline{Y}_2)^2)^{\frac{1}{2}}} \]</span></p>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>Using the results in part (a), obtain the maximum likelihood estimators of the parameters of the conditional probability distribution of <span class="math inline">\(Y_1\)</span> for any value of <span class="math inline">\(Y_2\)</span> in (2.80).</li>
@@ -2004,7 +2007,7 @@ f(Y_1, Y_2) &amp;= \frac{1}{2\pi\sigma_1\sigma_2 \sqrt{1 - \rho^2_{12}}} \exp\le
 </div>
 <div id="problem-61" class="section level3">
 <h3>Problem 61:</h3>
-<p>Show that the ratio $ $ is the same whether <span class="math inline">\(Y_1\)</span> is regressed on <span class="math inline">\(Y_2\)</span> or <span class="math inline">\(Y_2\)</span> is regressed on <span class="math inline">\(Y_1\)</span>. [Hint: Use (1.10a) and (2.51).]</p>
+<p>Show that the ratio <span class="math inline">\(\frac{\text{SSR}}{\text{SSTO}}\)</span> is the same whether <span class="math inline">\(Y_1\)</span> is regressed on <span class="math inline">\(Y_2\)</span> or <span class="math inline">\(Y_2\)</span> is regressed on <span class="math inline">\(Y_1\)</span>. [Hint: Use (1.10a) and (2.51).]</p>
 <p>Answer: If <span class="math inline">\(Y_1\)</span> is regressed on <span class="math inline">\(Y_2\)</span>, then <span class="math display">\[ \begin{aligned} \frac{\text{SSR}(Y_1)}{\text{SSTO}} &amp;= \frac{ \left(\frac{\sum (Y_{1i} - \overline{Y}_1)(Y_{2i}-\overline{Y}_2)}{\sum (Y_{1i} - \overline{Y}_1)^2}\right)^2 \left( \sum (Y_{1i} - \overline{Y}_1)^2\right)}{\sum (Y_{2i} - \overline{Y}_2)^2} \\ &amp;= \frac{\left(\sum (Y_{1i} - \overline{Y}_1)(Y_{2i}-\overline{Y}_2)\right)^2}{\sum (Y_{1i} - \overline{Y}_1)^2 \sum (Y_{2i} - \overline{Y}_2)^2} \end{aligned} \]</span> Similarly, <span class="math display">\[ \begin{aligned} \frac{\text{SSR}(Y_2)}{\text{SSTO}} &amp;= \frac{\left(\frac{\sum (Y_{2i} - \overline{Y}_2)(Y_{1i} - \overline{Y}_1)}{\sum (Y_{2i} - \overline{Y}_2)}\right)^2 \left(\sum (Y_{2i} - \overline{Y}_2)\right)^2}{\sum (Y_{1i} - \overline{Y}_1)^2} \\ &amp;= \frac{\left(\sum (Y_{2i} - \overline{Y}_2)(Y_{1i} - \overline{Y}_1)\right)^2}{\sum (Y_{1i} - \overline{Y}_1)^2 \sum (Y_{2i} - \overline{Y}_2)^2} \end{aligned} \]</span> These two quantites are equal in nature where the term in the numerator is swapped in both equations.</p>
 </div>
 <div id="problem-62" class="section level3">
