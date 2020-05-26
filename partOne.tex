@@ -304,7 +304,7 @@ $$ s^2[\text{pred}] = \text{MSE}\left[1 + \frac{1}{n} + \frac{(X_h - \Xbar)^2}{\
 \item The confidence coefficient for the prediction limits refers to the taking of repeated samples based on the same set of $X$ values, and calculating prediction limits for $Y_{h(\text{new})}$ for each sample
 \item Prediction limits apply for a single prediction based on the sample data
 \item Prediction intervals resemble confidence intervals but differ conceptually; a confidence interval represents an inference on a parameter and is an interval that is intended to cover the value of the parameter; a prediction interval is a statement about the value to be taken by a random variable, the new observation $Y_{h(\text{new})}$
-\item Suppose the mean of $m$ new observations on $Y$ for a given level of the predictor variable is to be predicted, then the mean of the new $Y$ observations to be predicted is denoted $\overline{Y}_{h(\text{new})}$ and the appropriate $1-\alpha$ prediction limits are, assuming that the new $Y$ observations are independent: $$ \hat{Y}_h \pm \tdist{1 - \frac{\alpha}{2}}{n-2}s[\text{predmean}] $$ where $$ s^2[\text{predmean}] = \frac{\text{MSE}}{m} + s^2[\hat{Y}_h] $$ or equivalently $$ s^2[\text{predmean}] = \text{MSE}\left[ \frac{1}{m} + \frac{1}{n}. + \frac{(X_h - \Xbar)^2}{\sum (X_i - \Xbar)^2}\right] $$ Note that the variance $s^2[\text{predmean}]$ has two components: (1) the variance of the mean of $m$ observations from the probability distribution of $Y$ at $X=X_h$ and (2) the variance of the sampling distribution of $\hat{Y}_h$ 
+\item Suppose the mean of $m$ new observations on $Y$ for a given level of the predictor variable is to be predicted, then the mean of the new $Y$ observations to be predicted is denoted $\bar{Y}_{h(\text{new})}$ and the appropriate $1-\alpha$ prediction limits are, assuming that the new $Y$ observations are independent: $$ \hat{Y}_h \pm \tdist{1 - \frac{\alpha}{2}}{n-2}s[\text{predmean}] $$ where $$ s^2[\text{predmean}] = \frac{\text{MSE}}{m} + s^2[\hat{Y}_h] $$ or equivalently $$ s^2[\text{predmean}] = \text{MSE}\left[ \frac{1}{m} + \frac{1}{n}. + \frac{(X_h - \Xbar)^2}{\sum (X_i - \Xbar)^2}\right] $$ Note that the variance $s^2[\text{predmean}]$ has two components: (1) the variance of the mean of $m$ observations from the probability distribution of $Y$ at $X=X_h$ and (2) the variance of the sampling distribution of $\hat{Y}_h$ 
 \item The prediction limits for predicting $m$ new observations on $Y$ are narrower than those for predicting for a single new observation on $Y$ because it involve a prediction of the mean response for $m$ new observations
 \end{itemize}
 
@@ -479,8 +479,8 @@ $\rho^2_{12}$ measures how much smaller relatively is the variability in the con
 \item Confidence limits for $\rho^2_{12}$ can be obtained by squaring the respective confidence limits for $\rho_{12}$, provided the latter limits do not differ in sign
 \item When the joint distribution of two random variables $Y_1$ and $Y_2$ differs considerably from the bivariate normal distribution, transformations of the variables $Y_1$ and $Y_2$ may be sought to make the joint distribution of the transformed variables approximately bivariate normal
 \item When no appropriate transformations can be found, a nonparametric rank correlation procedure may be useful for making inferences about the association between $Y_1$ and $Y_2$
-\item The Spearman rank correlation coefficient is calculated as follows: first the observations on $Y_1$ are expressed in ranks from $1$ to $n$ and denoted by $R_{i1}$; similarly, the observations on $Y_2$ are ranked, denoted by $R_{i2}$; the Spearman rank correlation coefficient, $r_s$ , is then defined as the ordinary Pearson product-moment correlation coefficient based on the rank data: $$ r_s = \frac{\sum (R_{i1} - \overline{R}_1)(R_{i2} - \overline{R}_2)}{[\sum (R_{i1} - \overline{R}_1)^2 \sum (R_{i2} - \overline{R}_2)^2]^{\frac{1}{2}}} $$ Here $\overline{R}_1$ is the mean of the ranks $R_{i1}$ and $\overline{R}_2$ is the mean of the ranks $R_{i2}$
-\item Note that $$ \overline{R}_1 = \overline{R}_2 = \frac{n+1}{2} $$ since the ranks are the integers $1,\dots,n$
+\item The Spearman rank correlation coefficient is calculated as follows: first the observations on $Y_1$ are expressed in ranks from $1$ to $n$ and denoted by $R_{i1}$; similarly, the observations on $Y_2$ are ranked, denoted by $R_{i2}$; the Spearman rank correlation coefficient, $r_s$ , is then defined as the ordinary Pearson product-moment correlation coefficient based on the rank data: $$ r_s = \frac{\sum (R_{i1} - \bar{R}_1)(R_{i2} - \bar{R}_2)}{[\sum (R_{i1} - \bar{R}_1)^2 \sum (R_{i2} - \bar{R}_2)^2]^{\frac{1}{2}}} $$ Here $\bar{R}_1$ is the mean of the ranks $R_{i1}$ and $\bar{R}_2$ is the mean of the ranks $R_{i2}$
+\item Note that $$ \bar{R}_1 = \bar{R}_2 = \frac{n+1}{2} $$ since the ranks are the integers $1,\dots,n$
 \item The Spearman rank correlation coefficient takes on values between $-1$ and $1$ inclusive: $-1 \leq r_s \leq 1$; the coefficient $r_s$ equals $1$ when the ranks for $Y_1$ are identical to those for $Y_2$; in that case, there is perfect association between the ranks for the two variables; the coefficient $r_s$ equals $-1$ when the case with rank $1$ for $Y_1$ has rank $n$ for $Y_2$, the case with rank $2$ for $Y_1$ has rank $n-1$ for $Y_2$ and so on; here, there is perfect inverse association between the ranks for the two variables; when there is little, if any, association between the ranks of $Y_1$ and $Y_2$, the Spearman rank correlation coefficient tends to have a value near zero
 \item The Spearman rank correlation coefficient can be used the test the alternatives: \begin{itemize} 
 \item $H_0$: There is no association between $Y_1$ and $Y_2$ 
@@ -496,26 +496,248 @@ an upper-tail (power-tail) one-sided test is conducted
 
 \section{Diagnostics and Remedial Measures}
 \subsection{Diagnostics for Predictor Variable}
+\begin{itemize} 
+\item Diagnostic information about the predictor variable tell if there are any outlying $X$ values that could influence the appropriateness of the fitted regression function 
+\item A dot plot is helpful when the number of observations in the data set is not large 
+\item A sequence plot is useful when the data is obtained in a sequence, such as over time or for adjacent geographic areas 
+\item A stem and leaf plot provides information similar to a frequency histogram but by displaying last digits explicitly 
+\item A box plot shows the minimum, maximum, first quartile, third quartile and the median of the data set; this visualization is particularly helpful when there are many observations in the data set 
+\end{itemize} 
 
 \subsection{Residuals}
+\begin{itemize}
+\item Direct diagnostic plots for the response variable $Y$ are ordinarily not too useful in regression analysis because the values of the observations on the response variable are a function of the level of the predictor variable 
+\item The residual $e_i$ is the difference between the observed value $Y_i$ and the fitted value $\hat{Y}_i$ $$ e_i = Y_i - \hat{Y}_i$$ The residual may be regarded as the observed error, in distinction to the unknown true error $\eps_i$ in the regression model $$ \eps_i = Y_i - \expe{Y_i} $$ 
+\item If the model is appropriate for the data at hand, the observed residuals $e_i$ should then reflect the properties assumed for the $\eps_i$
+\item The mean of the $n$ residuals $e_i$ for the simple linear regression model is $$ \bar{e} = \frac{\sum e_i}{n} = 0 $$ where $\bar{e}$ denotes the mean of the residuals; since $\bar{e}$ is always $0$, it provides no information as to whether the true errors $\eps_i$ have expected value $\expe{\eps_i} = 0$ 
+\item The variance of the $n$ residuals $e_i$ for the simple linear regression model is $$ s^2 = \frac{\sum (e_i - \bar{e})^2}{n-2} = \frac{\sum e_i^2}{n-2} = \frac{\text{SSE}}{n-2} = \text{MSE} $$ If the model is appropriate, the MSE is an unbiased estimator of the variance of the error terms $\sigma^2$ 
+\item The residuals for the regression model are subjected to two constraints: the sum of the $e_i$ must be $0$ and the products $X_ie_i$ must sum to $0$
+\item When the sample size is large in comparison to the number of parameters in the regression model, the dependency effect among the residuals $e_i$ is relatively unimportant and can be ignored for most purposes
+\item It is helpful to consider the standardization of the residuals for residual analysis as it can identify outlying observations 
+\item The semistudentized residual is defined as follows: $$ e_i^* = \frac{e_i - \bar{e}}{\sqrt{\text{MSE}}} = \frac{e_i}{\sqrt{\text{MSE}}} $$ 
+\item The following can be noted as departures from the simple linear regression model \begin{itemize} 
+\item The regression function is not linear 
+\item The error terms do not have constant variance
+\item The error terms are not independent 
+\item The model fits all but one or a few outlier observations 
+\item The error terms are not normally distributed 
+\item One or several important predictor variables have been omitted from the model \end{itemize} 
+\end{itemize} 
 
 \subsection{Diagnostics for Residuals}
+\begin{itemize}
+\item The following plots of residuals (or semistudentized residuals) can be utilized to diagnose any departures from the simple linear regression model \begin{itemize} 
+\item Plot of residuals against predictor variable
+\item Plot of absolute or squared residuals against predictor variable 
+\item Plot of residuals against fitted values 
+\item Plot of residuals against time or other sequence 
+\item Plots of residuals against omitted predictor variables 
+\item Box plot of residuals 
+\item Normal probability plot of residuals \end{itemize} 
+\item Whether a linear regression function is appropriate for the data being analyzed can be studied from a residual plot against the predictor variable, or equivalently, from a residual plot against the fitted values 
+\item Nonlinearity of the regression function can also be studied from a scatter plot, but this plot is not always as effective as a residual plot 
+\item In general, the residual plot is to be preferred over the scatter plot due to its advantages \begin{itemize} 
+\item The residual plot can be used for examining other facets of the aptness of the model 
+\item When the scaling of the scatter plot places $Y_i$ observations close to the fitted values $\hat{Y}_i$, it becomes difficult to study the appropriateness of a linear regression function from the scatter plot \end{itemize} 
+\item Note: A plot of residuals against the fitted values $\hat{Y}$ provides equivalent information as a plot of residuals against $X$ for the simple linear regression model because the fitted values $\hat{Y}_i$ are a linear function of the values $X_i$ for the predictor variable and thus, only the $X$ scale values, not the basic pattern of the plotted points, are affected by whether the residual plot is against the $X_i$ or the $\hat{Y}_i$  
+\item Plots of the residuals against the predictor variable or against the fitted values are not only helpful to study whether a linear regression function is appropriate but also to examine whether the variance of the error terms is constant 
+\item Plots of the absolute values of the residuals or of the squared residuals against the predictor variable $X$ or against the fitted values $\hat{Y}$ are also useful for diagnosing nonconstancy of the error variance since the signs of the residuals are not meaningful for examining the constancy of the error variance
+\item These plots are especially useful when there are not many cases in the data set because plotting of either the absolute or squared residuals places all of the information on changing magnitudes of the residuals above the horizontal zero line so that one can more readily see whether the magnitude of the residuals (irrespective of sign) is changing with the level of $X$ or $\hat{Y}$
+\item Residual outliers can be identified from residual plots against $X$ or $\hat{Y}$, as well as from box plots, stem and leaf plots and dot plots of the residuals 
+\item Plotting of semistudentized residuals is helpful for distinguishing outlying observations, since it then becomes easy to identify residuals that lie many standard deviations away from zero
+\item A rough rule of thumb when the number of cases is large is to consider semistudentized residuals with absolute value of four or more to be outliers
+\item Outliers can create great difficulty - a major reason for discarding it is that under the least squares method, a fitted line may be pulled disproportionately toward an outlying observation because the sum of the squared deviations is minimized, causing a misleading fit if indeed the outlying observation resulted from a mistake or other extraneous cause 
+\item When a linear regression model is fitted to a data set with a small number of cases and an outlier is present, the fitted regression can be so distorted by the outlier that the residual plot may improperly suggest a lack of fit for the linear regression model, in addition to flagging the model 
+\item Whenever data are obtained in a time sequence or some other type of sequence, it is a good idea to prepare a sequence plot of the residuals to see if there is any correlation between error terms that are near each other in the sequence 
+\item When the error terms are independent, the residuals in a sequence plot are to be expected to fluctuate in a more or less random pattern around the base line $0$; lack of randomness can take the form of too much or too little alternation of points around the zero line 
+\item Small departures from normality do not create any serious problems; major departures should be of concern, such as the normality of the error terms 
+\item A box plot of the residuals is helpful for obtaining summary information about the symmetry of the residuals and about possible outliers; a histogram, dot plot or stem and leaf plot of the residuals can also be useful for detecting gross departures from normality 
+\item When the number of cases is reasonably large, it can be useful to compare actual frequencies of the residuals against expected frequencies under normality 
+\item A normal probability plot of the residuals can also shed some information about the normality of error terms; here each residual is plotted against its expected value under normality; a plot that is nearly linear suggests agreement with normality, whereas a plot that departs substantially from linearity suggests that the error distribution is not normal \begin{itemize} 
+\item To find the expected values of the ordered residuals under normality, note that the expected value of the error terms for the regression model is zero and that the standard deviation of the error terms is estimated by $\sqrt{\text{MSE}}$ 
+\item For a normal random variable with mean $0$ and estimated standard deviation $\sqrt{\text{MSE}}$, a good approximation of the expected value of the $k$th smallest observation in a random sample of $n$ is 
+$$ \sqrt{\text{MSE}}\left( z\left(\frac{k - .375}{n + .25}\right)\right) $$ where $z(A)$ is the $(A)100$ percentile of the standard normal distribution \end{itemize} 
+\item When the distribution of the error terms departs substantially from normality: \begin{itemize} 
+\item If the error term distribution is highly skewed to the right in the normal probability plot, the plot is shaped concave-upward
+\item If the error term distribution is highly skewed to the left in the normal probability plot, the plot is shaped concave-downward 
+\item If the error term distribution is symmetrical but has heavy tails in the normal probability plot, one side is concave-upward while the other is concave-downward; here the distribution has higher probabilities in the tails than a normal distribution \end{itemize} 
+\item The analysis for model departures with respect to normality is more difficult than that for other types of departure because random variation can be particularly mischievous when studying the nature of a probability distribution unless the sample size is quite large; even worse, other types of departures can and do affect the distribution of the residuals 
+\item Residuals should also be plotted against variables omitted from the model that might have important effects on the response to determine whether there are any other key variables that could provide important additional descriptive and predictive power to the model 
+\item Note that in actuality, several types of model departures may occur together 
+\item Although graphic analysis of residuals is only an informal method of analysis, in many cases it suffices for examining the aptness of a model 
+\item Model misspecification due to either nonlinearity or the omission of important predictor variables tends to be serious, leading to biased estimates of the regression parameters and error variance 
+\item Nonconstancy of error variance tends to be less serious, leading to less efficient estimates and invalid error variance estimates 
+\item The presence of outliers can be serious for smaller data sets when their influence is large 
+\item The nonindependence of error terms results in estimators that are unbiased but whose variances are seriously biased 
+\end{itemize} 
 
 \subsection{Overview for Tests Involving Residuals}
+\begin{itemize} 
+\item A runs test is frequently used to test for lack of randomness in the residuals arranged in time order; another, specifically designed for lack of randomness in least squares residuals, is the Durbin-Watson test 
+\item When a residual plot gives the impression that the variance may be increasing or decreasing in a systematic manner related to $X$ or $\expe{Y}$, a simple test is based on the rank correlation between the absolute values of the residuals and the corresponding values of the predictor variable; two other simple tests for constancy of the error variance are the Brown-Forsythe test and the Breusch-Pagan test
+\item A simple test for identifying an outlier observation involves fitting a new regression line to the other $n-1$ observations; the suspect observation can now be regarded as a new observation; the probability that in $n$ observations, a deviation from the fitted line as great as that of the outlier will be obtained by chance can be calculated; if this probability is sufficiently small, the outlier can be rejected as not having come from the same population as the other $n-1$ observations; otherwise, the outlier is retained 
+\item Goodness of fit tests can be used for examining the normality of the error terms, such as the chi-square test or the Kolmogorov-Smirnov test and its modification, as well as the Lilliefors test; a simple test based on the normal probability plot of the residuals is also useful 
+\end{itemize} 
 
 \subsection{Correlation Test for Normality}
+\begin{itemize}
+\item A formal test for normality of the error terms can be conducted by calculating the coefficient of correlation between the residuals $e_i$ and their expected values under normality 
+\item A high value of the correlation coefficient is indicative of normality 
+\item If the observed coefficient of correlation is at least as large as the tabled value of the expected value for a given $\alpha$ level, one can conclude that the error terms are reasonably normally distributed 
+\item The correlation test for normality shown here is simpler than the Shapiro-Wilk test, which can be viewed as being based approximately also on the coefficient of correlation between the ordered residuals and their expected values under normality 
+\end{itemize} 
 
 \subsection{Tests for Constancy of Error Variance}
+\begin{itemize}
+\item The Brown-Forsythe test and the Breusch-Pagan test can both be used to ascertain whether the error terms have constant variance
+\item Brown-Forsythe Test \begin{itemize} 
+\item The Brown-Forsythe test does not depend on normality of the error terms and is thus robust against serious departures from normality, in the sense that the nominal significance level remains approximately correct when the error terms have equal variances even if the distribution of the error terms is far from normal
+\item The Brown-Forsythe test is applicable to simple linear regression when the variance of the error terms either increases or decreases with $X$; the sample size needs to be large enough so that the dependencies among the residuals can be ignored 
+\item The test is based on the variability of the residuals; the larger the error variance, the larger the variability of the residuals will tend to be 
+\item To conduct the Brown-Forsythe test, divide the data set into two groups, according to the level of $X$, so that one group consists of cases where the $X$ level is comparatively low and the other group consists of cases where the $X$ level is comparatively high
+\item If the error variance is either increasing or decreasing with $X$, the residuals in one group will tend to be more variable than those in the other group; equivalently, the absolute deviations of the residuals around their group mean will tend to be larger for one group than for the other group
+\item The Brown-Forsythe test consists simply of the two-sample $t$ test based on the test statistic to determine whether the mean of the absolute deviations of the residuals around the median for one group differs significantly from the mean absolute deviations os the residuals around the median of the other group 
+\item Let $e_{i1}$ denote the $i$th residual for group $1$ and $e_{i2}$ the $i$th residual for group $2$ and let $n_1$ and $n_2$ denote the sample sizes of the two groups such that $n = n_1 + n_2$
+\item Let $\bar{e}_1$ and $\bar{e}_2$ be the medians of the residuals in the two groups; the Brown-Forsythe test uses the absolute deviations of the residuals around their group median, to be denoted by $d_{i1}$ and $d_{i2}$: $$ d_{i1} = \abs{e_{i1} - \bar{e}_1} ~~~~~ d_{i2} = \abs{e_{i2} - \bar{e}_2} $$ 
+\item The two-sample $t$ test statistic is $$ t^*_{BF} = \frac{\bar{d}_1 - \bar{d}_2}{s\sqrt{\frac{1}{n_1} + \frac{1}{n_2}}} $$ where $\bar{d}_1$ and $\bar{d}_2$ are the sample means of the $d_{i1}$ and $d_{i2}$ respectively and the pooled variance $s^2$ is $$ s^2 = \frac{\sum (d_{1i} - \bar{d}_1)^2 + \sum (d_{i2} - \bar{d}_2)^2}{n-2} $$ 
+\item If the error terms have constant variance and $n_1$ and $n_2$ are sufficiently large, $t^*_{BF}$ follows the $t_{n-2}$ distribution; large absolute values of $t^*_{BF}$ indicates that the error terms do not have constant variance 
+\item If the data set contains many cases, the two-sample $t$ test for constancy of error variance can be conducted after dividing the cases into three or four groups, according to the level of $X$, and using the two extreme groups 
+\item A robust test for constancy of the error variance is desirable because nonnormality and lack of constant variance go hand in hand 
+\end{itemize} 
+\item Breutch-Pagan Test \begin{itemize} 
+\item The Breutch-Pagan test, a large sample test, assumes that the error terms are independent and normally distributed and that the variance of the error terms $\eps_i$, denoted by $\sigma^2_i$, is related to the level of $X$ such that $$ \log_e \sigma_i^2 = \gamma_0 + \gamma_1X_i $$ This implies that $\sigma^2_i$ either increases or decreases with the level of $X$, depending on the sign of $\gamma_1$ 
+\item Constancy of error variance corresponds to $\gamma_1 = 0$ 
+\item The test of $H_0: \gamma_1 = 0$ vs $H_A: \gamma_1 \neq 0$ is carried out by means of regressing the squared residuals $e_i^2$ against $X_i$ in the usual manner and obtaining the regression sum of squares, $\text{SSR}^*$
+\item The test statistic $\chidist{BP}$ is as follows: $$ \chidist{BP} = \frac{\text{SSR}^*}{2} / \left( \frac{\text{SSE}}{n}\right)^2 $$ where $\text{SSR}^*$ is the regression sum of squares when regressing $e^2$ on $X$ and SSE is the error sum of squares when regressing $Y$ on $X$ 
+\item If $H_0: \gamma_1 = 0$ holds and $n$ is reasonably large, $\chi^2_{BP}$ follows the $\chidist{1}$ distribution 
+\item Large values of of $\chidist{BP}$ lead to the conclusion $H_A$, that the error variance is not constant
+\item The Breusch-Pagan test can be modified to allow for different relationships between the error variance and the level of $X$ 
+\item The test statistic was developed independently by Cook and Weisberg and the test is sometimes referred to as the Cook-Weisberg test
+\end{itemize} 
+\end{itemize} 
 
 \subsection{$F$ Test for Lack of Fit}
+\begin{itemize} 
+\item The $F$ test for lack of fit is for ascertaining whether a linear regression function is a good fit for the data
+\item The lack of fit test assumes that the observations $Y$ for given $X$ are (1) independent and (2) normally distributed, and that (3) the distributions of $Y$ have the same variance $\sigma^2$ 
+\item The lack of fit test requires repeat observations at one or more $X$ levels
+\item Repeat trials for the same level of the predictor variable are called replications and the resulting observations are called replicates
+\item The different $X$ levels in a study, whether or not replicated observations are present, are denoted as $X_1, \dots, X_c$; the number of replicates for the $j$th level of $X$ is denoted as $n_j$ and therefore the total number of observations $n$ is $$ n = \sum_{j=1}^c n_j $$ 
+The observed value of the response variable for the $i$th replicate for the $j$th level of $X$ is denoted by $Y_{ij}$, where $i=1,\dots,n_j$ and $j=1,\dots,c$
+\item The general linear test approach begins with the specification of the full model, making the same assumptions as the simple linear regression model except for assuming a linear regression function, the subject of the test $$ Y_{ij} = \mu_i + \eps_{ij} $$ where $\mu_j$ are parameters $j=1,\dots,c$ and $\eps_{ij}$ are independent $N(0,\sigma^2)$ 
+\item Since the error terms have expectation zero, it follows that $ \expe{Y_{ij}} = \mu_j$ and so the parameter $\mu_j$ is the mean response when $X=X_j$ 
+\item Note that the full model here makes no restrictions on the mean $\mu_j$, whereas in the regression model, the mean responses are linear related to $X$ (i.e., $\expe{Y} = \beta_0 + \beta_1X$)
+\item To fit the full model to the data, the least squares or maximum likelihood estimators for the parameters $\mu_j$ is needed, which is simply the sample means $\bar{Y}_j$ 
+\item The estimated expected value for observation $Y_{ij}$ is $\bar{Y}_j$ and the error sum of squares for the full model therefore is $$ \text{SSE}(F) = \sum_j \sum_i (Y_{ij} - \bar{Y}_j)^2 = \text{SSPE} $$ This is called the pure error sum of squares, or SSPE
+\item Note that SSPE is made up of the sums of squared deviations at each $X$ level; at level $X=X_j$, this sum of squared deviations is $\sum_i (Y_{ij} - \bar{Y}_j)^2$ 
+\item Note that any $X$ level with no replications make no contribution to SSPE because $\bar{Y}_j = Y_{1j}$
+\item The degrees of freedom associated with SSPE is the sum of the component degrees of freedom: $$ df_F = \sum_j (n_j - 1) = \sum_j n_j - c = n-c $$ 
+\item The general linear test approach also requires consideration of the reduced model under $H_0$; the alternatives are 
+$$ \begin{aligned} H_0 &: \expe{Y} = \beta_0 + \beta_1X \\ H_A &: \expe{Y} \neq \beta_0 + \beta_1X \end{aligned} $$ and so $H_0$ postulates that $\mu_j$ in the full model is linear related to $X_j$: $\mu_j = \beta_0 + \beta_1X_j$ 
+\item The reduced model under $H_0$ is $$ Y_{ij} = \beta_0 + \beta_1X_j + \eps_{ij} $$ 
+\item The error sum of squares for the reduced model is the usual error sum of squares SSE $$ \text{SSE}(R) = \sum \sum (Y_{ij} - (b_0 + b_1X_j)^2) = \sum \sum (Y_{ij} - \hat{Y}_{ij})^2 = \text{SSE} $$ 
+\item The degrees of freedom associated with SSE(R) is $$ df_R = n-2 $$ 
+\item The general linear test statistic here is $$ F^* = \frac{\text{SSE}(R) - \text{SSE}(F)}{df_R - df_F} / \frac{\text{SSE}(F)}{df_F} = \frac{\text{SSE} - \text{SSPE}}{(n-2) - (n-c)} / \frac{\text{SSPE}}{n-c} $$ 
+\item The difference between the two error sums of squares is called the lack of fit sum of squares and is denoted by SSLF $$ \text{SSLF} = \text{SSE} - \text{SSPE} $$
+\item The test statistic can then be expressed as $$ F^* = \frac{\text{SSLF}}{c-2} / \frac{\text{SSPE}}{n-c} = \frac{\text{MSLF}}{\text{MSPE}} $$ where MSLF denotes the lack of fit mean square and MSPE denotes the pure error mean square
+\item Large values of $F^*$ lead to rejection of $H_0$ in the general linear test; the decision rules are as follows: $$ \begin{aligned} \text{If } F^* &\leq \Fdist{1-\alpha}{c-2, n-c}, \text{ conclude } H_0 \\ \text{If } F^* &> \Fdist{1-\alpha}{c-2, n-c}, \text{ conclude } H_A \end{aligned} $$ 
+\item The error sum of squares SSE can be decomposed as follows $$ \text{SSE} = \text{SSPE} + \text{SSLF} $$ which follows from the identity $$ \underbrace{Y_{ij} - \hat{Y}_{ij}}_{\text{error deviation}} = \underbrace{Y_{ij} - \bar{Y}_j}_{\text{pure error deviation}} + \underbrace{\var{Y}_j - \hat{Y}_{ij}}_{\text{lack of fit deviation}} $$ This identity shows that the error deviations in SSE are made up of a pure error component and a lack of fit component 
+\item When this is squared and summed over all observations, the following is achieved $$ \begin{aligned} \sum \sum (Y_{ij} - \hat{Y}_{ij})^2 &= \sum \sum (Y_{ij} - \bar{Y}_{j})^2 + \sum \sum (\bar{Y}_j - \hat{Y}_{ij})^2 \\ \text{SSE} &= \text{SSPE} + \text{SSLF} \end{aligned} $$ Thus the lack of fit sum of squares can then be defined as $$ \text{SSLF} = \sum \sum (\bar{Y}_j - \hat{Y}_{ij})^2 $$ Since all $Y_{ij}$ observations at the level $X_j$ have the same fitted value, denoted by $\hat{Y}_j$, this can be stated equivalently as $$ \text{SSLF} = \sum_j n_j (\bar{Y}_j - \hat{Y}_j)^2 $$ 
+\item If the linear regression function is appropriate, then the means $\bar{Y}_j$ will be near the fitted values $\hat{Y}_j$ calculated from the estimated linear regression function and SSLF will be small; if the linear regression function is not appropriate, the means $\bar{Y}_j$ will not be near the fitted values calculated from the estimated linear regression function and SSLF will be large 
+\item There are $c-2$ degrees of freedom associated with SSLF because there are $c$ means $\bar{Y}_j$ in the sum of squares and 2 degrees of freedom are lost in estimating the parameters $\beta_0$ and $\beta_1$ of the linear regression function to obtain the fitted values $\hat{Y}_j$ 
+\item An ANOVA table can be constructed for the decomposition of SSE 
+$$ \begin{tabular}{|c|c|c|c|} \hline 
+Source of Variation & Sum of Squares & df & Mean Squares \\ \hline 
+Regression & $\text{SSR} = \sum \sum (\hat{Y}_{ij} - \bar{Y})^2$ & $1$ & $\text{MSR} = \frac{\text{SSR}}{1}$ \\ \hline
+Error & $\text{SSE} = \sum \sum (Y_{ij} - \hat{Y}_{ij})^2$ & $n-2$ & $\text{MSE} = \frac{\text{SSE}}{n-2}$ \\ \hline
+Lack of Fit & $\text{SSLF} = \sum \sum (\bar{Y}_j - \hat{Y}_{ij})^2$ & $c-2$ & $\text{MSLF} = \frac{\text{SSLF}}{c-2}$ \\ \hline 
+Pure error & $\text{SSPE} = \sum \sum (Y_{ij} - \bar{Y}_j)^2$ & $n-c$ & $\text{MSPE} = \frac{\text{SSPE}}{n-c}$ \\ \hline 
+Total & $\text{SSTO} = \sum \sum (Y_{ij} - \bar{Y})^2$ & $n-1$ & \\ \hline \end{tabular} $$
+\item It can be shown that the mean squares MSPE and MSLF have the following expectations when testing whether the regression function is linear $$ \begin{aligned} \expe{\text{MSPE}} &= \sigma^2 \\ \expe{\text{MSLF}} &= \sigma^2 + \frac{\sum n_j(\mu_j - (\beta_0 + \beta_1X_j))^2}{c-2} \end{aligned} $$ 
+\item The terminology ``error sum of squares" and ``error mean square" is not precise when the regression function under test in $H_0$ is not the true function since the error sum of squares and error mean square then reflect the effects of both the lack of fit and the variability of the error terms 
+\item Note that when concluding $H_0$, or that $\beta_1 = 0$, it is to say that there is no linear association between $X$ and $Y$, not ``no relation" between the two variables 
+\item The general linear test approach can be used to test the appropriateness of other regression functions; only the degrees of freedom for SSLF needs be be modified; in general, $c-p$ degrees of freedom are associated with SSLF, where $p$ is the number of parameters in the regression function 
+\item The alternative $H_A$ in the test hypotheses includes all regression functions other a linear one
+\item When concluding that the employed model in $H_0$ is appropriate, the usual practice is to use the error mean square MSE as an estimator of $\sigma^2$ in preference to the pure error mean square MSPE, since the former contains more degrees of freedom
+\item Observations at the same level of $X$ are genuine repeats only if they involve independent trials with respect to the error term
+\item When no replications are present in a data set, an approximate test of lack of fit can be conducted if there are some cases at adjacent $X$ levels for which the mean responses are quite close to each other; such adjacent cases are grouped together and treated as pseudoreplicates, and the test for lack of fit is then carried out using these groupings of adjacent cases
+\end{itemize} 
 
 \subsection{Overview of Remedial Measures}
+\begin{itemize}
+\item If the simple linear regression model is not appropriate for a data set, there are two basic choices: \begin{itemize} 
+\item Abandon the regression model and develop and use a more appropriate model - may lead to more complex procedures for estimating the parameters 
+\item Employ some transformation on the data so that the regression model is appropriate for the transformed data - can lead to relatively simple methods of estimation and may involve fewer parameters than a complex model \end{itemize} 
+\item When the regression function is not linear, a direct approach is to modify the regression model by altering the nature of the regression function such as by using a quadratic or exponential regression function 
+\item When the error variance is not constant but varies in a systematic fashion, a direct approach is to modify the model to allow this and use the method of weighed least squares to obtain the estimators of the parameters; transformations can also be effective in stabilizing the variance 
+\item When the error terms are correlated, a direct remedial measure is to work with a model that calls for correlated error terms; a simple remedial transformation that is often helpful is to work with first differences 
+\item Lack of normality and nonconstant error variance frequently go hand in hand; it is often the case that the same transformation that helps stabilize the variance is also helpful in approximately normalizing the error terms 
+\item When residual analysis indicates that an important predictor variable has been omitted from the model, the solution is to modify the model to include that predictor variable 
+\item When outlying observations are present, use of the least squares and maximum likelihood estimators for the regression model may lead to serious distortions in the estimated regression function; when the outlying observations should not be discarded, it may be desirable to use an estimation procedure that places less emphasis on such outlying observations
+\end{itemize} 
 
 \subsection{Transformations}
+\begin{itemize} 
+\item When the distribution of the error terms is reasonably close to a normal distribution and the error terms have approximately constant variance, transformations on $X$ should attempted because a transformation on $Y$  may materially change the shape of the distribution of the error terms from the normal distribution and may also lead to substantially differing error term variances 
+\item When the error variance is constant and the regression pattern is \begin{itemize} 
+\item increasing and concave down, consider $X' = \log_{10} X$ or $X' = \sqrt{X}$
+\item increasing and concave up, consider $X' = X^2$ or $X' = \exp(X)$ 
+\item decreasing, consider $X' = 1/X$ or $X' = \exp(-X)$ \end{itemize} 
+\item If some of the $X$ data are near zero and the reciprocal transformation is desired, the origin can be shifted by using the transformation $X' = 1/(X+k)$ where $k$ is an appropriately chosen constant 
+\item Scatter plots and residuals plots based on each transformation can be prepared and analyzed to decide which transformation is most effective 
+\item Unequal error variances and nonnormality of the error terms frequently appear together and to remedy these departures from the simple linear regression model, a transformation on $Y$ is needed since the shapes and spreads of the distributions of $Y$ need to be changed, and can also help to linearize a curvilinear regression relation 
+\item When the error variance is nonconstant and its pattern is \begin{itemize} 
+\item increasing and concave down, consider $Y' = \sqrt{Y}$
+\item decreasing and concave up, consider $Y' = \log_{10} Y$
+\item increasing at constant slope, consider $Y' = 1/Y$ \end{itemize} 
+\item When $Y$ may be negative, it may be desirable to introduce a constant into a transformation of $Y$; in the case of the logarithmic transformation, shift the origin in $Y$ and make all observations positive by using $Y' = \log_{10}(Y + k)$ where $k$ is an appropriately chosen transformation
+\item Several alternative transformations of $Y$ may be tried, as well as some simultaneous transformations on $X$; scatter plots and residual plots should be prepared to determine the most effective transformation(s) 
+\item When unequal error variances are present but the regression relation is linear, a transformation on $Y$ may not be sufficient since it may be change the linear linear relationship to a curvilinear and thus a transformation on $X$ may also be required; weighted least squares is another option in this case
+\item The Box-Cox procedure can automatically identify a transformation from the family of power transformations on $Y$ which is most appropriate for correcting skewness of the distributions of error terms, unequal error variances and nonlinearity of the regression function 
+\item The family of power transformations is of the form: $$ Y' = Y^\lambda $$ where $\lambda$ is a parameter to be determined from the data
+\item The family of power transformations encompasses the following simple transformations 
+$$ \begin{tabular}{|c|c|c|c|c|} \hline 
+$\lambda = 2$ & $\lambda = .5$ & $\lambda = 0$ & $\lambda = -.5$ & $\lambda = -1.0$ \\ \hline 
+$Y' = Y^2$ & $Y' = \sqrt{Y}$ & $Y' = \log_e(Y)$ & $Y' = \frac{1}{\sqrt{Y}}$ & $Y' = \frac{1}{Y}$ \\ \hline \end{tabular} $$ 
+\item The normal error regression model with the response variable a member of the family transformations becomes $$ Y_i^\lambda = \beta_0 + \beta_1X_i + \eps_i $$ 
+\item The Box-Cox procedure uses the method of maximum likelihood to estimate $\lambda$ as well as the other parameters $\beta_0$, $\beta_1$ and $\sigma^2$; thus the Box-Cox procedure identifies $\hat{\lambda}$, the maximum likelihood estimate of $\lambda$ to use in the power transformation 
+\item A simple procedure for obtaining $\hat{\lambda}$ involves a numerical search in a range of potential $\lambda$ values; for each $\lambda$ value, the $Y_i^\lambda$ observations are first standardized so that the magnitude of the error sum of squares does not depend on the value of $\lambda$ $$ W_i = \begin{cases} K_i(Y_i^\lambda - 1) ~~~ &\lambda \neq 0 \\ K_2(\log_e(Y_i)) ~~~ &\lambda = 0 \end{cases} $$ where $$ \begin{aligned} K_2 &= \left( \prod_{i=1}^n Y_i \right)^{\frac{1}{n}} \\ K_1 &= \frac{1}{\lambda K_2^{\lambda-1}} \end{aligned} $$ 
+Note that $K_2$ is the geometric mean of the $Y_i$ observations
+\item Once the standardized observations $W_i$ have been obtained for a given $\lambda$ value, they are regressed on the predictor variable $X$ and the error sum of squares SSE is obtained; the maximum likelihood estimate $\hat{\lambda}$ is that value of $\lambda$ for which SSE is a minimum 
+\item If desired, a finer search can be conducted in the neighborhood of the $\lambda$ value that minimizes SSE but the Box-Cox procedure is only used to provide a guide for selecting a transformation, so overly precise results are not needed 
+\item At times, theoretical or a priori considerations can be utilized to help in choosing an appropriate transformation 
+\item After a transformation has been tentatively selected, residual plots and other analyses described earlier need to be employed to ascertain that the simple linear regression model is appropriate for the transformed data
+\item When transformed models are employed, the estimators $\beta_0$ and $\beta_1$ obtained by least squares have the least squares properties with respect to the transformed observations, not the original ones
+\item The maximum likelihood estimate of $\lambda$ with the Box-Cox procedure is subject to sampling variability; in addition, the error sum of squares SSE is often fairly stable in a neighborhood around the estimate and thus it is reasonable to use a nearby $\lambda$ value for which the power transformation is easy to understand 
+\item When the Box-Cox procedure leads to a $\lambda$ value near $1$, no transformation of $Y$ may be needed 
+\end{itemize} 
 
 \subsection{Exploration of Shape of Regression Function}
-
-\subsection{Case Example - Plutonium}
+\begin{itemize}
+\item Scatter plots often indicate readily the nature of the regression function; at other times, the scatter plot is complex and it becomes difficult to see the nature of the regression relationship, if any, from the plot
+\item It is helpful to explore the nature of the regression relationship by fitting a smoothed curve, or nonparametric regression curve, without any constraints on the regression function; these are useful not only for exploring regression relationships but also for confirming the nature of the regression function when the scatter plot visually suggests the nature of the regression relationship
+\item The method of moving averages uses the mean of the $Y$ observations for adjacent time periods to obtain smoothed values; special procedures are required for obtaining smoothed values at two ends of the series; the larger the successive neighborhoods used for obtaining the smoothed values, the smoother the curve will be 
+\item The method of running medians is similar to the method of moving averages, except that the median is used the average measure in order to reduce the influence of outlying observations
+\item With the method of running methods as well as with the moving average method, successive smoothing of the smoothed values and other refinements may be undertaken to provide a suitable smoothed curve
+\item When the $X$ values are not equally spaced apart, a smoothing method such as band regression can be useful; this method divides the data set into a number of groups or ``bands" consisting of adjacent cases according to their $X$ levels; for each band, the median $X$ value and the median $Y$ value are calculated and the points defined by the pairs of these median values are then connected by straight lines
+\item The lowess method, a more refined nonparametric method than band regression, obtains a smoothed curve by fitting successively linear regression functions in local neighborhoods 
+\item The name lowess stands for ``locally weighted regression scatter plot smoothing" 
+\item This method obtains the smoothed $Y$ value at a given $X$ by fitting a linear regression to the data in the neighborhood of the $X$ value and then using the fitted value at $X$ as the smoothed value 
+\item Smoothed values at each end of the $X$ range are also obtained by the lowess procedure 
+\item The lowess method uses a number of refinements in obtaining the final smoothed values to improve the smoothing and to make the procedure robust to outlying observations \begin{enumerate} 
+\item The linear regression is weighted to give cases further from the middle $X$ level in each neighborhood smaller weights 
+\item To make the procedure robust to outlying observations, the linear regression fitting is repeated, with the weights revised so that cases that had large residuals in the first fitting receive smaller weights in the second fitting
+\item To improve the robustness of the procedure further, step 2 is repeated one or more times by revising the weights according to the size of the residuals in the latest fitting \end{enumerate}
+\item To implement the lowess procedure, one must choose the size of the successive neighborhoods to be used when fitting each linear regression as well as the weight function that gives less weight to neighborhood cases with $X$ values far from each center $X$ level and another weight function that gives less weight to cases with large residuals; finally, the number of iterations to make the procedure robust must be chosen
+\item In practice, two iterations appear to be sufficient to provide robustness
+\item The weight functions suggested by Cleveland appear to be adequate for many circumstances; hence, the primary choice to be made for a particular application is the size of the successive neighborhoods
+\item  The larger the size of the successive neighborhoods, the smoother the function but the greater the danger that the smoothing will lose essential features of the regression relationship
+\item Smoothed curves are useful not only in the exploratory stages when a regression model is selected but they are also helpful in confirming the regression function chosen
+\item To confirm: the smoothed curve is plotted together with the confidence band for the fitted regression function; if the smoothed curve falls within the confidence band, there is supporting evidence of the appropriateness of the fitted regression function
+\item Note that smoothed curves, such as the lowess curve, do not provude an analytical expression for the functional form of the regression relationship; they only suggest the shape of the regression curve
+\item The lowess procedure is not restricted to fitting linear regression functions in each neighborhood; higher-degree polynomials can also be utilized with this method 
+\item Smoothed curves are also useful when examining residual plots to ascertain whether the residuals (or the absolute or squared residals) follow some relationship with $X$ or $\hat{Y}$
+\end{itemize} 
 
 
 \section{Simultaneous Inferences and Other Topics in Regression Analysis}
