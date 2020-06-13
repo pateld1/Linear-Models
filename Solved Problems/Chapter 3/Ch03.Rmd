@@ -1,7 +1,7 @@
 ---
-title: 'ALSM: Chapter 2'
+title: 'ALSM: Chapter 3'
 author: "Darshan Patel"
-date: "5/19/2020"
+date: "6/12/2020"
 output:
   html_document: default
   pdf_document: default
@@ -17,44 +17,226 @@ library(tidyverse)
 library(latex2exp)
 library(gridExtra)
 library(wesanderson)
+theme_set(theme_minimal())
 ```
 
 ### Problem 1: 
 Distinguish between (1) residual and semistudentized residual, (2) $\text{E}[\varepsilon_i] = 0$ and $\overline{e} = 0$ and (3) error term and residual. 
 
-Answer: 
+Answer: The semistudentized residual is the residual divided by an approximation of the standard deviation of the residual itself. $\overline{e} = 0$ is the declaration that the mean of the residuals calculated from the simple linear regression model is zero while $\text{E}[\varepsilon_i] = 0$ is the declaration that the true errors have an expected value of $0$. The difference between error term and residual is that the residual is meant to be the observed error between the observed value and the fitted value while the error term is is meant to be the true error error in the regression model. 
 
 ### Problem 2: 
 Prepare a prototype residual plot for each of the following cases: (1) error variance decreases with $X$; (2) true regression function is $\bigcup$ shaped, but a linear regression function is fitted.
 
 Answer: 
+```{r}
+lm.fit_manual = function(X, Y){
+  b1 = sum((X - mean(X))*(Y - mean(Y))) / (sum((X - mean(X))^2))
+  b0 = mean(Y) - b1*mean(X)
+  return(c(b0, b1))
+}
+```
+
+In this scenario, the error variance decreases with $X$: 
+```{r}
+set.seed(2020)
+x = sample(1:100, 100, replace = TRUE)
+error = rnorm(mean = x, sd = 100-x, n = 100)
+y = rexp(x) + error
+model = lm.fit_manual(x, y)
+pred = model[1] + model[2]*x
+resid = y - pred
+df = data.frame(x, y, pred, resid)
+
+plot1 = df %>% ggplot(aes(x=x, y=y)) + 
+  geom_point(size = .8) + 
+  geom_abline(intercept = model[1], slope = model[2], color = "firebrick") + 
+  labs(x = "x", y = "y", title = "Scatter Plot",
+       subtitle = "where error variance decreases with x")
+plot2 = df %>% ggplot(aes(x=x, y=resid)) + 
+  geom_point(size = .8) + 
+  geom_hline(yintercept = 0, color = "firebrick") + 
+  labs(x = "x", y = "residual", 
+       title = "Residual Plot", 
+       subtitle = "where error variance decreases with x")
+
+grid.arrange(plot1, plot2, ncol = 2)
+```
+
+In this scenario, the true regression function is $\bigcup$ shaped but a linear regression function is fitted.
+```{r}
+y = x^2
+model = lm.fit_manual(x, y)
+pred = model[1] + model[2]*x
+resid = y - pred
+df = data.frame(x, y, pred, resid)
+
+plot1 = df %>% ggplot(aes(x=x, y=y)) + 
+  geom_point(size = .8) + 
+  geom_abline(intercept = model[1], slope = model[2], color = "firebrick") + 
+  labs(x = "x", y = "y", title = "Scatter Plot",
+       subtitle = "where there is a misspecification")
+plot2 = df %>% ggplot(aes(x=x, y=resid)) + 
+  geom_point(size = .8) + 
+  geom_hline(yintercept = 0, color = "firebrick") + 
+  labs(x = "x", y = "residual", 
+       title = "Residual Plot", 
+       subtitle = "where there is a misspecification")
+
+grid.arrange(plot1, plot2, ncol = 2)
+```
+
 
 ### Problem 3: 
 Refer to Grade point average Problem 1.19.
 
 (a) Prepare a box plot for the ACT scores $X_i$. Are there any noteworthy features in this plot? 
 
-Answer: 
+Answer: The box plot is plotted below. 
+```{r}
+gpa = read.csv('CH01PR19.txt', sep = '', header = FALSE, 
+               col.names = c('y', 'x'), 
+               colClasses = c('numeric', 'numeric'))
+
+ggplot(gpa, aes(x = '', y = x)) + 
+  geom_boxplot(fill = "deepskyblue4") + 
+  labs(x = '', y = 'ACT Scores', title = "Box Plot of ACT Scores") + 
+  coord_flip()
+```
+
+The median ACT score is 25 while scores between 21 and 28 lie between the first and third quartiles. There are no outliers. 
 
 (b) Prepare a dot plot of the residuals. What information does this plot provide? 
 
-Answer: 
+Answer: The dot plot of the residuals is plotted below. 
+```{r}
+model = lm.fit_manual(gpa$x, gpa$y)
+pred = model[1] + model[2]*gpa$x
+resid = gpa$y - pred
+gpa_resids = data.frame(x = gpa$x, y = gpa$y, pred, resid)
+
+gpa_resids %>% ggplot(aes(x = x, y = resid)) + 
+  geom_point() + 
+  labs(x = "ACT Scores", y = "Residuals", 
+       title = "Dot Plot of the Residuals", subtitle = "of Regressing ACT Scores on GPA")
+```
+
+There does not seem to be a pattern in the residuals with the ACT scores.
 
 (c) Plot the residual $e_i$ against the fitted values $\hat{Y}_i$. What departures from regression model (2.1) can be studied from this plot? What are your findings? 
 
-Answer: 
+Answer: The residuals are plotted against the fitted values below. 
+```{r}
+gpa_resids %>% ggplot(aes(x = pred, y = resid)) + 
+  geom_point() + 
+  labs(x = "Yhat", y = "e_i",
+       title = "Residual Plot", subtitle = "of Regressing ACT Scores on GPA")
+```
 
-(d) Prepare a normal probability plot of the residuals. Also obtain the coefficient of correlationbetween the ordered residuals and their expected values under normality. Test the reasonableness of the normality assumption here using Table B.6 and $\alpha = 0.05$. What do you conclude? 
+The residuals are distributed randomly. A linear relationship between GPA and ACT scores is probable since there is no pattern in the distribution of the residuals. There appears to be a constant variance. 
 
-Answer: 
+
+(d) Prepare a normal probability plot of the residuals. Also obtain the coefficient of correlation between the ordered residuals and their expected values under normality. Test the reasonableness of the normality assumption here using Table B.6 and $\alpha = 0.05$. What do you conclude? 
+
+Answer: The normal probability plot is plotted below.
+```{r}
+prob_plot_table = function(df){
+  model = lm.fit_manual(df$x, df$y)
+  pred = model[1] + model[2]*df$x
+  resid = df$y - pred
+  n = nrow(df)
+  resids_df = data.frame(x = df$x, y = df$y, pred, resid)
+  
+  mse_sq_root = sqrt(sum((resids_df$y - resids_df$pred)^2) / (n - 2))
+
+  resids_df = resids_df %>% mutate("Run" = 1:nrow(resids_df),
+                                   "k" = rank(resid)) %>%
+    mutate("exp_val" = mse_sq_root * qnorm((k - .375)/(n + .25)))
+  return(resids_df)
+}
+
+prob_plot = function(df, subtitle){
+  prob_plot_table(df) %>% 
+    ggplot(aes(x = resid, y = exp_val)) + 
+    geom_point() + 
+    geom_abline(intercept = 0, slope = 1) +
+    labs(x = "Residuals", y = "Expected Value of Residuals Under Normality", 
+         title = "Normal Probablity Plot", 
+         subtitle = subtitle)
+}
+```
+
+The normal probability plot of the residuals in estimating GPA using ACT scores is shown below. 
+
+```{r}
+prob_plot(gpa, "GPA Scores")
+```
+
+The coefficent of correlation between the ordered residuals and their expected values under normality is
+```{r}
+prob_plot_table(gpa) %>% select(resid, exp_val) %>% cor()
+```
+
+There is a high correlation between the ordered and expected value of the residuals. Using Table B.6, it is found that the critical value for the coefficient of correlation between ordered residuals and expected values under normality, at $\alpha = .05$ and $n=120$, is $.9889$. Since the calculated correlation coefficient is less than the critical value, it can be stated that there is no evidence that that the error terms are reasonably normally distributed. This was also evident in the plot above where the points do not line up. 
 
 (e) Conduct the Brown-Forsythe test to determine whether or not the error variance varies with the level of $X$. Divide the data into two groups, $X < 26$, $X \geq 26$, and use $\alpha = 0.01$. State the decision rule and conclusion. Does your conclusion support your preliminary findings in part (c)? 
 
 Answer: 
+```{r}
+brown.forsythe = function(df, split, alpha){
+  df = prob_plot_table(df)
+  n = nrow(df)
+  
+  group1 = df[df$x < split,]
+  n1 = nrow(group1)
+  e1_median = median(group1$resid)
+  d1 = abs(group1$resid - e1_median)
+  d1_bar = mean(d1)
+  
+  group2 = df[df$x >= split,]
+  n2 = nrow(group2)
+  e2_median = median(group2$resi)
+  d2 = abs(group2$resid - e2_median)
+  d2_bar = mean(d2)
+  
+  s = sqrt((sum((d1 - d1_bar)^2) + sum((d2 - d2_bar)^2))/(n-2))
+  
+  t_ast = round((d1_bar - d2_bar) / (s  * sqrt((1/n1) + (1/n2))), 3)
+  t = qt(alpha, n-2)
+  
+  if(abs(t_ast) > t){
+    paste("At the alpha level of", alpha, "the test statistic is", t_ast, "and the null hypothesis is failed to be rejected. There is no sufficent evidence that the error variance is constant.", sep = ' ')
+  }
+  else{
+    paste("At the alpha level of", alpha, "the test statistic is", t_ast, "and the null hypothesis is rejected. There is evidence that the error variance is constant.", sep = ' ')
+  }
+}
+```
 
-(f) Information is given below for each student on two variables not included in the model, namely, intelligence test score ($X_2$) and high school class rank percentile ($X_3$). (Note that larger class rank percentiles indicate higher standing in the class, e.g., $1\%$ is near the bottom of the class and $99\%$ is near the top of the class.) Plot the residuals against $X_2$ and $X_3$ on separate graphs to ascentain whether the model can be improved by including either of these variables. What do you conclude? 
+Let the null hypothesis be that the error variance is constant and the alternative hypothesis that the error variance is not constant. Then
+```{r}
+brown.forsythe(gpa, 26, 0.01)
+```
+
+(f) Information is given below for each student on two variables not included in the model, namely, intelligence test score ($X_2$) and high school class rank percentile ($X_3$). (Note that larger class rank percentiles indicate higher standing in the class, e.g., $1\%$ is near the bottom of the class and $99\%$ is near the top of the class.) Plot the residuals against $X_2$ and $X_3$ on separate graphs to ascertain whether the model can be improved by including either of these variables. What do you conclude? 
 
 Answer: 
+```{r}
+gpa_fulldata = read.csv("CH03PR03.txt", sep = '', header = FALSE,
+                          col.names = c("y", "x1", "x2", "x3"), 
+                          colClasses = rep("numeric", 4))
+gpa_fulldata_resids = merge(prob_plot_table(gpa), gpa_fulldata)
+
+gpa_fulldata_resids %>% ggplot(aes(x = x2, y = resid)) + geom_point() + 
+  labs(x = "Intelligence Test Score", y = "Residuals", 
+       title = "Residuals against Intellligence Test Score")
+
+gpa_fulldata_resids %>% ggplot(aes(x = x3, y = resid)) + geom_point() + 
+  labs(x = "High School Class Rank Percentile", y = "Residuals",
+       title = "Residuals against HS Class Rank Percentile")
+```
+
+The residuals increase as intelligence test scores increase and stay relatively constant with increasing high school class rank percentile.
 
 ### Problem 4:
 Refer to Copier maintenance Problem 1.20.
