@@ -98,7 +98,8 @@ gpa = read.csv('CH01PR19.txt', sep = '', header = FALSE,
                col.names = c('y', 'x'), 
                colClasses = c('numeric', 'numeric'))
 
-ggplot(gpa, aes(x = '', y = x)) + 
+gpa %>% 
+  ggplot(aes(x = '', y = x)) + 
   geom_boxplot(fill = "deepskyblue4") + 
   labs(x = '', y = 'ACT Scores', title = "Box Plot of ACT Scores") + 
   coord_flip()
@@ -115,13 +116,14 @@ pred = model[1] + model[2]*gpa$x
 resid = gpa$y - pred
 gpa_resids = data.frame(x = gpa$x, y = gpa$y, pred, resid)
 
-gpa_resids %>% ggplot(aes(x = x, y = resid)) + 
-  geom_point() + 
-  labs(x = "ACT Scores", y = "Residuals", 
+gpa_resids %>% ggplot(aes(x = resid)) + 
+  geom_dotplot(binwidth = .1, fill = "darkseagreen", color = "black") + 
+  scale_y_continuous(breaks = NULL, name = '') + 
+  labs(x = "Residuals", 
        title = "Dot Plot of the Residuals", subtitle = "of Regressing ACT Scores on GPA")
 ```
 
-There does not seem to be a pattern in the residuals with the ACT scores.
+The residuals are skewed to the left and centered around $0$. There are two large residuals in the negatives.
 
 (c) Plot the residual $e_i$ against the fitted values $\hat{Y}_i$. What departures from regression model (2.1) can be studied from this plot? What are your findings? 
 
@@ -200,15 +202,14 @@ brown.forsythe = function(df, split, alpha){
   d2_bar = mean(d2)
   
   s = sqrt((sum((d1 - d1_bar)^2) + sum((d2 - d2_bar)^2))/(n-2))
-  
-  t_ast = round((d1_bar - d2_bar) / (s  * sqrt((1/n1) + (1/n2))), 3)
-  t = qt(alpha, n-2)
-  
-  if(abs(t_ast) > t){
-    paste("At the alpha level of", alpha, "the test statistic is", t_ast, "and the null hypothesis is failed to be rejected. There is no sufficent evidence that the error variance is constant.", sep = ' ')
+
+  t_ast = abs(round((d1_bar - d2_bar) / (s  * sqrt((1/n1) + (1/n2))), 3))
+
+  if(t_ast <  qt(1 - (alpha/2), n-2)){
+    paste("At the alpha level of", alpha, "the test statistic is", t_ast, "and the null hypothesis is failed to be rejected. There is no sufficent evidence that the error variance is nonconstant.", sep = ' ')
   }
   else{
-    paste("At the alpha level of", alpha, "the test statistic is", t_ast, "and the null hypothesis is rejected. There is evidence that the error variance is constant.", sep = ' ')
+    paste("At the alpha level of", alpha, "the test statistic is", t_ast, "and the null hypothesis is rejected. There is evidence that the error variance is nonconstant.", sep = ' ')
   }
 }
 ```
@@ -227,13 +228,15 @@ gpa_fulldata = read.csv("CH03PR03.txt", sep = '', header = FALSE,
                           colClasses = rep("numeric", 4))
 gpa_fulldata_resids = merge(prob_plot_table(gpa), gpa_fulldata)
 
-gpa_fulldata_resids %>% ggplot(aes(x = x2, y = resid)) + geom_point() + 
+plot_1 = gpa_fulldata_resids %>% ggplot(aes(x = x2, y = resid)) + geom_point() + 
   labs(x = "Intelligence Test Score", y = "Residuals", 
        title = "Residuals against Intellligence Test Score")
 
-gpa_fulldata_resids %>% ggplot(aes(x = x3, y = resid)) + geom_point() + 
+plot_2 = gpa_fulldata_resids %>% ggplot(aes(x = x3, y = resid)) + geom_point() + 
   labs(x = "High School Class Rank Percentile", y = "Residuals",
        title = "Residuals against HS Class Rank Percentile")
+
+grid.arrange(plot_1, plot_2, nrow = 2)
 ```
 
 The residuals increase as intelligence test scores increase and stay relatively constant with increasing high school class rank percentile.
@@ -245,33 +248,171 @@ Refer to Copier maintenance Problem 1.20.
 
 Answer:
 
+The dot plot for the number of copiers serviced is shown below.
+
+```{r}
+copier = read.csv('CH01PR20.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+
+copier %>% 
+  ggplot(aes(x = x)) + geom_dotplot(fill = "darkseagreen", color = "black") + 
+  scale_x_continuous(breaks = seq(0, 10, by = 2)) + 
+  scale_y_continuous(breaks = NULL, name = '') + 
+  labs(x = "Number of Copiers", y = '', title = "Dot Plot of the Number of Copiers Serviced")
+```
+
+The number of copiers serviced appears to be distributed slightly right skewed. There are no outlying cases with respect to this variable.
+
 (b) The cases are given in time order. Prepare a time plot for the number of copiers serviced. What does your plot show? 
 
 Answer: 
+
+The time plot for the number of copiers serviced is shown below. 
+
+```{r}
+copier %>% mutate(time = 1:nrow(.)) %>%
+  ggplot(aes(x=time, y = x)) + 
+  geom_point() +
+  geom_line(color = "deepskyblue2") + 
+  labs(x = "time", y = "Number of Copiers", 
+       title = "Number of Copiers Serviced", subtitle = "in time order")
+```
+
+As time increases, there does not appear to be any overall trend in the number of copiers being serviced. It is noted however that number of copiers serviced increases and decreases roughly every 3/4 measurement of time. 
 
 (c) Prepare a stem-and-leaf plot of the residuals. Are there any noteworthy features in this plot? 
 
 Answer: 
 
+The stem-and-leaf plot of the residuals is shown below.
+
+```{r}
+model = lm.fit_manual(copier$x, copier$y)
+pred = model[1] + model[2]*copier$x
+resid = copier$y - pred
+df = data.frame(copier$x, copier$y, pred, resid)
+
+stem(df$resid)
+```
+
+The residuals appear to hover around 0 and are normally distributed.
+
 (d) Prepare residual plots of $e_i$ versus $\hat{Y}_i$ and $e_i$ versus $X_i$ on separate graphs. Do these plots provide the same information? What departures from regression model (2.1) can be studied from these plots? State your findings.
 
 Answer: 
+
+The residual plots of $e_i$ versus $\hat{Y}_i$ and $e_i$ versus $X_i$ is shown below. 
+
+```{r}
+plot_1 = df %>% ggplot(aes(x = pred, y = resid)) + 
+  geom_point(color = "cadetblue") + 
+  labs(x = "prediction", y = "residual", 
+       title = "Predictions vs Residuals", 
+       subtitle = "of Number of Copiers Serviced and Service Time")
+
+plot_2 = df %>% ggplot(aes(x = copier.x, y = resid)) + 
+  geom_point(color = "cadetblue") + 
+  labs(x = "number of copiers", y = "residual", 
+       title = "Number of Copiers Serviced vs Residual")
+
+grid.arrange(plot_1, plot_2, nrow = 2)
+```
+
+These two plots provide the same information. The nonlinearity of the regression function can be studied from these plots. It is found that there is a reasonably random distribution of points, indicating that there is a linear relationship between the number of copiers serviced and service time.
 
 (e) Prepare a normal probability plot of the residuals. Also obtain the coefficient of correlation between the ordered residuals and their expected values under normality. Does the normality assumption appear to be tenable here? Use Table B.6 and $\alpha=.10$. 
 
 Answer: 
 
+The normal probability plot of the residuals is shown below.
+
+```{r}
+prob_plot(copier, "of the Residuals of Predicting Service Time by Number of Copiers Serviced")
+```
+
+The coefficent of correlation between the ordered residuals and their expected values under normality is
+```{r}
+prob_plot_table(copier) %>% select(resid, exp_val) %>% cor()
+```
+
+There is a high correlation between the ordered and expected value of the residuals. Using Table B.6, it is found that the critical value for the coefficient of correlation between ordered residuals and expected values under normality, at $\alpha = .10$ and $n=45$, is $.981$. Since the calculated correlation coefficient is greater than the critical value, it can be stated that there is evidence that that the error terms are reasonably normally distributed. This was also evident in the plot above where the points appeared to line up. 
+
 (f) Prepare a time plot of the residuals to ascertain whether the error terms are correlated over time. What is your conclusion? 
 
 Answer: 
+
+The time plot of the residuals is shown below. 
+
+```{r}
+df %>% mutate(time = 1:nrow(.)) %>% 
+  ggplot(aes(x = time, y = resid)) + 
+  geom_point() +
+  geom_line(color = "deepskyblue2") + 
+  labs(x = "time", y = "Residuals", 
+       title = "Residuals in Predictions", subtitle = "in time order")
+```
+
+There does not appear to be any correlation in error terms over time. 
 
 (g) Assume that (3.10) is applicable and conduct the Breusch-Pagan test to determine whether or not the error variance varies with the level of $X$. Use $\alpha=.05$. State the alternatives, decision rule and conclusion.
 
 Answer: 
 
+```{r}
+breusch.pagan = function(df, alpha){
+  
+  model = lm.fit_manual(df$x, df$y)
+  pred = model[1] + model[2]*df$x
+  resid = df$y - pred
+  df_new = data.frame(x = df$x, y = df$y, pred = pred, resid = resid, resid_sq = resid^2)
+  sse = sum(resid^2)
+
+  model_sq_error = lm.fit_manual(df_new$x, df_new$resid_sq)
+  pred_sq_error = model_sq_error[1] + model_sq_error[2]*df_new$x
+  ssr_ast = sum((pred_sq_error - mean(df_new$resid_sq))^2)
+
+  chi_sq_BP = round((ssr_ast/2) / ((sse/nrow(df))^2), 3)
+
+  if(chi_sq_BP < qchisq(1 - alpha, 1)){
+    paste("At the alpha level of", alpha, "the test statistic is", chi_sq_BP, "and the null hypothesis is failed to be rejected. There is no sufficent evidence that the error variance is nonconstant.", sep = ' ')
+  }
+  else{
+    paste("At the alpha level of", alpha, "the test statistic is", chi_sq_BP, "and the null hypothesis is rejected. There is evidence that the error variance is nonconstant.", sep = ' ')
+  }
+}
+```
+
+Let the null hypothesis be that the error variance is constant and the alternative hypothesis that the error variance is not constant. Then
+
+```{r}
+breusch.pagan(copier, alpha = .05)
+```
+
 (h) Information is given below on two variables not included in the regression model, namely, mean operational age of copiers serviced on the call ($X_2$, in months) and years of experience of the service person making the call ($X_3$). Plot the residuals against $X_2$ and $X_3$ on separate graphs to ascertain whether the model can be improved by including either or both of these variables. What do you conclude? 
 
 Answer: 
+
+The residuals against $X_2$ and $X_3$ are shown below. 
+
+```{r}
+copier_fulldata = read.csv('CH03PR04.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x1', 'x2', 'x3'), 
+                  colClasses = rep('numeric', 4))
+copier_fulldata_resids = merge(prob_plot_table(copier), copier_fulldata)
+
+plot_1 = copier_fulldata %>% ggplot(aes(x = x2, y = resid)) + geom_point() + 
+  labs(x = "Mean Operational Age of Copiers. in months", y = "Residuals", 
+       title = "Residuals against Mean Operational Age of Copiers")
+
+plot_2 = copier_fulldata %>% ggplot(aes(x = x3, y = resid)) + geom_point() + 
+  labs(x = "Years of Experience of the Service Person", y = "Residuals",
+       title = "Residuals against Years of Experience of the Service Person")
+
+grid.arrange(plot_1, plot_2, nrow = 2)
+```
+
+Residuals increase as the mean operational age of copiers, in months, increases, indicating that the model does not predict well for older copiers. There does not seem to be any pattern in model residuals and years of experience of the service person making the call.
 
 ### Problem 5: 
 Refer to Airfreight breakage Problem 1.21.
@@ -280,30 +421,117 @@ Refer to Airfreight breakage Problem 1.21.
 
 Answer: 
 
+The dot plot for the number of transfers is shown below.
+
+```{r}
+airfreight = read.csv('CH01PR21.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+
+airfreight %>% 
+  ggplot(aes(x = x)) + geom_dotplot(fill = "darkseagreen", color = "black") + 
+  scale_y_continuous(breaks = NULL, name = '') + 
+  labs(x = "Number of Transfers", y = '', title = "Dot Plot of the Number of Transfers")
+```
+
+The distribution of the number of transfers appears to be assymmetrical, where as the number of transfers increases, the number of such cases decreases.
+
 (b) The cases are given in time order. Prepare a time plot for the number of transfers. Is any systematic pattern evident in your plot? Discuss.
 
 Answer: 
+
+The time plot of the number of transfers is shown below.
+
+```{r}
+airfreight %>% mutate(time = 1:nrow(.)) %>% 
+  ggplot(aes(x = time, y = x)) + 
+  geom_point() +
+  geom_line(color = "deepskyblue2") + 
+  scale_x_continuous(breaks = 1:10) +
+  labs(x = "time", y = "Number of Transfers", 
+       title = "Number of Transfers", subtitle = "in time order")
+```
+
+There does not appear to be any systematic evidence of any trend in the number of transfers over time.
 
 (c) Obtain the residuals $e_i$ and prepare a stem-and-leaf plot of the residuals. What information is provided by your plot? 
 
 Answer: 
 
+The stem-and-leaf plot of the residuals is shown below.
+
+```{r}
+model = lm.fit_manual(airfreight$x, airfreight$y)
+pred = model[1] + model[2]*airfreight$x
+resid = airfreight$y - pred
+df = data.frame(x = airfreight$x, y = airfreight$y, pred, resid)
+
+stem(df$resid)
+```
+
+There are two high peaks in the residuals.
+
 (d) Plot the residuals $e_i$ against $X_i$ to ascertain whether any departures from regression model (2.1) are evident. What is your conclusion? 
 
 Answer: 
+
+The plots of the residuals $e_i$ against $X_i$ is shown below.
+
+```{r}
+df %>% ggplot(aes(x = x, y = resid)) + 
+  geom_point(color = "cadetblue") + 
+  labs(x = "number of transfers", y = "residual", 
+       title = "Number of Transfers vs Residual")
+```
+
+As the number of transfers increases, the residuals become smaller and smaller. This is a sign of nonconstant variance of the error terms.
+
 
 (e) Prepare a normal probability plot of the residuals. Also obtain the coefficient of correlation between the ordered residuals and their expected values under normality to ascertain whether the normality assumption is reasonable here. Use Table B.6 and $\alpha=.01$. What do you conclude? 
 
 Answer: 
 
+The normal probability plot of the residuals is shown below.
+
+```{r}
+prob_plot(df, "of the Residuals of Predicting Breakage using Number of Transfers")
+```
+
+The coefficent of correlation between the ordered residuals and their expected values under normality is
+```{r}
+prob_plot_table(airfreight) %>% select(resid, exp_val) %>% cor()
+```
+
+There is a high correlation between the ordered and expected value of the residuals. Using Table B.6, it is found that the critical value for the coefficient of correlation between ordered residuals and expected values under normality, at $\alpha = .01$ and $n=10$, is $.879$. Since the calculated correlation coefficient is greater than the critical value, it can be stated that there is evidence that that the error terms are reasonably normally distributed. This was also evident in the plot above where the points appeared to line up. 
+
 (f) Prepare a time plot of the residuals. What information is provided by your plot? 
 
 Answer: 
+
+The time plot of the residuals is shown below.
+
+```{r}
+df %>% mutate(time = 1:nrow(.)) %>% 
+  ggplot(aes(x = time, y = resid)) + 
+  geom_point() +
+  geom_line(color = "deepskyblue2") + 
+  labs(x = "time", y = "Residuals", 
+       title = "Residuals in Predictions", subtitle = "in time order")
+```
+
+There is no pattern in the residuals as time passes, meaning there is no correlation in the error terms over time.
 
 (g) Assume that (3.10) is applicable and conduct the Breusch-Pagan test to determine whether or not the error variance varies with the level of $X$. Use $\alpha=.10$. State the alternatives, decision rule and conclusion. Does your conclusion support your preliminary findings in part (d)? 
 
 Answer: 
 
+Let the null hypothesis be that the error variance is constant and the alternative hypothesis that the error variance is not constant. Then
+
+```{r}
+breusch.pagan(airfreight, alpha = .1)
+```
+
+This conclusion is supported by the preliminary findings in part (d).
 
 ### Problem 6: 
 Refer to Plastic hardness Problem 1.22.
@@ -312,21 +540,116 @@ Refer to Plastic hardness Problem 1.22.
 
 Answer: 
 
+The boxplot of the residuals is shown below.
+
+```{r}
+plastic = read.csv('CH01PR22.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+
+plastic_model = prob_plot_table(plastic)
+
+plastic_model %>% 
+  ggplot(aes(x = '', y = resid)) + 
+  geom_boxplot(fill = "deepskyblue4") + 
+  labs(x = '', y = 'Residual', 
+       title = "Box Plot of the Residuals of Predicting Hardness of Plastic using Time Elapsed") + 
+  coord_flip()
+```
+
+The residuals appear to be symmetrically distributed, with a median slightly above 0 
+
 (b) Plot the residuals $e_i$ against the fitted values $\hat{Y}_i$ to ascertain whether any departures from regression model (2.1) are evident. State your findings. 
 
 Answer: 
+
+The residuals $e_i$ are plotted against the fitted values $\hat{Y}_i$ below.
+```{r}
+plastic_model %>% 
+  ggplot(aes(x = pred, y = resid)) + 
+  geom_point(color = "cadetblue") + 
+  labs(x = "prediction", y = "residual", 
+       title = "Predictions vs Residuals", 
+       subtitle = "of Time Elapsed and Hardness of Plastic")
+```
+
+The residuals appear to be random yet have a downward trending slope. This could mean the variance of the error term is nonconstant.
 
 (c) Prepare a normal probability plot of the residuals. Also obtain the coefficient of correlation betwewn the ordered residuals and their expected values under normality. Does the normality assumption appear to be reasonable here? Use Table B.6 and $\alpha=.05$. 
 
 Answer: 
 
+The normal probability plot of the residuals is shown below.
+
+```{r}
+prob_plot(plastic, "of the Residuals between Time Elapsed and Hardness of Plastic")
+```
+
+The coefficent of correlation between the ordered residuals and their expected values under normality is
+```{r}
+prob_plot_table(plastic) %>% select(resid, exp_val) %>% cor()
+```
+
+There is a high correlation between the ordered and expected value of the residuals. Using Table B.6, it is found that the critical value for the coefficient of correlation between ordered residuals and expected values under normality, at $\alpha = .05$ and $n=16$, is $.941$. Since the calculated correlation coefficient is greater than the critical value, it can be stated that there is evidence that that the error terms are reasonably normally distributed. This was also evident in the plot above where the points appeared to line up. 
+
 (d) Compare the frequencies of the residuals against the expected frequencies under normality, using the $25$th, $50$th and $75$th percentiles of the relevant $t$ distribution. Is the information provided by these comparisons consistent with the findings from the normal probability plot in part (c)? 
 
 Answer: 
 
-(d) Use the Brown-Forsythe test to determine whether or not the error variance varies with the level of $X$. Divide the data into the two groups, $X \leq 24$ and $X > 24$ and use $\alpha=.05$. State the decision rule and conclusion. Does your conclusion support your preliminary findings in part (b)?
+```{r}
+expected_freq = function(df){
+  model = lm.fit_manual(df$x, df$y)
+  pred = model[1] + model[2]*df$x
+  resid = df$y - pred
+  n = nrow(df)
+  resids_df = data.frame(x = df$x, y = df$y, pred, resid)
+  
+  mse_sq_root = sqrt(sum((resids_df$y - resids_df$pred)^2) / (n - 2))
+
+  resids_df = resids_df %>% mutate("Run" = 1:nrow(resids_df),
+                                   "k" = rank(resid)) %>%
+    mutate("exp_val_25" = mse_sq_root * qt((k - .375)/(n + .25), .25),
+           "exp_val_50" = mse_sq_root * qt((k - .375)/(n + .25), .5),
+           "exp_val_75" = mse_sq_root * qt((k - .375)/(n + .25), .75))
+  return(resids_df)
+}
+
+expected_freq_table = expected_freq(plastic)
+
+plot_1 = expected_freq_table %>% 
+  ggplot(aes(x = resid, y = exp_val_25)) + 
+  geom_point() + 
+  geom_text(aes(x = 0, y = -20000, label = "25%")) + 
+  labs(x = '', 
+       y = "Expected Value of Residuals Under Normality", 
+       title = "Normal Probablity Plot using Various Expected Frequencies under Normality")
+
+plot_2 = expected_freq_table %>% 
+  ggplot(aes(x = resid, y = exp_val_50)) + 
+  geom_point() + 
+  geom_text(aes(x = 0, y = -200, label = "50%")) + 
+  labs(x = "Residuals", y = '', title = '')
+
+plot_3 = expected_freq_table %>% 
+  ggplot(aes(x = resid, y = exp_val_75)) + 
+  geom_point() + 
+  geom_text(aes(x = 0, y = -45, label = "75%")) + 
+  labs(x = '', y = '', title = '')
+
+grid.arrange(plot_1, plot_2, plot_3, nrow = 1)
+```
+
+The information provided by these comparisons is consistent with the findings from the normal probability plot in part (c). As the percentile of the releveant $t$ distribution increases, the points start to align themselves on a $y=x$ line and the scale of the expected value of the residual becomes smaller. 
+
+
+(e) Use the Brown-Forsythe test to determine whether or not the error variance varies with the level of $X$. Divide the data into the two groups, $X \leq 24$ and $X > 24$ and use $\alpha=.05$. State the decision rule and conclusion. Does your conclusion support your preliminary findings in part (b)?
 
 Answer: 
+
+Let the null hypothesis be that the error variance is constant and the alternative hypothesis that the error variance is not constant. Then
+```{r}
+brown.forsythe(plastic, 25, 0.05)
+```
 
 ### Problem 7: 
 Refer to Muscle mass Problem 1.27. 
@@ -335,22 +658,86 @@ Refer to Muscle mass Problem 1.27.
 
 Answer: 
 
+A stem-and-leaf plot of the ages is shown below.
+
+```{r}
+muscle = read.csv('CH01PR27.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+
+stem(muscle$x)
+```
+
+It appears to be that there is randomness in the ages of each age group of women. The distribution appears to be uniform with no skewness in either ends, nor is there any sense of normality.
+
 (b) Obtain the residuals $e_i$ and prepare a dot plot of the residuals. What does your plot show? 
 
 Answer: 
 
-(c) Plot the residuasl $e_i$ against $\hat{Y}_i$ and also against $X_i$ on separate graphs to ascertain whether any departures from regression model (2.1) are evident. Do the two plots provide the same information? State your conclusions. 
+The dot plot of the residuals is shown below.
+
+```{r}
+muscle_model = prob_plot_table(muscle)
+
+muscle_model %>% 
+  ggplot(aes(x = resid)) + 
+  geom_dotplot(binwidth = 2, fill = "darkseagreen", color = "black") + 
+  scale_y_continuous(breaks = NULL, name = '') + 
+  labs(x = "Residuals", 
+       title = "Dot Plot of the Residuals", subtitle = "of Regressing Muscle Mass on Age")
+```
+
+The residuals are skewed to the right due to the presence of an outlier. 
+
+(c) Plot the residuals $e_i$ against $\hat{Y}_i$ and also against $X_i$ on separate graphs to ascertain whether any departures from regression model (2.1) are evident. Do the two plots provide the same information? State your conclusions. 
 
 Answer: 
+
+The plot of the residual $e_i$ against $\hat{Y}_i$ and also against $X_i$ is shown below.
+
+```{r}
+plot_1 = muscle_model %>% ggplot(aes(x = pred, y = resid)) + 
+  geom_point(color = "cadetblue") + 
+  labs(x = "prediction", y = "residual", 
+       title = "Predictions vs Residuals", 
+       subtitle = "of Age on Muscle Mass ")
+
+plot_2 = muscle_model %>% ggplot(aes(x = x, y = resid)) + 
+  geom_point(color = "cadetblue") + 
+  labs(x = "age", y = "residual", 
+       title = "Age vs Residual")
+
+grid.arrange(plot_1, plot_2, nrow = 2)
+```
+
+These two plots are showing the same information yet reversed. This is because of the negative trend between muscle mass and age. Nonetheless, since the residuals appear to be scattered and not follow a particular pattern, the error terms should have a constant variance. Residuals are slightly larger at the end of 1 side than the other. 
 
 (d) Prepare a normal probability plot of the residuals. Also obtain the coefficient of correlation between the ordered residuals and their expected values under normality to ascertain whether the normality assumption is tenable here. Use Table B.6 and $\alpha=.10$. What do you conclude? 
 
 Answer: 
 
+The normal probability plot of the residuals is shown below.
+
+```{r}
+prob_plot(muscle, "of the Residuals between Muscle Mass and Age")
+```
+
+The coefficent of correlation between the ordered residuals and their expected values under normality is
+```{r}
+prob_plot_table(muscle) %>% select(resid, exp_val) %>% cor()
+```
+
+There is a high correlation between the ordered and expected value of the residuals. Using Table B.6, it is found that the critical value for the coefficient of correlation between ordered residuals and expected values under normality, at $\alpha = .10$ and $n=60$, is $.984$. Since the calculated correlation coefficient is greater than the critical value, it can be stated that there is evidence that that the error terms are reasonably normally distributed. This was also evident in the plot above where the points appeared to line up. 
+
 (e) Assume that (3.10) is applicable and conduct the Breusch-Pagan test to determine whether or not the error variance varies with the level of $X$. Use $\alpha=.01$. State the alternatives, decision rule and conclusion. Is your conclusion consistent with your preliminary findings in part (c)? 
 
 Answer: 
 
+Let the null hypothesis be that the error variance is constant and the alternative hypothesis that the error variance is not constant. Then
+
+```{r}
+breusch.pagan(muscle, alpha = .01)
+```
 
 ### Problem 8: 
 Refer to Crime rate Problem 1.28. 
@@ -359,28 +746,101 @@ Refer to Crime rate Problem 1.28.
 
 Answer: 
 
+The stem-and-leaf plot of the percentage of individuals in the county having at least a high school diploma is shown below.
+
+```{r}
+crime = read.csv('CH01PR28.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+
+stem(crime$x)
+```
+
+There is much higher number of percentages in the 70s and 80s range than either ends. The percentages are distributed normally. 
+
 (b) Obtain the residuals $e_i$ and prepare a box plot of the residuals. Does the distribution of the residuals appear to be symmetrical? 
 
 Answer: 
+
+The box plot of the residuals is shown below.
+
+```{r}
+crime_model = prob_plot_table(crime)
+
+crime_model %>% 
+  ggplot(aes(x = '', y = resid)) + 
+  geom_boxplot(fill = "deepskyblue4") + 
+  labs(x = '', y = 'Residual', 
+       title = "Box Plot of the Residuals of Predicting Crime Rate", 
+       subtitle = "using % of People with High School Diplomas") + 
+  coord_flip()
+```
+
+The distribution of the residuals does not appear to be symmetrical. 
 
 (c) Make a residual plot of $e_i$ against $\hat{Y}_i$. What does the plot show? 
 
 Answer: 
 
+The residual plot of $e_i$ against $\hat{Y}_i$ is shown below.
+
+```{r}
+crime_model %>% 
+  ggplot(aes(x = pred, y = resid)) + 
+  geom_point(color = "cadetblue") + 
+  labs(x = "prediction", y = "residual", 
+       title = "Predictions vs Residuals", 
+       subtitle = "of Crime Rate")
+```
+
+The residuals appear to be more varied in the middle range of predictions whereas at either ends it congregates towards $0$. 
+
 (d) Prepare a normal probability plot of the residuals. Also obtain the coefficient of correlation between the ordered residuals and their expected values under normality. Test the reasonableness of the normality using Table B.6 and $\alpha=.05$. What do you conclude? 
 
 Answer: 
 
-(e) Conduct the Brown-Forsythe test to determine whether or not the error variance varies with the level of $X$. Divide the data into two groups, $X \geq 69$ and $X > 69$ and use $\alpha=.05$. State the decision rule and conclusion. Does your conclusion support your preliminary findings in part (c)? 
+The normal probability plot of the residuals is shown below.
+
+```{r}
+prob_plot(crime, "of the Residuals in Predicting Crime Rate using % of HSD")
+```
+
+The coefficent of correlation between the ordered residuals and their expected values under normality is
+```{r}
+prob_plot_table(crime) %>% select(resid, exp_val) %>% cor()
+```
+
+There is a high correlation between the ordered and expected value of the residuals. Using Table B.6, it is found that the critical value for the coefficient of correlation between ordered residuals and expected values under normality, at $\alpha = .05$ and $n=84$, is $.985$. Since the calculated correlation coefficient is greater than the critical value, it can be stated that there is evidence that that the error terms are reasonably normally distributed. This was also evident in the plot above where the points appeared to line up. 
+
+(e) Conduct the Brown-Forsythe test to determine whether or not the error variance varies with the level of $X$. Divide the data into two groups, $X \leq 69$ and $X > 69$ and use $\alpha=.05$. State the decision rule and conclusion. Does your conclusion support your preliminary findings in part (c)? 
 
 Answer: 
 
+Let the null hypothesis be that the error variance is constant and the alternative hypothesis that the error variance is not constant. Then
+```{r}
+brown.forsythe(crime, 69, 0.05)
+```
 
 ### Problem 9:
 *Electricity consumption.* An economist studying the relation between household electricity ($Y$) and number of rooms in the home ($X$) employed linear regression model (2.1) and obtained the residuals. Plot the residuals against $X_i$. What problem appears to be present here? Might a transformation alleviate the problem? 
 
 Answer: 
 
+A plot of the residuals against $X_i$ is shown below.
+
+```{r}
+electricity = read.csv('CH03PR09.txt', sep = '', header = FALSE, 
+                  col.names = c('x', 'e'), 
+                  colClasses = c('numeric', 'numeric'))
+
+electricity %>% 
+  ggplot(aes(x = x, y = e)) + 
+  geom_point(color = "cadetblue") + 
+  labs(x = "number of rooms", y = "residual", 
+       title = "Number of Rooms vs Residual")
+```
+
+Residuals appear to become large and small in no detectable pattern. A transformation might alleviate this problem and find a viable way to correct the nonlinearity of the regression function.
 
 ### Problem 10: 
 *Per capita earnings.* A sociologist employed linear regression model (2.1) to relate per capita earnings ($Y$) to average number of years of schooling ($X$) for $12$ cities. The fitted values $\hat{Y}_i$ and the semistudentized residuals $e_i^*$ are given. 
@@ -389,10 +849,41 @@ Answer:
 
 Answer: 
 
+A plot of the semistudentized residuals against the fitted values is shown below.
+
+```{r}
+earnings = read.csv('CH03PR10.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'e'), 
+                  colClasses = c('numeric', 'numeric'))
+
+earnings %>% 
+  ggplot(aes(x = y, y = e)) + 
+  geom_point() + 
+  labs(x = "Predicted Per Capita Earning", y = "Semistudentized Residual",
+       title = "Predicted Per Capita Earning vs Semistudentized Residual")
+```
+
+There is no pattern between the predicted per capita earning and the semistudentized residuals. However there appears to be one outlier that has a residual much lower than the other predicted per capita earnings.
+
 (b) How many semistudentized residuals are outside $\pm 1$ standard deviation? Approximately how many would you expect to see if the normal error model is appropriate? 
 
 Answer: 
 
+The above plot is redrawn with two lines added indicating the area above and below $1$ standard deviation. 
+
+```{r}
+earnings %>% 
+  ggplot(aes(x = y, y = e)) + 
+  geom_point() + 
+  geom_hline(yintercept = -1, 
+             linetype = "dashed", color = "magenta4") + 
+  geom_hline(yintercept = 1,
+             linetype = "dashed", color = "magenta4") + 
+  labs(x = "Predicted Per Capita Earning", y = "Semistudentized Residual",
+       title = "Predicted Per Capita Earning vs Semistudentized Residual")
+```
+
+There appears to be $4$ semistudentized residuals outside $\pm 1$ standard deviation. If the normal error model was appropriate, then there should be $4$ semistudented residuals outside $\pm 1$ standard deviation, since $68\%$ of the values shall fall in within $1$ standard deviation of the mean. In this case, since the size of the data is $12$, $68\%$ of it is $8.16$, which is within $1$ standard deviation, and the remaining $3.84$, or $4$ falls outside.
 
 ### Problem 11: 
 *Drug concentration.* A pharmacologist employed linear regression model (2.1) to study the relation between the concentration of a drug in plasma ($Y$) and the log-dose of the drug ($X$). The residuals and log-dose levels are given.
@@ -401,27 +892,88 @@ Answer:
 
 Answer: 
 
+A plot of the residuals against the $X_i$ values is shown below.
+
+```{r}
+drug = read.csv('CH03PR11.txt', sep = '', header = FALSE, 
+                  col.names = c('x', 'e'), 
+                  colClasses = c('numeric', 'numeric'))
+
+drug %>% 
+  ggplot(aes(x = x, y = e)) + 
+  geom_point() + 
+  labs(x = "Log Dose of the Drug", y = "Residual",
+       title = "Log Dose of the Drug vs Residual")
+```
+
+As the log dose of the drug increases, the residual grows in magnitude. This shows that the error variance is not constant.
+
 (b) Assume that (3.10) is applicable and conduct the Breusch-Pagan test to determine whether or not the error variance varies with log-dose of the drug ($X$). Use $\alpha=.05$. State the alternatives, decision rule and conclusion. Does your conclusion support your preliminary findings in part (a)? 
 
 Answer: 
 
+Let the null hypothesis be that the error variance is constant and the alternative hypothesis that the error variance is not constant. Then
+
+```{r}
+breusch.pagan.error = function(df, alpha){
+  
+  df_new = data.frame(x = df$x, resid = df$e, resid_sq = (df$e)^2)
+  sse = sum(df$e^2)
+
+  model_sq_error = lm.fit_manual(df_new$x, df_new$resid_sq)
+  pred_sq_error = model_sq_error[1] + model_sq_error[2]*df_new$x
+  ssr_ast = sum((pred_sq_error - mean(df_new$resid_sq))^2)
+
+  chi_sq_BP = round((ssr_ast/2) / ((sse/nrow(df))^2), 3)
+  
+  if(chi_sq_BP < qchisq(1 - alpha, 1)){
+    paste("At the alpha level of", alpha, "the test statistic is", chi_sq_BP, "and the null hypothesis is failed to be rejected. There is no sufficent evidence that the error variance is nonconstant.", sep = ' ')
+  }
+  else{
+    paste("At the alpha level of", alpha, "the test statistic is", chi_sq_BP, "and the null hypothesis is rejected. There is evidence that the error variance is nonconstant.", sep = ' ')
+  }
+}
+
+breusch.pagan.error(drug, .05)
+```
 
 ### Problem 12:
 A student does not understand why the sum of squares defined in (3.16) is called a pure error sum of squares "since the formula looks like one for an ordinary sum of squares" Explain.
 
 Answer: 
 
+The equation given in (3.16) is 
+$$ \text{SSE}(F) = \sum_j \sum_i (Y_{ij} - \overline{Y}_{j})^2 = \text{SSPE} $$ 
+This is called the pure error sum of squares because it quantifies how much of a lack of fit in $Y_{ij}$ there is from the estimated value for $Y_{ij}$. It is different from the formula for the ordinary sum of squares because it is derived from the notion that the full model for a simple linear regression model is $$ Y_{ij} = \mu_j + \varepsilon_{ij} $$ where here there is no restrictions on the means $\mu_j$ ($E[Y_{ij}] = \mu_j$). In the regression model, the mean responses are linearly related to $X$, or $E[Y] = \beta_0 + \beta_1X$.
 
 ### Problem 13: 
 Refer to Copier maintenance Problem 1.20.
 
 (a) What are the alternative conclusions when testing for lack of fit of a linear regression function? 
 
+Answer: When testing for lack of fit of a linear regression function, the alternative conclusions are such that: the expected value of $Y$ is $\beta_0 + \beta_1X$ (or $H_0: E[Y] = \beta_0 + \beta_1X$) and the expected value of $Y$ is not $\beta_0 + \beta_1X$ (or $H_A: E[Y] \neq \beta_0 + \beta_1X$). 
+
+(b) Perform the test indicated in part (a). Control the risk of Type I error at $.05$. State the decision rule and conclusion. 
+
 Answer: 
 
-(b) Perform thetest indicated in part (a). Control the risk of Type I error at $.05$. State the decision rule and conclusion. 
+```{r}
+lack.of.fit.test = function(data, alpha = 0.05){
+  
+  X = data$x
+  Y = data$y 
+  Y_bar = mean(Y)
+  
+  coefs = lm.fit_manual(X, Y)
+  preds = coefs[1] + coefs[2]*X
+  
+  SSE_full = (Y - Y_bar)^2
+  df_full = nrow(data) 
+  
+}
+copier$x %>% unique
+```
 
-Answer: 
 
 (c) Does your test in part (b) detect other departures from regression model (2.1), such as lack of constant variance or lack of normality in the error terms? Could the results of the test of lack of fit be affected by such departures? Discuss. 
 
