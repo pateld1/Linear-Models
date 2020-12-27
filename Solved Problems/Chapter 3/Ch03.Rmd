@@ -3,8 +3,8 @@ title: 'ALSM: Chapter 3'
 author: "Darshan Patel"
 date: "6/12/2020"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 subtitle: Diagnostics and Remedial Measures
 ---
 
@@ -17,6 +17,7 @@ library(tidyverse)
 library(latex2exp)
 library(gridExtra)
 library(wesanderson)
+library(broom)
 theme_set(theme_minimal())
 ```
 
@@ -962,22 +963,42 @@ lack.of.fit.test = function(data, alpha = 0.05){
   
   X = data$x
   Y = data$y 
-  Y_bar = mean(Y)
+  Y_bars = data.frame(x = sort(unique(X)))
+  mean_vec = c()
+  for(i in Y_bars$x){
+    temp_mean = mean(data[data$x == i, "y"])
+    mean_vec = c(mean_vec, temp_mean)
+  }
+  Y_bars$ybars = mean_vec
+  SSPE= 0
+  for(i in Y_bars$x){
+    temp_Y = data[data$x == i, "y"]
+    SSPE = SSPE + sum((temp_Y - Y_bars[Y_bars$x == i, "ybars"])^2)
+  }
+  df_F = nrow(data) - length(unique(X))
   
-  coefs = lm.fit_manual(X, Y)
-  preds = coefs[1] + coefs[2]*X
+  model = lm.fit_manual(X, Y)
+  Ypreds = model[1] + model[2]*X
+  SSE_R = sum((Ypreds - Y)^2)
+  df_R = nrow(data) - 2
   
-  SSE_full = (Y - Y_bar)^2
-  df_full = nrow(data) 
-  
+  F_ast = round(((SSE_R - SSPE) / (df_R - df_F))/(SSPE / df_F), 3)
+
+  if(F_ast < qf(1 - alpha, length(unique(X)) - 2, nrow(data) - length(unique(X)))){
+    paste("At the alpha level of", alpha, "the test statistic is", F_ast, "and the null hypothesis is failed to be rejected. There is no sufficent evidence that the regression function is linear.", sep = ' ')
+  }
+  else{
+    paste("At the alpha level of", alpha, "the test statistic is", F_ast, "and the null hypothesis is rejected. There is evidence that the regression function is not linear.", sep = ' ')
+  }
 }
-copier$x %>% unique
+
+lack.of.fit.test(copier, 0.05)
 ```
 
 
 (c) Does your test in part (b) detect other departures from regression model (2.1), such as lack of constant variance or lack of normality in the error terms? Could the results of the test of lack of fit be affected by such departures? Discuss. 
 
-Answer: 
+Answer: The lack of fit test decomposes the error sum of squares SSE as follows $$ SSE = SSPE + SSLF $$ where SSE is the error deviation, SSPE is the pure error deviation and SSLF is the lack of fit deviation. This reveals that the error deviations in SSE depend on the lack of fit deviation. Hence if there is non-constant variance or lack of normality in the error terms, it will be shown in the lack of fit component of the SSE. 
 
 
 ### Problem 14: 
@@ -985,15 +1006,20 @@ Refer to Plastic hardness Problem 1.22.
 
 (a) Perform the $F$ test to determine whether or not there is lack of fit of a linear regression function; use $\alpha=.01$. State the alternatives, decision rule and conclusion.
 
-Answer: 
+Answer: Let the null hypothesis be that there exists a linear regression function associating hardness of plastic and the time elapsed. Let the alternative hypothesis be that there does not exist such a linear regression function. Then
+
+```{r}
+lack.of.fit.test(plastic, 0.01)
+```
+
 
 (b) Is there any advantage of having an equal number of replications at each of the $X$ levels? Is there any disadvantage? 
 
-Answer: 
+Answer: There is no advantage of having an equal number of replications at each of the $X$ levels.
 
 (c) Does the test in part (a) indicate what regression function is appropriate when it leads to the conclusion that the regression function is not linear? How would you proceed? 
 
-Answer: 
+Answer: When the lack of fit test concludes that the regression function is not linear, it does not indicate which family of regression function is the true representation. To do so, studying the residuals can help to identify an appropriate family of functions.
 
 
 ### Problem 15: 
@@ -1002,14 +1028,28 @@ Answer:
 (a) Fit a linear regression function.
 
 Answer: 
+```{r}
+solutions = read.csv('CH03PR15.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+model = round(lm.fit_manual(solutions$x, solutions$y), 3)
+
+paste("The coefficients of the linear regression function are b0 = ", model[1],
+      " and b1 = ", model[2], ".", sep = '')
+```
+
 
 (b) Perform the $F$ test to determine whether or not there is lack of fit of a linear regression function; use $\alpha=.025$. State the alternatives, decision rule and conclusion.
 
-Answer: 
+Answer: The null hypothesis is that there exists a linear regression function relating the concentration of a solution to time. The alternative hypothesis is that there is no such linear function. Then
+```{r}
+lack.of.fit.test(solutions, 0.025)
+```
+
 
 (c) Does the test in part (b) indicate what regression function is appropriate when it leads to the conclusion that lack of fit of a linear regression function exists? Explain.
 
-Answer: 
+Answer: The lack of best fit test does not indicate what regression function is appropriate when it leads to the conclusion that lack of fit of a linear regression function exists. It only tells that a linear relationship cannot be established.
 
 
 ### Problem 16: 
@@ -1018,26 +1058,117 @@ Refer to Solution concentration Problem 3.15.
 (a) Prepare a scatter plot of the data. What transformation of $Y$ might you try, using the prototype patterns in Figure 3.15 to achieve constant variance and linearity? 
 
 Answer: 
+```{r}
+plastic %>% 
+  ggplot(aes(x,y)) + 
+  geom_point() + 
+  labs(x = "time", y = "concentration", 
+       title = "Concentration of Solution at Various Times")
+```
 
-(b) Use the Box-Cos procedure and standardization (3.36) to find an appropriate power transformation. Evaluate SSE for $\lambda = -.2, -.1, 0, .1, .2$. What transformation of $Y$ is suggested? 
+To achieve constant variance and linearity, a $\log_{10}$ transformation on $Y$ might be useful.
+
+(b) Use the Box-Cox procedure and standardization (3.36) to find an appropriate power transformation. Evaluate SSE for $\lambda = -.2, -.1, 0, .1, .2$. What transformation of $Y$ is suggested? 
 
 Answer: 
+```{r}
+box.cox = function(x, y, lambda){
+  
+  sse = c()
+  for(i in lambda){
+    if(i != 0){
+      y_prime = y^i
+    }
+    else{
+      y_prime = log(y)
+    }
+    
+    k2 = (prod(y))^(1/length(y))
+    k1 = 1/(i*k2^(i-1))
+    
+    if(i != 0){
+      W = k1*(y_prime - 1)
+    }
+    else{
+      W = k2*y_prime
+    }
+    
+    model = lm.fit_manual(x, W)
+    preds = model[1] + model[2]*x
+    
+    sse_temp = sum((W - preds)^2)
+    sse = c(sse, sse_temp)
+  }
+  df = data.frame(lambda = lambda, sse = sse)
+  lambda_min_sse = df[df$sse == min(df$sse), "lambda"]
+  if(lambda_min_sse == 0){
+    print("Using the Box-Cox procedure and strandardization, the most appropriate power transformation on Y is a natural log transformation.")
+  }
+  else{
+    paste("Using the Box-Cox procedure and standardizarion, the most appropriate power transformation on Y is Y to the power of ", lambda_min_sse, '.', sep = '')
+  }
+  
+}
 
-(c) Use the transformation $Y' = \log_{10} Y$ and obtain the estimated linear regression funcion for the transformed data.
+box.cox(solutions$x, solutions$y, seq(-.2, .2, length = 5))
+```
+
+
+(c) Use the transformation $Y' = \log_{10} Y$ and obtain the estimated linear regression function for the transformed data.
 
 Answer: 
+```{r}
+Y_prime = log10(solutions$y)
+model = round(lm.fit_manual(solutions$x, Y_prime), 3)
+paste("b0:", model[1], ", b1:", model[2], sep = ' ')
+```
+
 
 (d) Plot the estimated regression line and the transformed data. Does the regression line appear to be a good fit to the transformed data? 
 
 Answer: 
+```{r}
+solutions_transformed = data.frame(x = solutions$x, 
+                                   y = log10(solutions$y), 
+                                   y_original = solutions$y,
+                                   y_pred = model[1] + model[2]*solutions$x,
+                                   resids = model[1] + (model[2]*solutions$x) - log10(solutions$y))
+
+solutions_transformed %>% 
+  ggplot(aes(x, y)) + 
+  geom_point() + 
+  geom_abline(intercept = model[1], slope = model[2]) + 
+  labs(x = "time", 
+       y = "log10(concentration)", 
+       title = "Regressing on Log10(concentration)")
+```
+
+The regression line appears to be a good fit to the transformed data.
 
 (e) Obtain the residuals and plot them against the fitted values. Also prepare a normal probability plot. What do your plots show? 
 
 Answer: 
+```{r}
+plot_1 = solutions_transformed %>% 
+  ggplot(aes(x = y, y = resids)) + 
+  geom_point() + 
+  labs(x = "fitted value", 
+       y = "residual", 
+       title = "Fitted Values vs Residual Plot")
+plot_2 = prob_plot(solutions_transformed, "of Log10(concentration) vs Time")
+
+grid.arrange(plot_1, plot_2, nrow = 1)
+```
+
+The transformation causes error terms to be distributed normally. The error terms have nonconstant variance. 
 
 (f) Express the estimated regression function in the original units.
 
 Answer: 
+```{r}
+paste("Y = concentration = 10^(", model[1], " + ", model[2], "* x)", sep = '')
+```
+
 
 
 ### Problem 17: 
@@ -1046,27 +1177,82 @@ Answer:
 (a) Prepare a scatter plot of the data. Does a linear relation appear adequate here? 
 
 Answer: 
+```{r}
+sales = read.csv('CH03PR17.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
 
-(b) Use the Box-Cox procedure and standarization (3.36) to find an appropriate power transformation of $Y$. Evaluate SSE for $\lambda = .3, .4, .5, .6, .7$. What transformation of $Y$ is suggested? 
+sales %>% 
+  ggplot(aes(x,y)) + 
+  geom_point() + 
+  labs(x = "year", 
+       y = "sales (in thousands)", 
+       title = "Sales of Product vs Year")
+```
+
+There appears to be a linear relationship between the two variables.
+
+(b) Use the Box-Cox procedure and standardization (3.36) to find an appropriate power transformation of $Y$. Evaluate SSE for $\lambda = .3, .4, .5, .6, .7$. What transformation of $Y$ is suggested? 
 
 Answer:
+```{r}
+box.cox(sales$x, sales$y, seq(.3, .7, by = .1))
+```
 
 (c) Use the transformation $Y' = \sqrt{Y}$ and obtain the estimated linear regression function for the transformed data.
 
 Answer: 
+```{r}
+Y_prime = sqrt(sales$y)
+model = round(lm.fit_manual(sales$x, Y_prime), 3)
+paste("b0:", model[1], ", b1:", model[2], sep = ' ')
+```
+
 
 (d) Plot the estimated regression line and the transformed data. Does the regression line appear to be a good fit to the transformed data? 
 
 Answer: 
+```{r}
+sales_transformed = data.frame(x = sales$x, 
+                                   y = sqrt(sales$y), 
+                                   y_original = sales$y,
+                                   y_pred = model[1] + model[2]*sales$x,
+                                   resids = model[1] + (model[2]*sales$x) - sqrt(sales$y))
+
+sales_transformed %>% 
+  ggplot(aes(x, y)) + 
+  geom_point() + 
+  geom_abline(intercept = model[1], slope = model[2]) + 
+  labs(x = "year", 
+       y = "sqrt(sales)", 
+       title = "Regressing on Sqrt(Sales)")
+```
+
+The regression line appears to be a good fit to the transformed data.
 
 (e) Obtain the residuals and plot them against the fitted values. Also prepare a normal probability plot. What do your plots show? 
 
 Answer: 
+```{r}
+plot_1 = sales_transformed %>% 
+  ggplot(aes(x = y, y = resids)) + 
+  geom_point() + 
+  labs(x = "fitted value", 
+       y = "residual", 
+       title = "Fitted Values vs Residual Plot")
+plot_2 = prob_plot(solutions_transformed, "of Sqrt(Sales) vs Year")
+
+grid.arrange(plot_1, plot_2, nrow = 1)
+```
+
+The residuals are distributed normally and have a nonconstant variance. 
 
 (f) Express the estimated regression function in the original units.
 
 Answer: 
-
+```{r}
+paste("Y = (", model[1], " + ", model[2], "* x)^2", sep = '')
+```
 
 ### Problem 18: 
 *Production time.* In a manufacturing study, the production times for $111$ recent production runs were obtained. The table lists for each run the production time in hours ($Y$) and the production lot size ($X$). 
@@ -1074,49 +1260,117 @@ Answer:
 (a) Prepare a scatter plot of the data. Does a linear relation appear adequate here? Would a transformation on $X$ or $Y$ be more appropriate here? Why? 
 
 Answer: 
+```{r}
+prod_time = read.csv('CH03PR18.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+
+prod_time %>% 
+  ggplot(aes(x,y)) + 
+  geom_point() + 
+  labs(x = "lot size", 
+       y = "production time (in hrs)", 
+       title = "Production Time (in hrs) vs Lot Size")
+```
+
+There does not appear to exist a linear relation between the two variable. A transformation on the $X$ would be appropriate here since there exists replicates of $X$ in this data set.
 
 (b) Use the transformation $X' = \sqrt{X}$ and obtain the estimated linear regression function for the transformed data.
 
 Answer: 
+```{r}
+prod_time_transformed = data.frame(x = sqrt(prod_time$x), x_original = prod_time$x, y = prod_time$y)
+
+prod_time_transformed = data.frame(x_original = prod_time$x, 
+                                   x = sqrt(prod_time$x),
+                                   y = prod_time$y, 
+                                   y_pred = lm.fit_manual(sqrt(prod_time$x), prod_time$y)[1] + lm.fit_manual(sqrt(prod_time$x), prod_time$y)[2]*sqrt(prod_time$x),
+                                   resids = lm.fit_manual(sqrt(prod_time$x), prod_time$y)[1] + (lm.fit_manual(sqrt(prod_time$x), prod_time$y)[2]*sqrt(prod_time$x)) - prod_time$y)
+
+model = round(lm.fit_manual(prod_time_transformed$x, prod_time_transformed$y), 3)
+paste("b0:", model[1], ", b1:", model[2], sep = ' ')
+```
+
 
 (c) Plot the estimated regression line and the transformed data. Does the regression line appear to be a good fit to the transformed data? 
 
 Answer: 
+```{r}
+prod_time_transformed %>% 
+  ggplot(aes(x, y)) + 
+  geom_point() + 
+  geom_abline(intercept = model[1], slope = model[2]) + 
+  labs(x = "sqrt(lot size)", 
+       y = "production time (in hrs)", 
+       title = "Regressing using Sqrt(Lot Size)")
+```
+
+The regression line seems to be an okay fit for the transformed data.
 
 (d) Obtain the residuals and plot them against the fitted values. Also prepare a normal probability plot. What do your plots show? 
 
 Answer: 
+```{r}
+plot_1 = sales_transformed %>% 
+  ggplot(aes(x = y, y = resids)) + 
+  geom_point() + 
+  labs(x = "fitted value", 
+       y = "residual", 
+       title = "Fitted Values vs Residual Plot")
+plot_2 = prob_plot(solutions_transformed, "of Sqrt(Sales) vs Year")
+
+grid.arrange(plot_1, plot_2, nrow = 1)
+```
+
+The residuals have nonconstant variance and distributed normally.
 
 (e) Express the estimated regression function in the original units. 
 
 Answer: 
+```{r}
+paste("Y = ", model[1], " + ", model[2], "sqrt(X)", sep = '')
+```
 
 
 ### Problem 19: 
 A student fitted a linear regression function for a class assignment. The student plotted the residuals $e_i$ against $Y_i$ and found a positive relation. When the residuals were plotted against the fitted values $\hat{Y}_i$, the student found no relation. How could this difference arise? Which is the more meaningful plot? 
 
-Answer: 
+Answer: Plotting residuals against the original $Y$ values would indicate nothing valuable about the created model. There is always a positive relationship between $Y_i$ and $e_i$ since $e_i = Y_i - \hat{Y}_i$ and because $e_i$ and $\hat{Y}_i$ are independent, their covariance is always positive. The more meaningful plot is $e_i$ against $\hat{Y}_i$.
 
 ### Problem 20: 
 If the error terms in a regression model are independent $N(0, \sigma^2)$, what can be said about the error terms after transformation $X' = \frac{1}{X}$ is used? Is the situation the same after transformation $Y' = \frac{1}{Y}$ is used?
 
-Answer: 
+Answer: If the error terms in a regression model are independent $N(0, \sigma^2)$, then the transformation $X' = \frac{1}{X}$ will not change the shape of the normal distribution of the error terms, except with a shift in where the mean lies. However if the transformation $Y' = \frac{1}{Y}$ is used, then that can change the distribution of the error terms, since the inverse of a normally distributed random variable is not normally distributed. 
 
 ### Problem 21: 
 Derive the result in (3.29).
 
-Answer: 
+Answer: $$ \underbrace{\sum \sum (Y_{ij} - \hat{Y}_{ij})^2}_{\text{SSE}} = \underbrace{\sum \sum (Y_{ij} - \overline{Y}_j)^2}_{\text{SSPE}} + \underbrace{\sum \sum (\overline{Y}_j - \hat{Y}_{ij})^2}_{\text{SSLF}} $$ 
+
+The sum of squares can be decomposed into two sums: the full model sum of squares (or pure error sum of squares), and the lack of fit sum of squares. Start from the left and note that $\hat{Y}_{ij} = b_0 + b1X_j$ is independent of $j$.
+
+$$ \begin{aligned} 
+\sum \sum (Y_{ij} - \hat{Y}_{ij})^2 &= \sum \sum [(Y_{ij} - \overline{Y}_j) + (\overline{Y}_j - \hat{Y}_{ij})]^2 \\ &= \sum \sum (Y_{ij} - \overline{Y})^2 + \sum \sum (\overline{Y}_j - \hat{Y}_{ij})^2 + 2\left(\sum \sum (Y_{ij} - \overline{Y}_j)(\overline{Y}_j - \hat{Y}_{ij})\right) \\ 
+&= \sum \sum (Y_{ij} - \overline{Y})^2 + \sum \sum (\overline{Y}_j - \hat{Y}_{ij})^2 + 2\left[\sum \sum Y_{ij} \overline{Y}_j - \sum \sum \overline{Y}_j^2 - \sum \sum Y_{ij}\overline{Y}_{ij} + \sum \sum \overline{Y}_j\hat{Y}_{ij}\right] \\ &= \sum \sum (Y_{ij} - \overline{Y})^2 + \sum \sum (\overline{Y}_j - \hat{Y}_{ij})^2 + 2\left[\sum_j n_j \overline{Y}_j^2 - \sum_j n_j\overline{Y}_j^2 - \sum_j \hat{Y}_{ij}n_j\overline{Y}_j + \sum_j n_j\overline{Y}_j\hat{Y}_{ij}\right] \\ 
+&= \sum \sum (Y_{ij} - \overline{Y})^2 + \sum \sum (\overline{Y}_j - \hat{Y}_{ij})^2 + 0 \\
+&= \sum \sum (Y_{ij} - \overline{Y})^2 + \sum \sum (\overline{Y}_j - \hat{Y}_{ij})^2 \end{aligned} $$ 
 
 
 ### Problem 22: 
 Using (A.70), (A.41) and (A.42), show that $\text{E[MSPE]} = \sigma^2$ for normal error regression model (2.1). 
 
-Answer: 
+Answer: Note that, from (A.70), for the sample variance $s^2$, $\frac{(n-1)s^2}{\sigma^2}$ is distributed as $\chi^2$ with $n-1$ degrees of freedom when the random sample is from a normal population. 
+
+MSPE, or pure error mean square, is defined as $\frac{\text{SSPE}}{n-c}$, or pure error sum of squares divided by the sum of the component degrees of freedom. Now, SSPE is made up of the sums od squared deviations at each $X$ level, or $\sum_i (Y_{ij} - \overline{Y}_j)^2$. Therefore, using the above property,
+$$ \begin{aligned} 
+\text{E[MSPE]} &= \text{E}\left[\frac{\sum_j \sum_i (Y_{ij} - \overline{Y}_j)^2}{n-c}\right] \\ &= \frac{1}{n-c} \sum_j \text{E}\left[(n_j - 1)s_j^2\right] \\ &= \frac{1}{n-c} \sum_j \text{E}[\sigma^2 \chi^2 (n_j - 1)] \\ &= \frac{\sigma^2}{n-c} \sum_j (n_j - 1) \\ &= \sigma^2 \end{aligned} $$ 
 
 ### Problem 23: 
 A linear regression model with intercept $\beta_0=0$ is under consideration. Data have been obtained that contain replications. State the full and reduced models for testing the appropriateness of the regression function under consideration. What are the degrees of freedom associated with the full and reduced models if $n=20$ and $c=10$? 
 
-Answer: 
+Answer: The full model is $$Y_{ij} = \mu_j + \varepsilon_{ij}$$ and the reduced model is $$ Y_{ij} = \beta_1X_j + \varepsilon_{ij} $$ 
+When $n=20$ and $c=10$, the degrees of freedom are as follows: 
+$$ \begin{aligned} df_F &= n - c = 20 - 10 = 10 \\ df_R &= n - 1 = 20 - 1 = 19 \end{aligned} $$ 
 
 ### Problem 24: 
 *Blood pressure.* Data was obtained in a study of the relation between diastolic blood pressure ($Y$) and age ($X$) for boys 5 to 13 years old.
@@ -1124,24 +1378,136 @@ Answer:
 (a) Assuming normal error regression model (2.1) is appropriate, obtain the estimated regression function and plot the residuals $e_i$ against $X_i$. What does your residual plot show? 
 
 Answer: 
+```{r}
+blood_pressure = read.csv('CH03PR24.txt', sep = '', header = FALSE, 
+                  col.names = c('y', 'x'), 
+                  colClasses = c('numeric', 'numeric'))
+
+model = round(lm.fit_manual(blood_pressure$x, blood_pressure$y), 3)
+paste("b0:", model[1], "b1:", model[2], sep = ' ')
+```
+
+```{r}
+Y_pred = model[1] + model[2]*blood_pressure$x
+resid = Y_pred - blood_pressure$y
+
+data.frame(resid, x = blood_pressure$x) %>% 
+  ggplot(aes(x, resid)) + 
+  geom_point() + 
+  labs(x = "age", 
+       y = "residual",
+       title = "Residuals of Predicting Diastolic Blood Pressure using Age")
+```
+
+The residual plot shows that there is an outlier at age 12, which makes the distribution of error terms to have nonconstant variance. 
+
 
 (b) Omit case 7 from the data and obtain the estimated regression function based on the remaining seven cases. Compare this estimated regression function to that obtained in part (a). What can you conclude about the effect of case 7? 
 
 Answer: 
+```{r}
+blood_pressure_new = blood_pressure[c(1:6, 8:nrow(blood_pressure)),]
+model = round(lm.fit_manual(blood_pressure_new$x, blood_pressure_new$y), 3)
+paste("b0:", model[1], "b1:", model[2], sep = ' ')
+```
+
+By omitting case 7, the y intercept of the regression function is higher and the slope is less steep. The effect of case 7 was bringing the regression function down. 
+
 
 (c) Using your fitted regression function in part (b), obtain a $99$ percent prediction interval for a new $Y$ observation at $X=12$. Does observation $Y_7$ fall outside this prediction interval? What is the significance of this? 
 
 Answer: 
+```{r}
+Yhat_pred_interval = function(data, Xhat, alpha = 0.01){
+  
+  X = data[['x']]
+  Y = data[['y']]
+  df = nrow(data) - 2
+  b1 = sum((X - mean(X))*(Y - mean(Y))) / (sum((X - mean(X))^2))
+  b0 = mean(Y) - b1*mean(X)
+  Ypred = b0 + b1*X
+  Yhat = b0 + b1*Xhat
+  mse = sum((Y - Ypred)^2) / df
+  var_adjust = (1/nrow(data)) + ((Xhat - mean(X))^2)/sum((X - mean(X))^2) + 1
+  t = qt(1 - (alpha/2), df = df)
+  se = sqrt(mse * var_adjust)
+  error = t*se
+  lower = round(Yhat - error, 5)
+  upper = round(Yhat + error, 5)
+  return(c(lower, upper))
+}
+
+Yhat_pred_interval(blood_pressure_new, Xhat = 12, alpha = 0.01)
+```
+
+```{r}
+blood_pressure[7,]
+```
+
+Observation $Y_7$ falls outside this prediction interval. This signifies that the observation is an outlier from the collection of the data. 
+
 
 ### Problem 25: 
 Refer to the CDI data set in Appendix C.2 and Project 1.43. For each of the three fitted regression models, obtain the residuals and prepare a residual plot against $X$ and a normal probability plot. Summarize your conclusions. Is linear regression model (2.1) more appropriate in one case than in the others? 
 
 Answer: 
+```{r}
+cdi_cols = c('ID', 'county', 'state', 'area', 'total_pop', 'perc_pop_18to34',
+             'perc_pop_65plus', 'num_physicians', 'num_hosp_beds', 'total_crimes',
+             'perc_hs_grads', 'perc_bach', 'perc_below_poverty', 'perc_unemploy', 
+             'per_capita_income', 'total_personal_income', 'geographic_region')
+cdi_colclasses = c('integer', 'character', 'character', rep('numeric', 13), 'factor')
+cdi = read.csv('APPENC02.txt', sep = '', header = FALSE, 
+                  col.names = cdi_cols, 
+                  colClasses = cdi_colclasses)
+cdi_43 = cdi %>% 
+  select(num_physicians, total_pop, 
+         num_hosp_beds, total_personal_income)
+plot_1 = cdi_43 %>% 
+  gather(type, x, total_pop, num_hosp_beds, total_personal_income) %>% 
+  group_by(type) %>%
+  do(., augment(lm(num_physicians ~ x, data = .))) %>% 
+  ggplot(aes(x = x, y = .resid, color = type)) + 
+  geom_point() + 
+  facet_wrap(type ~ ., ncol = 2, scales = "free") + 
+  theme(legend.position = '') + 
+  labs(x = '', 
+       y = "residual",
+       title = "Residuals vs X")
+plot_2 = prob_plot(select(cdi_43, x = num_hosp_beds, y = num_physicians), "Number of Hospital Beds")
+plot_3 = prob_plot(select(cdi_43, x = total_personal_income, y = num_physicians), "Total Personal Income")
+plot_4 = prob_plot(select(cdi_43, x = total_pop, y = num_physicians), "Total Population")
+plot_1
+grid.arrange(plot_2, plot_3, plot_4, ncol = 3)
+```
+
+Error terms from all 3 regression models have a constant variance and are distributed normally, with heavy tails at the higher end. The linear regression model is appropriate when using number of hospital beds, as the model diagnostics are most normal in use. 
 
 ### Problem 26: 
 Refer to the CDI data set in Appendix C.2 and Project 1.44. For each geographic region, obtain the residuals and prepare a residual plot against $X$ and a normal probability plot. Do the four regions appear to have similar error variances? What other conclusions do you draw from your plots? 
 
 Answer: 
+```{r}
+cdi %>% select(per_capita_income, perc_bach, geographic_region) %>% 
+  group_by(geographic_region) %>% 
+  do(., augment(lm(per_capita_income ~ perc_bach, data = .))) %>% 
+  ggplot(aes(x = perc_bach, y = .resid, color = factor(geographic_region))) + 
+  geom_point() + 
+  facet_wrap(geographic_region ~ ., ncol = 2, scales = "free") + 
+  theme(legend.position = '') + 
+  labs(x = '', 
+       y = "residual",
+       title = "Residuals vs X")
+
+plot_1 = prob_plot(select(filter(cdi, geographic_region == 1), x = perc_bach, y = per_capita_income), "Geo Loc 1")
+plot_2 = prob_plot(select(filter(cdi, geographic_region == 2), x = perc_bach, y = per_capita_income), "Geo Loc 2")
+plot_3 = prob_plot(select(filter(cdi, geographic_region == 3), x = perc_bach, y = per_capita_income), "Geo Loc 3")
+plot_4 = prob_plot(select(filter(cdi, geographic_region == 4), x = perc_bach, y = per_capita_income), "Geo Loc 4")
+
+grid.arrange(plot_1, plot_2, plot_3, plot_4, ncol = 2)
+```
+
+There is some occurrence of higher variances for high values of $X$ in most of the regression plots. Thus the four regions do not appear to have similar error variances. However residuals are distributed normally in all 4 regression models.
 
 ### Problem 27: 
 Refer to the SENIC data set in Appendix C.1 and Project 1.45.
@@ -1149,15 +1515,84 @@ Refer to the SENIC data set in Appendix C.1 and Project 1.45.
 (a) For each of the three fitted regression models, obtain the residuals and prepare a residual plot against $X$ and a normal probability plot. Summarize your conclusions. Is linear regression model (2.1) more apt in one case than in the others? 
 
 Answer: 
+```{r}
+senic_cols = c('ID', 'length_stay', 'age', 'infection_risk', 'culturing_ratio',
+               'chest_xray_ratio', 'num_beds', 'med_school_aff', 'region', 
+               'avg_daily_census', 'num_nurses', 'available_facilities')
+senic_colclasses = c(rep('numeric', 6), rep('factor', 2), rep('numeric', 3))
+senic = read.csv('APPENC01.txt', sep = '', header = FALSE, 
+                  col.names = senic_cols, 
+                  colClasses = senic_colclasses)
+senic_model = senic %>% 
+  select(length_stay, infection_risk, available_facilities, chest_xray_ratio)
 
-(b) Obtain the fitted regression function for the relation between length of stay and infection risk affter deleting cases 47 ($X_{47} = 6.5$, $Y_{47} = 19.56$) and 112 ($X_{112} = 5.9$ and $Y_{112} = 17.94$). From this fitted regression function obtain separate $95$ percent prediction intervals for new $Y$ observations at $X=6.5$ and $X=5.9$, respectively. Do observations $Y_{47}$ and $Y_{112}$ fall outside these prediction intervals? Discuss the significance of this.
+plot_1 = senic_model %>% 
+  gather(type, x, infection_risk, available_facilities, chest_xray_ratio) %>% 
+  group_by(type) %>%
+  do(., augment(lm(length_stay ~ x, data = .))) %>% 
+  ggplot(aes(x = x, y = .resid, color = type)) + 
+  geom_point() + 
+  facet_wrap(type ~ ., ncol = 2, scales = "free") + 
+  theme(legend.position = '') + 
+  labs(x = '', 
+       y = "residual",
+       title = "Residuals vs X")
+plot_2 = prob_plot(select(senic_model, x = chest_xray_ratio, y = length_stay), "Chest Xray Ratio")
+plot_3 = prob_plot(select(senic_model, x = available_facilities, y = length_stay), "Available Facilities")
+plot_4 = prob_plot(select(senic_model, x = infection_risk, y = length_stay), "Infection Risk")
+plot_1
+grid.arrange(plot_2, plot_3, plot_4, ncol = 3)
+```
+
+In all 3 regression models, error terms show a constant variance and are distributed normally, with slightly large tails at the high end. The linear regression model is apt in all 3 cases.
+
+(b) Obtain the fitted regression function for the relation between length of stay and infection risk after deleting cases 47 ($X_{47} = 6.5$, $Y_{47} = 19.56$) and 112 ($X_{112} = 5.9$ and $Y_{112} = 17.94$). From this fitted regression function obtain separate $95$ percent prediction intervals for new $Y$ observations at $X=6.5$ and $X=5.9$, respectively. Do observations $Y_{47}$ and $Y_{112}$ fall outside these prediction intervals? Discuss the significance of this.
 
 Answer: 
+```{r}
+senic_model_2 = senic %>% 
+  filter(!ID %in% c(47, 112)) %>% 
+  select(y = length_stay, x = infection_risk)
+
+Yhat_pred_interval(senic_model_2, 6.5, 0.05)
+senic[47, c("ID", "length_stay", "infection_risk")]
+```
+
+```{r}
+Yhat_pred_interval(senic_model_2, 5.8, 0.05)
+senic[112, c("ID", "length_stay", "infection_risk")]
+```
+
+Observations $Y_{47}$ and $Y_{112}$ both fall outside these prediction intervals, indicating that they are outliers in the data collection. 
+
 
 ### Problem 28: 
 Refer to the SENIC data set in Appendix C.1 and Project 1.46. For each geographic region, obtain the residuals and prepare a residual plot against $X$ and a normal probability plot. Do the four regions appear to have similar error variance? What other conclusions do you draw from your plots? 
 
 Answer: 
+```{r}
+senic %>% 
+  select(length_stay, infection_risk, region) %>% 
+  group_by(region) %>% 
+  do(., augment(lm(length_stay ~ infection_risk, data = .))) %>% 
+  ggplot(aes(x = infection_risk, y = .resid, color = factor(region))) + 
+  geom_point() + 
+  facet_wrap(region ~ ., ncol = 2) + 
+  labs(x = "Infection Risk", 
+       y = "Residual",
+       title = "Residuals vs Infection Risk",
+       subtitle = "based on Region") + 
+  theme(legend.position = '')
+
+plot_1 = prob_plot(select(filter(senic, region == 1), x = infection_risk, y = length_stay), "Loc 1")
+plot_2 = prob_plot(select(filter(senic, region == 2), x = infection_risk, y = length_stay), "Loc 2")
+plot_3 = prob_plot(select(filter(senic, region == 3), x = infection_risk, y = length_stay), "Loc 3")
+plot_4 = prob_plot(select(filter(senic, region == 4), x = infection_risk, y = length_stay), "Loc 4")
+
+grid.arrange(plot_1, plot_2, plot_3, plot_4, ncol = 2)
+```
+
+The error variances appear to be constant and similar for regression models for regions 2, 3 and 4. Error variances may be higher for region 1. Error terms are distributed normally for region 2, 3 and 4. Region 1 error terms are distributed with high tails at both ends. 
 
 ### Problem 29: 
 Refer to Copier maintenance Problem 1.20. 
@@ -1165,14 +1600,101 @@ Refer to Copier maintenance Problem 1.20.
 (a) Divide the data into four bands according to the number of copiers serviced ($X$). Band 1 ranges from $X=.5$ to $X=2.5$; band 2 ranges from $X=2.5$ to $X=4.5$; and so forth. Determine the median value of $X$ and the median value of $Y$ in each of the bands and develop the band smooth by connecting the four pairs of medians by straight lines on a scatter plot of the data. Does the band smooth suggest the regression relation is linear? Discuss. 
 
 Answer: 
+```{r}
+plot_1 = copier %>% 
+  mutate(band = case_when(
+    x <= 2.5 ~ 1,
+    x > 2.5 & x <= 4.5 ~ 2, 
+    x > 4.5 & x <= 6.5 ~ 3,
+    x > 6.5 & x <= 8.5 ~ 4,
+    x > 8.5 ~ 5)) %>% 
+  group_by(band) %>% 
+  summarize(x_med = median(x, na.rm = TRUE),
+            y_med = median(y, na.rm = TRUE)) %>% 
+  ggplot(aes(x_med, y_med)) + 
+  geom_point(shape=23, fill="blue", size=4) + 
+  geom_line(color = "darkgreen") + 
+  geom_point(data = copier, aes(x,y)) + 
+  labs(x = "number of copiers serviced", 
+       y = "total number of minutes",
+       title = "Regressing Total Number of Minutes on Number of Copiers Serviced",
+       subtitle = "using Regresion Bands of Medians",
+       caption = "Note: The blue diamond represents medians of each band.")
+plot_1
+```
+
+The smooth band suggests that the regression relation is not linear. This is because the medians in each of the bands do not appear to match up on a straight line. 
 
 (b) Obtain the $90$ percent confidence band for the true regression line and plot it on the scatter plot prepared in part (a). Does the band smooth fall entirely inside the confidence band? What does this tell you about the appropriateness of the linear regression function? 
 
 Answer: 
+```{r}
+conf_band_reg = function(data, alpha = 0.05){
+  
+  model = lm.fit_manual(data$x, data$y)
+  Y_hat = model[1] + model[2]*data$x
+  mse = sum((Y_hat - data$y)^2)/(nrow(data)-2)
+  X_bar = mean(data$x)
+  X_iX_bar_diff_sum_sq = sum((data$x - X_bar)^2)
+  
+  X_h = sort(unique(data$x))
+  Y_hat_sd = c()
+  for(i in X_h){
+    temp_sd = sqrt(mse * ((1/nrow(data)) + ((i - X_bar)^2/X_iX_bar_diff_sum_sq)))
+    Y_hat_sd = c(Y_hat_sd, temp_sd)
+  }
+  
+  W_squared = 2*qf(1 - alpha, 2, nrow(data)-2)
+  W = sqrt(W_squared)
+  
+  conf_band_df = data.frame(x = X_h,
+                            y = model[1] + model[2]*X_h,
+                            W = rep(W, length(X_h)),
+                            s_Yhat = Y_hat_sd)
+  
+  conf_band_df$lower_bound = conf_band_df$y - (conf_band_df$W*conf_band_df$s_Yhat)
+  conf_band_df$upper_bound = conf_band_df$y + (conf_band_df$W*conf_band_df$s_Yhat)
+  return(conf_band_df)
+}
 
-(c) Create a series of six overlapping neighborhoods of width $3.0$ beginning at $X=.5$. The first neighborhood will range from $X=.5$ to $X=3.5$; the second neighborhood will range from $X=1.5$ to $X=4.5$; and so on. For each of the six overlapping neighborhoods, fit a linear regression function and obtain the fittedvalue $\hat{Y}_c$ at the center $X_c$ of the neighborhood. Develop a simplified version of the lowess smooth by connecting the six($X_c, \hat{Y}_c$) pairs by straight lines on a scatter plot of the data. In what ways does your simplified lowess smooth differ from the band smooth obtained in part (a)? 
+plot_1 + 
+  geom_path(data = conf_band_reg(copier, alpha = 0.1),
+            aes(x = x, y = lower_bound), color = "firebrick") + 
+  geom_path(data = conf_band_reg(copier, alpha = 0.1),
+            aes(x = x, y = upper_bound), color = "firebrick") + 
+  labs(caption = "Note: The red lines indicates the upper and lower bounds of the regression line")
+```
+
+The band smooth does not fall entirely inside the confidence band. Hence the linear regression function may not be the best fit for this data. 
+
+(c) Create a series of six overlapping neighborhoods of width $3.0$ beginning at $X=.5$. The first neighborhood will range from $X=.5$ to $X=3.5$; the second neighborhood will range from $X=1.5$ to $X=4.5$; and so on. For each of the six overlapping neighborhoods, fit a linear regression function and obtain the fitted value $\hat{Y}_c$ at the center $X_c$ of the neighborhood. Develop a simplified version of the lowess smooth by connecting the six ($X_c, \hat{Y}_c$) pairs by straight lines on a scatter plot of the data. In what ways does your simplified lowess smooth differ from the band smooth obtained in part (a)? 
 
 Answer: 
+```{r}
+X_c_list = c()
+pred_list = c()
+for(i in seq(0.5, 6.5, by = 1)){
+  filtered_data = filter(copier, x >= i & x <= i + 3)
+  model = lm.fit_manual(filtered_data$x, filtered_data$y)
+  X_c = (i + i + 3)/2
+  pred = model[1] + model[2]*X_c
+  
+  X_c_list = c(X_c_list, X_c)
+  pred_list = c(pred_list, pred)
+}
+
+data.frame(X_c = X_c_list, pred = pred_list) %>% 
+  ggplot(aes(X_c, pred)) + 
+  geom_point(color = "firebrick") + 
+  geom_line(color = "firebrick") + 
+  geom_point(data = copier, aes(x,y)) + 
+  labs(x = "number of copiers serviced",
+       y = "total number of minutes",
+       title = "Regressing Total Bumber of Minutes on Number of Copiers Serviced",
+       subtitle = "using Lowess Smooth Method with Neighborhoods of Width 3")
+```
+
+The simplified lowess smooth does not fit the data fully from the minimum and maximum value of $X$. It only covers values that are centers of discrete neighborhoods. 
 
 ### Problem 30: 
 Refer to Sales growth Problem 3.17. 
@@ -1180,23 +1702,190 @@ Refer to Sales growth Problem 3.17.
 (a) Divide the range of the predictor variable (coded years) into five bands of width $2.0$, as follows: Band 1 ranges from $X=-.5$ to $X=1.5$; band 2 ranges from $X=1.5$ to $X=3.5$; and so on. Determine the median value of $X$ and the median value of $Y$ in each band and develop the band smooth by connecting the five pairs of medians by straight lines on a scatter plot of the data. Does the band smooth suggest that the regression relation is linear? Discuss.
 
 Answer: 
+```{r}
+sales %>% 
+  mutate(band = case_when(
+    x > -.5 & x <= 1.5 ~ 1,
+    x > 1.5 & x <= 3.5 ~ 2, 
+    x > 3.5 & x <= 5.5 ~ 3, 
+    x > 5.5 & x <= 7.5 ~ 4,
+    x > 7.5 & x <= 9.5 ~ 5)) %>% 
+  group_by(band) %>% 
+  summarize(x_med = median(x), y_med = median(y)) %>% 
+  ggplot(aes(x_med, y_med)) + 
+  geom_point(color = "firebrick", size = 3) + 
+  geom_path() + 
+  geom_point(data = sales, aes(x,y)) + 
+  labs(x = "year", y = "sales (in thousands)",
+       title = "Regressing on Sales using Year",
+       subtitle = "using Regression Bands of Medians")
+```
+
+The band smooth suggests that the regression relation is not linear. The medians do not appear to line up on a straight line. 
 
 (b) Create a series of seven overlapping neighborhoods of width $3.0$ beginning at $X=-.5$. The first neighborhood will range from $X=-.5$ to $X=2.5$; the second neighborhood will range from $X=.5$ to $X=3.5$; and so on. For each of the seven overlapping neighborhoods, fit a linear regression function and obtain the fitted value $\hat{Y}_c$ at the center $X_c$ of the neighborhood. Develop a simplified version of the lowess smooth by connecting the seven ($X_c, \hat{Y}_c$) pairs by straight lines on a scatter plot of the data.
 
 Answer: 
+```{r}
+X_c_list = c()
+pred_list = c()
+for(i in seq(-0.5, 5.5, by = 1)){
+  filtered_data = filter(sales, x >= i & x <= i + 3)
+  model = lm.fit_manual(filtered_data$x, filtered_data$y)
+  X_c = (i + i + 3)/2
+  pred = model[1] + model[2]*X_c
+  
+  X_c_list = c(X_c_list, X_c)
+  pred_list = c(pred_list, pred)
+}
+
+plot_1 = data.frame(X_c = X_c_list, pred = pred_list) %>% 
+  ggplot(aes(X_c, pred)) + 
+  geom_point(color = "firebrick") + 
+  geom_line(color = "firebrick") + 
+  geom_point(data = sales, aes(x,y)) + 
+  labs(x = "year",
+       y = "sales (in thousands)",
+       title = "Regressing Sales on Year",
+       subtitle = "using Lowess Smooth Method with Neighborhoods of Width 3")
+```
+
 
 (c) Obtain the $95$ percent confidence band for the true regression line and plot it on the plot prepared in part (b). Does the simplified lowess smooth fall entirely within the confidence band for the regression line? What does this tell you about the appropriateness of the linear regression function? 
 
 Answer: 
+```{r}
+plot_1 + 
+  geom_path(data = conf_band_reg(sales, alpha = 0.05),
+            aes(x = x, y = lower_bound), color = "blue") + 
+  geom_path(data = conf_band_reg(sales, alpha = 0.05),
+            aes(x = x, y = upper_bound), color = "blue") + 
+  labs(caption = "Note: The blue lines indicates the upper and lower bounds of the regression line")
+```
+
+The simplified lowess smooth appears to fall entirely within the confidence band for the regression line. This suggests that the linear regression function is appropriate. 
 
 ### Problem 31: 
-Refer to the Real estate sales data set in Appendix C.7. Obtain a random sample of $200$ cases from the $522$ cases in this data set. Using the random sample, build a regression model to predict sales price ($Y$) as a function of finished square feet ($X$). The analysis should include an assessment of the degree to which the key regression assumptions are satisfied. If the regression assumptions are not met, include and justify appropriate remeidal measures. Use the final model to predict sales price for two houses that are about tocome on the market: the first has $X=1100$ finished square feet and the second has $X=4900$ finished square feet. Assess the strengths and weaknesses of the final model.
+Refer to the Real estate sales data set in Appendix C.7. Obtain a random sample of $200$ cases from the $522$ cases in this data set. Using the random sample, build a regression model to predict sales price ($Y$) as a function of finished square feet ($X$). The analysis should include an assessment of the degree to which the key regression assumptions are satisfied. If the regression assumptions are not met, include and justify appropriate remedial measures. Use the final model to predict sales price for two houses that are about to come on the market: the first has $X=1100$ finished square feet and the second has $X=4900$ finished square feet. Assess the strengths and weaknesses of the final model.
 
 Answer: 
+```{r}
+real_estate_cols = c('ID', 'sales_price', 'sq_ft', 'num_bed',
+                     'num_bath', 'air_cond', 'garage_size', 'pool', 'year_built',
+                     'quality', 'style', 'lot_size', 'adj_to_highway')
+real_estate_colclasses = c(rep('numeric', 5), 'factor', 
+                           'numeric', 'factor', 'numeric', 
+                           rep('factor', 2), 'numeric', 'factor')
+real_estate = read.csv('APPENC07.txt', sep = '', header = FALSE, 
+                       col.names = real_estate_cols, 
+                       colClasses = real_estate_colclasses)
+```
+
+```{r}
+set.seed(2020)
+real_estate_sampled = real_estate[sample(1:nrow(real_estate), 200, replace = FALSE), c("sales_price", "sq_ft")]
+model = lm.fit_manual(real_estate_sampled$sq_ft, real_estate_sampled$sales_price)
+
+
+real_estate_sampled %>% 
+  ggplot(aes(sq_ft, sales_price)) + 
+  geom_point() + 
+  labs(x = "square feet", 
+       y = "sales price",
+       title = "Scatterplot of Sales Price and Square Feet", 
+       subtitle = "based on random sample of 200 points")
+```
+
+Using the randomly selected points, a model was created. Regression diagnostics plots are shown below. 
+```{r}
+real_estate_model = data.frame(x = real_estate_sampled$sq_ft, 
+                               y = real_estate_sampled$sales_price, 
+                               y_pred = model[1] + model[2]*real_estate_sampled$sq_ft,
+                               resids = model[1] + (model[2]*real_estate_sampled$sq_ft) - real_estate_sampled$sales_price)
+plot_1 = real_estate_model %>% 
+  ggplot(aes(x, resids)) + 
+  geom_point() + 
+  labs(x = "square feet",
+       y = "residual",
+       title = "Residuals from Regressing Square Feet on Sales Price")
+plot_2 = prob_plot(data.frame(x=real_estate_sampled$sq_ft, y=real_estate_sampled$sales_price), "of Regressing Square Feet on Sales Price")
+grid.arrange(plot_1, plot_2, ncol = 1)
+```
+
+Error terms appear to have constant variance and are distributed normally. 
+
+The sales price for a house that has $X=1100$ finished square feet is
+```{r}
+model[1] + model[2]*1100
+```
+
+and the sales price for a house that has $X=4900$ finished square feet is
+```{r}
+model[1] + model[2]*4900
+```
+
+
+The final model will prove to be ineffective for houses that are large in square feet, as demonstrated by the giant spread of variance towards the high end of square feet in the diagnostic plot above. It also does not take into account the various other factors that go into pricing a house in real estate. 
 
 ### Problem 32: 
-Refer to the Prostate cancer data set in Appendix C.5. Build a regression model to predict PSA lebel ($Y$) as a function of cancer volume ($X$). The analysis should include an assessment of the degree to which the key regression assumptions are satisfied. If the regression assumptions are not met, include and justify appropriate remedial measures. Use the final model to estimate mean PSA level for a patient whose cancer volume is $20$ cc. Assess the strengths and weaknesses of the final model.
+Refer to the Prostate cancer data set in Appendix C.5. Build a regression model to predict PSA level ($Y$) as a function of cancer volume ($X$). The analysis should include an assessment of the degree to which the key regression assumptions are satisfied. If the regression assumptions are not met, include and justify appropriate remedial measures. Use the final model to estimate mean PSA level for a patient whose cancer volume is $20$ cc. Assess the strengths and weaknesses of the final model.
 
 Answer: 
+```{r}
+prostate_cols = c('ID', 'PSA_level', 'cancer_volume', 'weight', 'age',
+                  'benign_prostatic_hyperplasia', 'seminal_vesical_invation',
+                  'capsular_penetration', 'gleason_score')
+prostate_colclasses = c(rep('numeric', 6), 'factor', 'numeric', 'factor')
+prostate = read.csv('APPENC05.txt', sep = '', header = FALSE, 
+                       col.names = prostate_cols, 
+                       colClasses = prostate_colclasses)
+```
 
+```{r}
+prostate %>% 
+  ggplot(aes(cancer_volume, PSA_level)) + 
+  geom_point() + 
+  labs(x = "cancer volume", 
+       y = "PSA level",
+       title = "Scatterplot of PSA Level and Cancer Volume")
+```
+
+Using all the points, a model was created. Regression diagnostics plots are shown below. 
+```{r}
+model = lm.fit_manual(prostate$cancer_volume, prostate$PSA_level)
+prostate_model = data.frame(x = prostate$cancer_volume, 
+                            y = prostate$PSA_level, 
+                            y_pred = model[1] + model[2]*prostate$cancer_volume,
+                            resids = model[1] + (model[2]*prostate$cancer_volume) - prostate$PSA_level)
+plot_1 = prostate_model %>% 
+  ggplot(aes(x, resids)) + 
+  geom_point() + 
+  labs(x = "cancer volume",
+       y = "residual",
+       title = "Residuals from Regressing Cancer Volume on PSA Level")
+plot_2 = prob_plot(data.frame(x=prostate$cancer_volume, y=prostate$PSA_level), "of Regressing Cancer Volume on PSA Level")
+grid.arrange(plot_1, plot_2, ncol = 1)
+```
+
+The model does not appear to be a good fit for the data. Error terms deviate heavily from normality and the error variance is sparse at the high end. To remedy this, a $\log_{10}$ tranformation will be used on the PSA level ($Y$) variable. By doing so and creating the regression model again, the following diagnostic plots are made.
+```{r}
+model = lm.fit_manual(prostate$cancer_volume, log10(prostate$PSA_level))
+prostate_model = data.frame(x = prostate$cancer_volume, 
+                            y = log10(prostate$PSA_level), 
+                            y_pred = model[1] + model[2]*prostate$cancer_volume,
+                            resids = model[1] + (model[2]*prostate$cancer_volume) - log10(prostate$PSA_level))
+plot_1 = prostate_model %>% 
+  ggplot(aes(x, resids)) + 
+  geom_point() + 
+  labs(x = "cancer volume",
+       y = "residual",
+       title = "Residuals from Regressing Cancer Volume on Log10(PSA Level)")
+plot_2 = prob_plot(data.frame(x=prostate$cancer_volume, y=log10(prostate$PSA_level)), "of Regressing Cancer Volume on Log10(PSA Level)")
+grid.arrange(plot_1, plot_2, ncol = 1)
+```
+
+By using the $\log_{10}$ tranformation on $Y$, the error terms are now distributed normally and have a constant variance. The regression function in its original units is:
+```{r}
+paste("Y = 10^(", round(model[1], 3), "+", round(model[2], 3), "x)", sep = '')
+```
 
