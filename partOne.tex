@@ -674,7 +674,7 @@ Total & $\text{SSTO} = \sum \sum (Y_{ij} - \bar{Y})^2$ & $n-1$ & \\ \hline \end{
 \item Lack of normality and nonconstant error variance frequently go hand in hand; it is often the case that the same transformation that helps stabilize the variance is also helpful in approximately normalizing the error terms 
 \item When residual analysis indicates that an important predictor variable has been omitted from the model, the solution is to modify the model to include that predictor variable 
 \item When outlying observations are present, use of the least squares and maximum likelihood estimators for the regression model may lead to serious distortions in the estimated regression function; when the outlying observations should not be discarded, it may be desirable to use an estimation procedure that places less emphasis on such outlying observations
-\end{itemize} 
+\end{itemize}  
 
 \subsection{Transformations}
 \begin{itemize} 
@@ -742,19 +742,129 @@ Note that $K_2$ is the geometric mean of the $Y_i$ observations
 
 \section{Simultaneous Inferences and Other Topics in Regression Analysis}
 \subsection{Joint Estimation of $\beta_0$ and $\beta_1$}
+\begin{itemize}
+\item Analysis of data frequently requires a series of estimates (or tests) being correct; the set of estimates (or tests) of interest are called the family of estimates (or tests)
+\item A statement confidence coefficient indicates the proportion of correct estimates that are obtained when repeated samples are selected and the specified confidence interval is calculated for each sample 
+\item A family confidence coefficient indicates the proportion of families of estimates that are entirely correct when repeated samples are selected and the specified confidence intervals for the entire family are calculated for each sample 
+\item A family confidence coefficient corresponds to the probability, in advance of sampling, that the entire family of statements will be correct
+\item The Bonferroni procedure for developing joint confidence intervals for $\beta_0$ and $\beta_1$ with a specified family confidence coefficient can be used to assure that the entire set of estimates is correct; each statement confidence coefficient is adjusted to be higher than $1-\alpha$ so that the family confidence coefficient is at least $1-\alpha$
+\item The ordinary confidence limits for $\beta_0$ and $\beta_1$ with statement confidence coefficients $1-\alpha$ each are: $$ \begin{aligned} b_0 &\pm t_{1 - \frac{\alpha}{2}, n-2}s[b_0] \\ b_1 &\pm t_{1 - \frac{\alpha}{2}, n-2}s[b_1] \end{aligned} $$ 
+\item Let $A_1$ be the event that the first confidence interval does not cover $\beta_0$ and $A_2$ be the event that the second confidence interval does not cover $\beta_1$. then the Bonferroni inequality is 
+$$ P(\overline{A}_1 \cap \overline{A}_2) \geq 1 - P(A_1) - 1 - P(A_2) = 1 - \alpha - \alpha = 1 - 2\alpha $$ 
+\item If $\beta_0$ and $\beta_1$ are separately estimated with $95\%$ confidence intervals, the Bonferroni inequality guarantees a family confidence coefficient of at least $90\%$ that both intervals based on the same sample are correct
+\item To obtain a family confidence coefficient of at least $1-\alpha$ for estimating $\beta_0$ and $\beta_1$, estimate $\beta_0$ and $\beta_1$ separately with statement confidence coefficients of $1- \frac{\alpha}{2}$, yielding the Bonferroni bound $1-\frac{\alpha}{2} - \frac{\alpha}{2} = 1-\alpha$
+\item The $1-\alpha$ family confidence limits for $\beta_0$ and $\beta_1$ for the simple linear regression model by the Bonferroni procedure are: $$ b_0 \pm Bs[b_0] ~~~~ b_1 \pm Bs[b_1] $$ where $$ B = t_{1 - \frac{\alpha}{4}, n-2} $$ and $b_0$, $b_1$, $s[b_0]$ and $s[b_1]$ are defined as 
+$$ \begin{aligned} b_1 &= \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sum (X_i - \overline{X})^2} \\ b_0 &= \frac{1}{n} \left( \sum Y_i - b_1\sum X_i\right) = \overline{Y} - b_1\overline{X} \\  
+s^2[b_1] &= \frac{MSE}{\sum (X_i - \overline{X})^2} \\ s^2[b_0] &= MSE\left[\frac{1}{n} + \frac{\overline{X}^2}{\sum (X_i - \overline{X})^2}\right] \end{aligned} $$ 
+Note that a statement confidence coefficient of $1-\frac{\alpha}{2}$ requires the $1-\frac{\alpha}{4}100$ percentile of the $t$ distribution for a two-sided confidence interval
+\item The Bonferroni $1-\alpha$ family confidence coefficient is actually a lower bound on the true (but unknown) family confidence coefficient and are frequently specified at lower levels than when a single estimate is made
+\item The Bonferroni inequality can be extended to $g$ simultaneous confidence intervals with family confidence coefficient $1-\alpha$ $$ P\left(\cap_{i=1}^g \overline{A}_i \right) \geq 1 - g\alpha $$ If $g$ interval estimates are desired with family confidence coefficient $1-\alpha$, constructing each interval estimate with statement confidence coefficient $1-\frac{\alpha}{g}$ will suffice
+\item For a given family confidence coefficient, the larger the number of confidence intervals in the family, the greater becomes the multiple $B$, which may make some or all of the confidence intervals too wide to be helpful 
+\item It is not necessary with the Bonferroni procedure that the confidence intervals have the same statement confidence coefficient; different statement confidence coefficients, depending on the importance of each estimate, can be used 
+\item Joint confidence intervals can be used directly for testing
+\item The estimators $b_0$ and $b_1$ are usually correlated, but the Bonferroni simultaneous confidence limits only recognize this correlation by means of the bound on the family confidence coefficient; it can be shown that the covariance between $b_0$ and $b_1$ is $$ \sigma[b_0, b_1] = -\overline{X}\sigma^2[b_1] $$ 
+If $\overline{X}$ is positive, $b_0$ and $b_1$ are negatively correlated, implying that if the estimate $b_1$ is too high, the estimate $b_0$ is likely to be too low, and vice versa 
+\end{itemize} 
 
 \subsection{Simultaneous Estimation of Mean Responses}
+\begin{itemize}
+\item The mean responses at a number of $X$ levels often need to be estimated from the same sample data; to assure that the all of the estimates of mean responses are correct, a family confidence coefficient is used 
+\item A family confidence coefficient is needed to estimate several mean responses, even though all estimates are based on the same fitted regression line, because  the separate interval estimates of $E[Y_h]$ at the different $X_h$ levels need not all be correct or all be incorrect; the combination of sampling errors in $b_0$ and $b_1$ may be such that the interval estimates of $E[Y_h]$ will be correct over some range of $X$ levels and incorrect elsewhere 
+\item The Working-Hotelling procedure, based on the confidence band for the regression line, contains the mean responses at all $X$ levels; to obtain simultaneous confidence intervals for the mean responses at selected $X$ levels, use the boundary values for the $X$ levels of interest
+\item The simultaneous confidence limits for $g$ mean responses $E[Y_h]$ for the simple linear regression model, with the Working-Hotelling procedure, is $$ \hat{Y}_h \pm Ws[\hat{Y}_h] $$ where $$ W^2 = 2F_{1-\alpha, 2, n-2} $$ and $\hat{Y}_h$ and $s[\hat{Y}_h]$ defined as $$ \begin{aligned} \hat{Y}_h &= b_0 + b_1 X_h \\ s^2[\hat{Y}_h] &= MSE\left[\frac{1}{n} + \frac{(X_h - \overline{X})^2}{\sum (X_i - \overline{X})^2}\right] \end{aligned} $$ 
+\item To construct a family of confidence intervals for mean responses at different $X$ levels with the Bonferroni procedure, calculate the usual confidence limits for a single mean response $E[Y_h]$ and adjust the statement confidence coefficient to yield the specified family confidence coefficient 
+\item When $E[Y_h]$ is to be estimated for $g$ levels $X_h$ with family confidence coefficient $1-\alpha$, the Bonferroni confidence limits for the simple linear regression model is $$ \hat{Y}_h \pm B s[\hat{Y}_h] $$ where $$ B = t_{1 - \frac{\alpha}{2g}, n-2} $$ where $g$ is the number of confidence intervals in the family
+\item In cases where the number of statements is small, the Bonferroni confidence limits may be tighter than the Working-Hoteling confidence limits; for larger families, the Working-Hotelling confidence limits will always be the tighter one, since $W$ stays the same for any number of statements in the family whereas $B$ becomes larger as the number of statements increases
+\item Both the Working-Hotelling and Bonferroni procedures provide lower bounds to the actual family confidence coefficient 
+\item The levels of the predictor variable for which the mean response is to be estimated are sometimes not known in advance and so the levels of interest are determined via speculation; when this is the case, it is better to use the Working-Hotelling procedure because the family for this procedure encompasses all possible levels of $X$
+\end{itemize}
 
 \subsection{Simultaneous Prediction Intervals for New Observations}
+\begin{itemize}
+\item There are two procedures for making simultaneous predictions of $g$ new observations on $Y$ in $g$ independent trials at $g$ different levels of $X$ 
+\item The simultaneous prediction limits for $g$ predictions with the Scheffé procedure with family confidence coefficient $1-\alpha$ are $$ \hat{Y}_h \pm Ss[pred] $$ where $$ S^2 = gF_{1-\alpha, g, n-2} $$ and $$ s^2[pred] = MSE + s^2[\hat{Y}_h] = MSE \left[1 + \frac{1}{n} + \frac{(X_h - \overline{X})^2}{\sum (X_i - \overline{X})^2}\right]  $$  
+\item The simultaneous prediction limits for $g$ predictions with the Bonferroni procedure with family confidence coefficient $1-\alpha$ are $$ \hat{Y}_h \pm Bs[pred] $$ where $$ B = t_{1-\frac{\alpha}{2g}, n-2} $$ 
+\item The Scheffé procedure uses the $F$ distribution while the Boneferroni procedure uses the $t$ distribution
+\item The $S$ and $B$ multiples can be evaluated in advance to see which procedure produces prediction limits
+\item Simultaneous prediction intervals for $g$ new observations on $Y$ at $g$ different levels of $X$ with a $1-\alpha$ family confidence coefficient are wider than the corresponding single prediction intervals; when the number of simultaneous predictions is not large, however, the difference int he width is only moderate
+\item Note that both the $B$ and $S$ multiples for simultaneous predictions become larger as $g$  increases; this contrasts with simultaneous estimation of mean responses where the $B$ multiple becomes larger but not the $W$ multiple; when $g$ is large, both the $B$ and $S$ multiples for simultaneous predictions may become so large that the prediction intervals will be too wide to be helpful 
+\end{itemize} 
 
 \subsection{Regression through Origin}
+\begin{itemize}
+\item When the regression function is known to be linear and go through the orifgn at $(0, 0)$, the normal error model becomes $$ Y_i = \beta_1X_i + \varepsilon_i $$ where $\beta_1$ is a parameter, $X_i$ are known constants and $\varepsilon_i$ are independent $N(0, \sigma^2)$
+\item Note that in this model, $\beta_0 = 0$
+\item The regression function for the normal error model here is $$ E[Y] = \beta_1X $$ which is a straight line through the origin, with slopes $\beta_1$ 
+\item The least squares estimator of $\beta_1$ is obtained by minimizing $$ Q = \sum (Y_i - \beta_1X_i)^2 $$ with respect to $\beta_1$, resulting in the normal equation $$ \sum X_i(Y_i - b_1X_i) = 0 $$ leading to the point estimator $$ b_1 = \frac{\sum X_iY_i}{\sum X_i^2} $$ 
+The estimate $b_1$ is also the maximum likelihood estimator for the normal error regression model
+\item The fitted value $\hat{Y}_i$ for the $i$th case is $$ \hat{Y}_i = b_1X_i$$ and the $i$th residual is defined as the difference between the observed and fitted values $$ e_i = Y_i - \hat{Y}_i = Y_i - b_1X_i $$ 
+\item An unbiased estimator of the error variance $\sigma^2$ for the regression model is $$ s^2 = MSE = \frac{\sum (Y_i - \hat{Y}_i)^2}{n-1} = \frac{\sum e_i^2}{n-1} $$ The reason for the denominator $n-1$ is that only one degree of freedom is lost in estimating the single parameter in the regression function
+\item Confidence limits for $\beta_1$, $E[Y_h]$ and a new observation $Y_{h(\text{new})}$ for the regression model with $\beta_0 = 0$ are shown below 
+$$  \begin{tabular}{|c|c|c|} \hline 
+Estimate of & Estimated Variance & Confidence Limits \\ \hline 
+$\beta_1$ & $s^2[b_1] = \frac{MSE}{\sum X_I^2}$ & $b_1 \pm ts[b_1]$ \\ \hline
+$E[Y_h]$ & $s^2[\hat{Y}_h] = \frac{X_h^2MSE}{\sum X_i^2}$ &  $\hat{Y}_h \pm ts[\hat{Y}_h]$ \\ \hline
+$Y_{h(\text{new})}$ & $s^2[pred] = MSE\left(1 + \frac{X_h^2}{\sum X_i^2} \right)$ & $\hat{Y}_h \pm ts[pred]$ \\ \hline \end{tabular}  $$
+where $t = t_{1 - \frac{\alpha}{2}, n-1}$ 
+\item In using regression-through-the-origin model, the residuals must be interpreted with case because they do not sum to zero usually
+\item The only constraint on the residuals, from the normal equation, is of the form $\sum X_ie_i = 0$ and so, in a residual plot, the residuals will usually not be balanced around the zero line
+\item The sum of the squared residuals $SSE = \sum e_i^2$ for this type of regression may exceed the total sum of squares $SSTO = \sum (Y_i - \overline{Y})^2$; this can occur when the data form a curvilinear pattern or a linear pattern with an intercept away from the origin, and so the coefficient of determination ($R^2 = 1 - \frac{SSE}{SSTO}$) may become negative; consequently, the coefficient of determination $R^2$ has no clear meaning for regression through the origin
+\item It is generally a safe practice not to use regression-through-the-origin model and instead use the intercept regression model so that regression diagnostics can be done; even when it is known that the regression function must go through the origin, the function may not be linear or the variance of the error terms may not be constant
+\item If the regression line does go through the origin under the intercept model, $b_0$ will differ from $0$ only by a small sampling error, and unless the sample size is very small, use of the intercept regression model has no disadvantages of any consequence
+\item In interval estimation of $E[Y_h]$ or prediction of $Y_{h(\text{new})}$, with regression through the origin, note that the intervals widen the further $X_h$ is from the origin; this happens because the value of the true regression function is known precisely at the origin and so the effect of the sampling error in the slope $b_1$ becomes increasingly important the farther $X_h$ is from the origin
+\item Since with regression through the origin, only one parameter $\beta_1$ must be estimated, simultaneous estimation methods are not required to make a family of statements about several mean responses; for a given confidence coefficient $1-\alpha$, confidence limits can be used repeatedly with the given sample results for different levels of $X$ to generate a family of statements for which the family confidence coefficient is still $1-\alpha$
+\item The ANOVA tables for regression through the origin is based on $SSTOU = \sum Y_i^2$ (total uncorrected sum of squares), $SSRU = \sum \hat{Y}_i^2 = b_1^2 \sum X_i^2 $ (uncorrected sum of squares) and $SSE = \sum (Y_i - b_1X_i)^2$; it can be shown that these sums of squares are additive $$ SSTOU = SSRU + SSE $$ 
+\end{itemize}
 
-\subsection{Effects of Measurement Errors}
+\subsection{Effects of Measurement Errors} 
+\begin{itemize}
+\item When random measurement errors are present in the observations on the response variable $Y$, no new problems are created when these errors are uncorrelated and bot biased (positive and negative measurement errors tend to cancel out)
+\item The model error term will always reflect the composite effects of a large number of factors not considered in the model, one of which now would be the random variation due to inaccuracy in the process of measuring $Y$
+\item When the observations on the predictor variable $X$ are subject to measurement errors, a different regression model must be used
+\item Let the measurement error $\delta_i$ be defined as $$ \delta_i = X_i^* - X_i $$ and so the regression model becomes $$ Y_i = \beta_0 + beta_1X_i + \varepsilon_i = \beta_0 + \beta_1(X_i^* - \delta_i) + \varepsilon_i $$ 
+This can be rewritten as $$ Y_i = \beta_0 + \beta_1X_i^* + (\varepsilon_i - \beta_1\delta_i) $$ 
+This may look like an ordinary regression model, with predictor variable $X^*$ and error term $\varepsilon - \beta_1\delta$, but it is not, since the predictor variable observation $X_i^*$ is a random variable that is correlated with the error term $\varepsilon_i - \beta_1\delta_i$ 
+\item Assume that $E[\delta_i] = 0$, $E[\varepsilon_i] = 0$ and $E[\delta_i\varepsilon_i] = 0$; then $E[X_i^*] = E[X_i + \delta_i] = X_i$, the model error terms $\varepsilon_i$ have expectation $0$, and the measurement error $\delta_i$ is not correlated with the model error $\varepsilon_i$; with this, the covariance between the observations $X_i^*$ and the random terms $\varepsilon_i - \beta_1\delta_i$ under the 3 conditions given, which imply that $E[X_i^*] = X_i$ and $E[\varepsilon_i - \beta_1\delta_i] = 0$ is $$ \begin{aligned} \sigma[X_i^*, \varepsilon_i - \beta_1\delta_i] &= E{(X_i^* - E[X_i^*])((\varepsilon_i - \beta_1\delta_i) - E[\varepsilon_i - \beta_1\delta_i])} \\ &= E[(X_i^* - X_i)(\varepsilon_i - \beta_1\delta_i)] \\ &= E[\delta_i(\varepsilon_i - \beta_1\delta_i)] \\ &= E[\delta_i\varepsilon_i - \beta_1\delta_i^2] \\ &= -\beta_1\sigma^2[\delta_i] \end{aligned} $$ 
+The last result occurs because $E[\delta_i\varepsilon_i] = 0$ and $E[\delta_i^2] = \sigma^2[\delta_i]$ since $E[\delta_i] = 0$
+\item The covariance above is not zero whenever there is a linear regression relation between $X$ and $Y$
+\item If it is assumed that the response $Y$ and the random predictor variable $X^*$ follow a bivariate normal distribution, then the conditional distribution of the $Y_i$ given $X_i^*$, are normal and independent with conditional mean $$ E[Y_i ~|~ X_i^*] = \beta_0^* + \beta_1^*X_i^* $$ and conditional variance $\sigma^2_{Y|X^*}$; it can also be shown that $$ \beta_1^* = \beta_1\frac{\sigma_X^2}{\sigma_X^2 + \sigma_Y^2} $$ where $\sigma^2_X$ is the variance of $X$ and $\sigma_Y^2$ is the variance of $Y$; hence, the least squares slope estimate from fitting $Y$ on $X^*$ is not an estimate of $\beta_1$, but an estimate of $\beta_1^* \leq \beta_1$,  which is too small on average, with the magnitude of the bias dependent upon the relative sizes of $\sigma^2_X$ and $\sigma^2_Y$
+\item Another approach is to use additional variables that are known to be related to the true value of $X$ but not to the errors of measurement $\delta$, called instrumental variables since they are used as an instrument in studying the relation between $X$ and $Y$
+\item Under the Berkson model, measurement errors in $X$ are no problem when the observation $X_i^*$ is a fixed quantity but the unobserved true value $X_i$ is a random variable
+\item Under the Berkson model, let the measurement error be $$ \delta_i = X_i^* - X_i $$ where there is no constraint on the relation between $X_i^*$ and $\delta_i$, since $X_i^*$ is a fixed quantity, and assume $E[\delta_i] = 0$;
+then the model under the Berkson case is $$ Y_i = \beta_0 + \beta_1X_i^* + (\varepsilon_i - \beta_1\delta_i) $$ 
+Here the expected value of the error term, $E[\varepsilon_i - \beta_1\delta_i] = 0$ since $E[\varepsilon_i] = 0$ and $E[\delta_i] = 0$; however, $\varepsilon_i - \beta_1\delta_i$ is now uncorrelated with $X_i^*$ since $X_i^*$ is a constant for the Berkson case
+\item Least squares procedures can be applied for the Berkson case without modification and the estimators $b_0$ and $b_1$ will be unbiased; if the standard normality and constant variance assumptions are made for the errors $\varepsilon_i - \beta_1\delta_i$, then the usual tests and interval estimates can be utilized
+\end{itemize}
 
 \subsection{Inverse Predictions}
+\begin{itemize} 
+\item An inverse prediction is made using a regression model of $Y$ on $X$ where a prediction of the value of $X$ is made, after a new observation $Y$ is found
+\item In inverse predictions, the regression model is assumed as $$ Y_i = \beta_0 + \beta_1X_i + \varepsilon_i $$ and the estimated regression function based on $n$ observations is obtained as follows $$ \hat{Y} = b_0 + b_1X $$ 
+\item A new observation $Y_{h(\text{new})}$ becomes available and it is desired to estimate the level of $X_{h(\text{new})}$ that gave rise to this new observation, as follows $$ \hat{X}_{h(\text{new})} = \frac{Y_{h(\text{new})} - b_0}{b_1} ~~~~ b_1 \neq 0 $$  where $\hat{X}_{h(\text{new})}$ denotes the point estimator of the new level $X_{h(\text{new})}$; it can be shown that the estimator $\hat{X}_{h(\text{new})}$ is the maximum likelihood estimator of $X_{h(\text{new})}$ for the normal error regression model
+\item Approximate $1-\alpha$ confidence limits for $X_{h(\text{new})}$ are $$ \hat{X}_{h(\text{new})} \pm t_{1-\frac{\alpha}{2}, n-2} s[\text{predX}] $$ where $$ s^2[\text{predX}] = \frac{MSE}{b_1^2\left[1 + \frac{1}{n} + \frac{(\hat{X}_{h(\text{new})} - \overline{X})^2}{\sum (X_i - \overline{X})^2}\right]} $$ 
+\item The inverse prediction problem is also known as a calibration problem since it is applicable when inexpensive, quick and approximate measurements $Y$ are related to precise, often expensive, and time-consuming measurements $X$ based on $n$ observations; the resulting regression model is then used to estimate the precise measurement $X_{h(\text{new})}$ for a new approximate measurement $Y_{h(\text{new})}$
+\item The approximate confidence interval is appropriate if the quantity $$ \frac{(t_{1 - \frac{\alpha}{2}, n-2})^2 MSE}{b_1^2 \sum (X_i - \overline{X})^2} $$ is small
+\item Simultaneous prediction intervals based on $g$ different new observed measurements $Y_{h(\text{new})}$, with a $1-\alpha$ family confidence coefficient, are easily obtained by using either the Bonferroni or the Scheffé procedures; the value of $t_{1-\frac{\alpha}{2}, n-2}$ is replaced by either $B = t_{1-\frac{\alpha}{2g}, n-2}$ or $S = \sqrt{gF_{1-\alpha, g, n-2}}$ 
+\item The inverse prediction problem is controversial among statisticians, where some suggest that inverse predictions be made in direct fashion by regressing $X$ on $Y$ (inverse regression)
+\end{itemize} 
 
 \subsection{Choice of $X$ Levels}
-
+\begin{itemize} 
+\item When regression data are obtained by experiment, the levels of $X$ at which observations on $Y$ are to be taken are under the control of the experimenter; among other things, the experimenter will have to consider: \begin{itemize} 
+\item How many levels of $X$ should be investigated? 
+\item What shall the two extreme levels be? 
+\item How shall the other levels of $X$, if any, be spaced? 
+\item How many observations should be taken at each level of $X$? \end{itemize} 
+\item In many cases, the main objective in regression analysis is to predict one or more new observations or to estimate one of more mean responses; when the regression function is curvilinear, the main objective may be to locate the maximum or minimum mean responses; at still other times, the main purpose is to determine the nature of the regression function 
+\item If the main purpose of the regression analysis is to estimate the slope $\beta_1$, the variance of $b_1$ is minimized if $\sum (X_i - \overline{X})^2$ is maximized, which is accomplished by using two levels of $X$, at the two extremes for the scope of the model, and placing half of the observations at each of the two levels
+\item If the main purpose of the regression analysis is to estimate the intercept $\beta_0$, the number and placement of levels does not affect the variance of $b_0$ as long as $\overline{X} = 0$
+\item From ``Planning of Experiments", by D. R. Cox (1958), \begin{itemize} 
+\item Use two levels when the object is primarily to examine whether or not the predictor variable has an effect and in which direction that effect is 
+\item Use three levels whenever a description of the response curve by its slope and curvature is likely to be adequate
+\item Use four levels if further examination of the shape of the response curve is important 
+\item Use more than four levels when it is required to estimate the detailed shape of the response curve, or when the curve is expected to rise to an asymptotic value, or in general to show features not adequately described by slope and curvature
+\item In these last cases, it is generally satisfactory to use equally spaced levels with equal numbers of observations per level \end{itemize} 
+\end{itemize} 
 
 \section{Matrix Approach to Simple Linear Regression Analysis}
 \subsection{Matrices}
