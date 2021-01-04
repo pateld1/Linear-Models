@@ -9,7 +9,7 @@ subtitle: Simultaneous Inferences and Other Topics in Regression Analysis
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, results = 'asis')
 ```
 
 ```{r, message=FALSE}
@@ -229,33 +229,42 @@ The Bonferroni procedure provides the tighter prediction limits here.
 
 Answer: 
 ```{r}
-family.pred.interval = function(data, alpha, g, Xh, method = c("Scheffe", "Bonferroni", "best")){
+family.pred.interval = function(data, alpha, g, Xh, 
+                                method = c("Scheffe", "Bonferroni", "best")){
   
   model = lm.fit_manual(data$x, data$y)
   preds = model[1] + model[2]*data$x
   MSE = sum((data$y - preds)^2) / (nrow(data)-2)
   
   Yh = model[1] + model[2]*Xh
-  s2_pred = MSE * (1 + (1/nrow(data)) + 
+  s2_pred = MSE * ((1/nrow(data)) + 
                      (((Xh - mean(data$x))^2)/sum((data$x - mean(data$x))^2)))
   
   S = sqrt(g * qf(1 - alpha, g, nrow(data)-2))
+  s2_pred_S = MSE * (1 + (1/nrow(data)) + 
+                     (((Xh - mean(data$x))^2)/sum((data$x - mean(data$x))^2)))
   B = qt(1 - (alpha / (2 * g)), nrow(data)-2)
+  s2_pred_B = MSE * ((1/nrow(data)) + 
+                     (((Xh - mean(data$x))^2)/sum((data$x - mean(data$x))^2)))
   
   if(method == "Scheffe"){
     multiplier = S
+    s2_pred = s2_pred_S
   }
   else if(method == "Bonferroni"){
     multiplier = B
+    s2_pred = s2_pred_B
   }
   else{
     if(S > B){
       method = "Bonferroni (best of two)"
       multiplier = B
+      s2_pred = s2_pred_B
     }
     else{
       method = "Scheffe (best of two)"
       multiplier = S
+      s2_pred = s2_pred_S
     }
   }
   
@@ -518,9 +527,51 @@ Using a zero intercept model creates a U-shaped pattern in the fitted values vs 
 
 (b) Conduct a formal test for lack of fit of linear regression through the origin; use $\alpha = .01$. State the alternatives, decision rule and conclusion. What the $P$-value of the test? 
 
-Answer: 
+Answer: Let the null hypothesis be that $E[Y] = \beta_1X$ and the alternative hypothesis that $E[Y] \neq \beta_1X$. Then
 ```{r}
+lack.of.fit.origin.test = function(data, alpha = 0.05, pval = FALSE){
+  
+  X = data$x
+  Y = data$y 
+  Y_bars = data.frame(x = sort(unique(X)))
+  mean_vec = c()
+  for(i in Y_bars$x){
+    temp_mean = mean(data[data$x == i, "y"])
+    mean_vec = c(mean_vec, temp_mean)
+  }
+  Y_bars$ybars = mean_vec
+  SSPE= 0
+  for(i in Y_bars$x){
+    temp_Y = data[data$x == i, "y"]
+    SSPE = SSPE + sum((temp_Y - Y_bars[Y_bars$x == i, "ybars"])^2)
+  }
+  df_F = nrow(data) - length(unique(X))
+  
+  model = lm.fit.origin_manual(X, Y)
+  Ypreds = model*X
+  SSE_R = sum((Ypreds - Y)^2)
+  df_R = nrow(data) - 1
+  
+  F_ast = round(((SSE_R - SSPE) / (df_R - df_F))/(SSPE / df_F), 3)
+  
+  if(pval){
+    print(paste("P value:", round(pf(F_ast, length(unique(X)) - 1, 
+                                     nrow(data) - length(unique(X)), 
+                                     lower.tail = FALSE), 3), 
+          sep = ' '))
+  }
 
+  if(F_ast < qf(1 - alpha, length(unique(X)) - 1, nrow(data) - length(unique(X)),
+                lower.tail = FALSE)){
+    paste("At the alpha level of", alpha, "the test statistic is", F_ast, "and the null hypothesis is failed to be rejected. There is no sufficent evidence that the regression function is linear.", sep = ' ')
+  }
+  else{
+    paste("At the alpha level of", alpha, "the test statistic is", F_ast, "and the null hypothesis is rejected. There is evidence that the regression function is not linear.", sep = ' ')
+  }
+}
+lack.of.fit.origin.test(typo_errors, 0.01, TRUE)
+
+?pf
 ```
 
 
@@ -534,16 +585,55 @@ Answer:
 gpa = read.csv('CH01PR19.txt', sep = '', header = FALSE, 
                col.names = c('y', 'x'), 
                colClasses = c('numeric', 'numeric'))
+
+model = round(lm.fit.origin_manual(gpa$x, gpa$y), 3)
+paste("Y = ", model, "X", sep = '')
 ```
 
 
 (b) Estimate $\beta_1$ with a $95$ percent confidence interval. Interpret your interval estimate.
 
 Answer: 
+```{r}
+b1.origin.conf.int = function(data, alpha = 0.01){
+
+  model = lm.fit.origin_manual(data$x, data$y)
+  pred = model*data$x
+  MSE = sum((data$y - pred)^2) / (nrow(data)-1)
+  s2_b1 = MSE/sum(data$x^2)
+  t = qt(1 - (alpha/2), nrow(data)-1)
+  error = t*sqrt(s2_b1)
+  lower = round(model - error, 3)
+  upper = round(model + error, 3)
+  return(c(lower, upper))
+}
+
+b1.origin.conf.int(gpa, .05)
+```
+
+$b_1$ is estimated to lie between $0.116$ and $0.127$, with $95$ percent confidence. 
 
 (c) Estimate the mean freshman GPA for students whose ACT test score is $30$. Use a $95$ percent confidence interval.
 
 Answer: 
+```{r}
+exp.Yh.origin.conf.int = function(data, Xh, alpha = 0.01){
+
+  model = lm.fit.origin_manual(data$x, data$y)
+  pred = model*data$x
+  Yh = model*Xh
+  MSE = sum((data$y - pred)^2) / (nrow(data)-1)
+  s2_Yh = MSE * ((Xh^2/sum(data$x^2)))
+  t = qt(1 - (alpha/2), nrow(data)-1)
+  error = t*sqrt(s2_Yh)
+  lower = round(Yh - error, 3)
+  upper = round(Yh + error, 3)
+  return(c(lower, upper))
+}
+
+exp.Yh.origin.conf.int(gpa, 30, .05)
+```
+
 
 ### Problem 15: 
 Refer to *Grade point average* Problem 4.14. 
@@ -551,29 +641,83 @@ Refer to *Grade point average* Problem 4.14.
 (a) Plot the fitted regression line and the data. Does the linear regression function through the origin appear to be a good fit here? 
 
 Answer: 
+```{r}
+model = lm.fit.origin_manual(gpa$x, gpa$y)
+
+gpa %>% 
+  ggplot(aes(x,y)) + 
+  geom_point() + 
+  geom_abline(intercept = 0, slope = model, color = "firebrick") + 
+  scale_x_continuous(limits = c(0, 35)) + 
+  scale_y_continuous(limits = c(0, 5)) + 
+  labs(x = "ACT Score", 
+       y = "GPA", 
+       title = "Regressing GPA on ACT Score", 
+       subtitle = "using a no-Intercept Model")
+```
+
+The linear regression function through the origin does not appear to be a good fit here. 
 
 (b) Obtain the residuals $e_i$. Do they sum to zero? Plot the residuals against the fitted values $\hat{Y}_i$. What conclusions can be drawn from your plot? 
 
 Answer: 
+```{r}
+gpa_no_intercept_model = gpa %>% 
+  mutate(preds = model*x, 
+         resids = y - preds)
+
+gpa_no_intercept_model$resids %>% sum
+```
+
+The residuals of the no-intercept model do not sum to zero. 
+```{r}
+gpa_no_intercept_model %>% 
+  ggplot(aes(preds, resids)) + 
+  geom_point() + 
+  labs(x = "fitted values", 
+       y = "residuals",
+       title = "Fitted Values vs Residuals",
+       subtitle = "from fitting a no Intercept Model on GPA vs ACT Scores")
+```
+
+There is a downward trend in the plot indicating that there is a nonconstant variance in the error terms. The model is not a good fit here. 
 
 (c) Conduct a formal test for lack of fit of linear regression through the origin; use $\alpha = .005$. State the alternatives, decision rule and conclusion. What is the $P$-value of the test? 
 
-Answer: 
+Answer: Let the null hypothesis be that $E[Y] = \beta_1X$ and the alternative that $E[Y] \neq \beta_1X$. Then
+```{r}
+lack.of.fit.origin.test(gpa, .005, TRUE)
+```
+
 
 ### Problem 16: 
-Refer to *Copier maintenance* Problem 1.20. Assume that linear regression through the origin mdodel is appropriate.
+Refer to *Copier maintenance* Problem 1.20. Assume that linear regression through the origin model is appropriate.
 
 (a) Obtain the estimated regression function.
 
 Answer: 
+```{r}
+model = round(lm.fit.origin_manual(copier$x, copier$y), 3)
+paste("Y = ", model, "X", sep = '')
+```
+
 
 (b) Estimate $\beta_1$ with a $90$ percent confidence interval. Interpret your interval estimate.
 
 Answer: 
+```{r}
+b1.origin.conf.int(copier, .1)
+```
+
+The true value of $\beta_1$ lies between $14.567$ and $15.328$ with $90$ percent confidence. 
 
 (c) Predict the service time on a new call in which six copiers are to be serviced. Use a $90$ percent prediction interval. 
 
 Answer: 
+```{r}
+Yhat_pred_interval_origin(copier, 6, .1)
+```
+
 
 ### Problem 17: 
 Refer to *Copier maintenance* Problem 4.16. 
@@ -581,30 +725,113 @@ Refer to *Copier maintenance* Problem 4.16.
 (a) Plot the fitted regression line and the data. Does the linear regression through the origin appear to be a good fit here? 
 
 Answer: 
+```{r}
+model = lm.fit.origin_manual(copier$x, copier$y)
+
+copier %>% 
+  ggplot(aes(x,y)) + 
+  geom_point() + 
+  geom_abline(intercept = 0, slope = model, color = "firebrick") + 
+  scale_x_continuous(limits = c(0, 11)) + 
+  labs(x = "number of copiers", 
+     y = "time, in minutes", 
+     title = "Regressing Time on Number of Copiers", 
+     subtitle = "using a no-Intercept Model")
+```
+
+The linear regression through the origin appears to be a good fir here. 
 
 (b) Obtain the residuals $e_i$. Do they sum to zero? Plot the residuals against the fitted values $\hat{Y}_i$. What conclusions can be drawn from your plot? 
 
 Answer: 
+```{r}
+copier_no_intercept_model = copier %>% 
+  mutate(preds = model*x, 
+         resids = y - preds)
+
+copier_no_intercept_model$resids %>% sum
+```
+
+The residuals of the no-intercept model do not sum to zero. 
+```{r}
+copier_no_intercept_model %>% 
+  ggplot(aes(preds, resids)) + 
+  geom_point() + 
+  labs(x = "fitted values", 
+       y = "residuals",
+       title = "Fitted Values vs Residuals",
+       subtitle = "from fitting a no Intercept Model on Service Time vs Number of Copiers")
+```
+
+There does not appear to be any patterns in the plot, indicating that the variance of the error terms may be constant. This means that the model could be a good fit for the data.
 
 (c) Conduct a formal test for lack of fit of linear regression through the origin; use $\alpha = .01$. State the alternatives, decision rule and conclusion. What is the $P$-value of the test? 
 
-Answer: 
+Answer: Let the null hypothesis be that $E[Y] = \beta_1X$ and the alternative be that $E[Y] \neq \beta_1X$. Then
+```{r}
+lack.of.fit.origin.test(copier, .01, TRUE)
+```
+
 
 ### Problem 18: 
-Refer to *Plastic hardness* Problem 1.22. Suppose that errors arrise in $X$ because the laboratory technician is instructed to measure the hardness of the $i$th specimen ($Y_i$) at a prerecorded elapsed time ($X_i$), but the timing is imperfect so the true elapsed time varies at random from the prerecorded elapsed time. Will ordinary least squares estimates be biased here? Discuss.
+Refer to *Plastic hardness* Problem 1.22. Suppose that errors arise in $X$ because the laboratory technician is instructed to measure the hardness of the $i$th specimen ($Y_i$) at a prerecorded elapsed time ($X_i$), but the timing is imperfect so the true elapsed time varies at random from the prerecorded elapsed time. Will ordinary least squares estimates be biased here? Discuss.
 
-Answer: 
+Answer: Under the condition described, ordinary least squares estimates will not be biased. This is because error in timing is random and be encapsulated in the error term of the model. 
 
 ### Problem 19: 
 Refer to *Grade point average* Problem 1.19.  A new student earned a grade point average of $3.4$ in the freshman year.
 
-(a) Obtain a $90$ percent confidence interavl for the students' ACT test score. Interpret your confidence interval.
+(a) Obtain a $90$ percent confidence interval for the students' ACT test score. Interpret your confidence interval.
 
 Answer: 
+```{r}
+Xhat.conf.interval = function(data, Yhat, alpha = 0.01){
+  
+  model = lm.fit_manual(data$x, data$y)
+  Xhat = (Yhat - model[1]) / model[2]
+  pred = model[1] + model[2]*data$x
+  MSE = sum((data$y - pred)^2)/(nrow(data)-2)
+  temp = 1 + (1/nrow(data)) + ((Xhat - mean(data$x))^2/sum((data$x - mean(data$x))^2))
+  s2_predX = MSE * temp / (model[2]^2)
+  t = qt(1 - (alpha/2), nrow(data)-2)
+  error = t*sqrt(s2_predX)
+  lower = round(Xhat - error, 5)
+  upper = round(Xhat + error, 5)
+  return(c(lower, upper))
+}
+
+Xhat.conf.interval(gpa, 3.4, .1)
+```
+
+If a new student earns a grade point average of $3.4$, then their ACT score is estimated to be between $6.01315$ and $60.226$, with $90$ percent confidence. 
+
 
 (b) Is criterion (4.33) as to the appropriateness of the approximate confidence interval met here? 
 
-Answer: 
+Answer: Criterion (4.33) says that the approximate confidence interval is appropriate if the following quantity is small: $$ \frac{[t_{1 - \frac{\alpha}{2}}]^2 MSE}{b_1^2 \sum (X_i - \overline{X})^2} $$ 
+
+```{r}
+inverse.prediction.criterion = function(data, alpha){
+  
+  model = lm.fit_manual(data$x, data$y)
+  pred = model[1] + model[2]*data$x
+  MSE = sum((data$y - pred)^2)/(nrow(data) - 2)
+  t = qt(1 - (alpha/2), nrow(data) - 2)
+  
+  quantity = round((t^2 * MSE) / (model[2]^2 * sum((data$x - mean(data$x))^2)), 3)
+  
+  if(quantity < .1){
+    paste("The criterion equals", quantity, 
+          "which is small and so the confidence interval is appropriate", sep = ' ')
+  }
+  else{
+    paste("The criterion equals", quantity, 
+          "which is large and so the confidence interval is not appropriate", sep = ' ')
+  }
+}
+inverse.prediction.criterion(gpa, .1)
+```
+
 
 ### Problem 20: 
 Refer to *Plastic hardness* Problem 1.22. The measurement of a new test item showed $238$ Brinell units of hardness. 
@@ -612,35 +839,50 @@ Refer to *Plastic hardness* Problem 1.22. The measurement of a new test item sho
 (a) Obtain a $99$ percent confidence interval for the elapsed time before the hardness was measured. Interpret your confidence interval.
 
 Answer:
+```{r}
+Xhat.conf.interval(plastic, 238, .01)
+```
+
+If a new test item showed $238$ Brinell units of hardness, it can be said with $99$ percent confidence that the elapsed time between the hardness was measured lies between $29.16920$ and $39.05815$.
 
 (b) Is criterion (4.33) as to the appropriateness of the approximate confidence interval met here? 
 
 Answer: 
+```{r}
+inverse.prediction.criterion(plastic, .01)
+```
+
 
 ### Problem 21: 
 When the predictor variable is coded that $\overline{X} = 0$ and the normal error regression model applies, are $b_0$ and $b_1$ independent? Are the joint confidence intervals for $\beta_0$ and $\beta_1$ then independent? 
 
-Answer: 
+Answer: When the predictor variable is coded such that $\overline{X} = 0$, and the normal error regression model is applied, then $b_0$ and $b_1$ are independent. This comes from the covariance of $b_0$ and $b_1$, which is $$ \sigma[b_0, b_1] = -\overline{X}\sigma^2[b_1] $$ When the covariance is $0$, that means $b_0$ and $b_1$ are independent. However, it does not mean that the joint confidence intervals for $\beta_0$ and $\beta_1$ are then independent as well, since each of the confidence intervals depend on a single multiplier for the standard deviation. 
 
 ### Problem 22: 
 Derive an extension of the Bonferroni inequality (4.2a) for the case of three statements, each with statement confidence coefficients $1-\alpha$.
 
-Answer: 
+Answer: Let $A_3$ denote the event that the third statement is not correct, and $\overline{B}$ be the event the first two statements are correct, or $\overline{A}_1 \cap \overline{A}_2$. Then
+$$ P(\overline{B} \cap \overline{A}_3) = P(\overline{A}_1 \cap \overline{A}_2 \cap \overline{A}_3) \geq 1 - 2\alpha - \alpha = 1 - 3\alpha $$ 
 
 ### Problem 23: 
 Show that for the fitted least squares regression line through the origin (4.15), $\sum X_ie_i = 0$. 
 
-Answer: 
+Answer: For the fitted least squares regression line through the origin, the estimator of $\beta_1$ is obtained by minimizing $$ Q = \sum (Y_i - \beta_1X_i)^2 $$ resulting in the normal equation $$ \sum X_i(Y_i - b_1X_i) = 0 $$ The regression model under this framework is $$ Y_i = \beta_1X_i + \varepsilon_i$$ and so by substituting the estimates in for each variable and rearranging, $$ e_i = Y_i - b_1X_i $$ This can be plugged into the normal equation: 
+$$ \sum X_i(Y_i - b_1X_i) = \sum X_ie_i = 0 $$ 
 
 ### Problem 24: 
 Show that $\hat{Y}$ as defined in (4.15) for linear regression through the origin is an unbiased estimator of $E[Y]$.
 
-Answer: 
+Answer: To show that $\hat{Y}$ is an unbiased estimator of $E[Y]$, show that $E[\hat{Y}] = E[Y]$.
+Now, since the framework is linear regression through the origin, it is known that 
+$$\hat{Y} = b_1X $$ and so $$ E[\hat{Y}] = E[b_1X] = XE[b_1] = X\beta_1 = E[Y] $$ 
 
 ### Problem 25: 
 Derive the formula for $s^2[\hat{Y}_h]$ for linear regression through the origin.
 
-Answer: 
+Answer: Since $$\hat{Y}_h = b_1X_h $$ then 
+$$ \sigma^2[\hat{Y}_h] = \sigma^2[b_1X_h] = X_h^2\sigma^2[b_1] = \frac{X_h^2 \sigma^2}{\sum X_i^2} $$ Now replace $\sigma$ with $MSE$ for the estimate of $\sigma^2[\hat{Y}_h]$ and so
+$$ s^2[\hat{Y}_h] = \frac{X_h^2 MSE}{\sum X_i^2} $$ 
 
 ### Problem 26: 
 Refer to the *CDI* dataset in Appendix C.2 and Project 1.43. Consider the regression relation of number of active physicians to total population.
@@ -657,22 +899,36 @@ cdi_colclasses = c('integer', 'character', 'character', rep('numeric', 13), 'fac
 cdi = read.csv('APPENC02.txt', sep = '', header = FALSE, 
                   col.names = cdi_cols, 
                   colClasses = cdi_colclasses)
+
+cdi_relevant = cdi %>% select(x = total_pop, y = num_physicians)
+bonferroni.joint.ci(cdi_relevant, .05)
 ```
 
 
-(b) An investigator has suggested that $\beta_0$ should be $-100$ and $\beta_1$ should b $.0028$. Do the joint confidence intervals in part (a) support this view? Discuss.
+(b) An investigator has suggested that $\beta_0$ should be $-100$ and $\beta_1$ should be $.0028$. Do the joint confidence intervals in part (a) support this view? Discuss.
 
-Answer: 
+Answer: The joint confidence intervals in part (a) support this view as both estimates fall witin the confidence limits found. 
 
 (c) It is desired to estimate the expected number of active physicians for countries with total population of $X = 500$, $1,000$, $5,000$ thousands with family confidence coefficient $.90$. Which procedure, the Working-Hotelling or the Bonferroni, is more efficient here? 
 
 Answer: 
+```{r}
+working.hotelling.coef(.1, nrow(cdi_relevant))
+bonferroni.coef(.1, 3, nrow(cdi_relevant))
+```
+
+The Bonferroni procedure is more efficient here since the multiplier is smaller than that under the Working-Hotelling procedure.
 
 (d) Obtain the family of interval estimates required in part (c), using the more efficient procedure. Interpret your confidence intervals.
 
 Answer: 
+```{r}
+family.pred.interval(cdi_relevant, .1, 3, 500, "Bonferroni")
+family.pred.interval(cdi_relevant, .1, 3, 1000, "Bonferroni")
+family.pred.interval(cdi_relevant, .1, 3, 5000, "Bonferroni")
+```
 
-### Problem 26: 
+### Problem 27: 
 Refer to the *SENIC* dataset in Appendix C.1 and Project 1.45. Consider the regression relation of average length of stay to infection risk.
 
 (a) Obtain Bonferroni join confidence intervals for $\beta_0$ and $\beta_1$, using a $90$ percent family confidence coefficient. 
@@ -686,19 +942,34 @@ senic_colclasses = c(rep('numeric', 6), rep('factor', 2), rep('numeric', 3))
 senic = read.csv('APPENC01.txt', sep = '', header = FALSE, 
                   col.names = senic_cols, 
                   colClasses = senic_colclasses)
+senic_relevant = senic %>% select(x = infection_risk, y = length_stay)
+
+bonferroni.joint.ci(senic_relevant, .1)
 ```
 
 
 (b) A researcher suggested that $\beta_0$ should be approximately $7$ and $\beta_1$ should be approximately $1$. Do the joint intervals in part (a) support this expectation? Discuss.
 
-Answer: 
+Answer: The joint intervals in part (a) do not support this expectation since $\beta_1$ falls outside the interval calculated.
 
 (c) It is desired to estimate the expected hospital stay for persons with infection risks $X=2$, $3$, $4$, $5$ with family confidence coefficient $.95$. Which procedure, the Working-Hotelling or the Bonferroni, is more efficient here? 
 
 Answer: 
+```{r}
+working.hotelling.coef(.05, nrow(senic_relevant))
+bonferroni.coef(.05, 4, nrow(senic_relevant))
+```
+
+The Working-Hotelling procedure is more efficient here due to the smaller multiplier.
 
 (d) Obtain the family of interval estimates required in part (c), using the more efficient procedure. Interpret your confidence intervals. 
 
 Answer: 
+```{r}
+working.hotelling.reg.band(senic_relevant, .05, 2)
+working.hotelling.reg.band(senic_relevant, .05, 3)
+working.hotelling.reg.band(senic_relevant, .05, 4)
+working.hotelling.reg.band(senic_relevant, .05, 5)
+```
 
 
