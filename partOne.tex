@@ -867,19 +867,102 @@ Here the expected value of the error term, $E[\varepsilon_i - \beta_1\delta_i] =
 \end{itemize} 
 
 \section{Matrix Approach to Simple Linear Regression Analysis}
-\subsection{Matrices}
+\subsection{Matrices} 
+\begin{itemize} 
+\item A matrix is a rectangular array of elements in rows and columns 
+\item The dimension of the matrix is given by $r \times c$ where $r$ is the number of rows and $c$ is the number of columns in the matrix
+\item To identify the elements of a matrix $\mtx{A}$, let $a_{ij}$ represent the element in the $i$th row and the $j$th column 
+\item A matrix with $r$ rows and $c$ columns can be represented in full as $$ \matrix{a_{11} & a_{12} & \hdots & a_{1j} & \hdots & a_{1c} \\ a_{21} & a_{22} & \hdots & a_{2j} & \hdots & a_{2c} \\ \vdots & \vdots & \ddots & \vdots & \ddots & \vdots \\ a_{i1} & a_{i2} & \hdots & a_{ij} & \hdots & a_{ic} \\ \vdots & \vdots & \ddots & \vdots & \ddots & \vdots \\ a_{r1} & a_{r2} & \hdots & a_{rj} & \hdots & a_{rc}} $$ or in abbreviated form as $$ \mtx{A} = [a_{ij}] ~~~ i = 1.\dots, r; j = 1,\dots, c $$ or simply by a boldface symbol, such as $\mtx{A}$
+\item A matrix is said to be square if the number of rows equals the number of columns
+\item A matrix containing only one column in called a column vector, or simply a vector; likewise, a matrix containing only one row is called a row vector
+\item The transpose of a matrix $\mtx{A}$ is another matrix, denoted by $\\mtvT{A}$, that is obtained by interchanging corresponding columns and rows of the matrix $\mtx{A}$ 
+$$ \begin{aligned} 
+\underbrace{\mtx{A}}_{r \times c} &= \matrix{a_{11} & \hdots & a_{1c} \\ \vdots & \ddots & \vdots \\ a_{r1} & \hdots & a_{rc} } &= [a_{ij}] ~~~ &i = 1,\dots,r; j = 1,\dots, c \\ 
+\underbrace{\tr{A}}_{c \times r} &= \matrix{a_{11} & \dots & a_{r1} \\ \vdots & \ddots & \vdots \\ a_{1c} & \hdots & a_{rc} } &= [a_{ji}] ~~~ &j = 1,\dots, c; i = 1, \dots r \end{aligned} $$ 
+The element in the $i$th row and the $j$th column in $\mtx{A}$ is found int he $j$th row and $i$th column in $\tr{A}$
+\item Two matrices $\mtx{A}$ and $\mtx{B}$ are said to be equal if they have the same dimension and if all corresponding elements are equal; conversely, if two matrices are equal, their corresponding elements are equal
+\end{itemize}
 
 \subsection{Matrix Addition and Subtraction}
+\begin{itemize}
+\item Adding and subtracting two matrices require that they have the same dimension
+\item The sum, or difference, of two matrices is another matrix  whose elements each consist of the sum, of difference, of the corresponding elements of the two matrices 
+\item In general, if $$ \underbrace{\mtx{A}}_{r \times c} [ a_{ij}] ~~~ \underbrace{\mtx{B}}_{r \times c} = [b_{ij}] ~~~ i = 1,\dots,r; j = 1,\dots, c $$ 
+then $$ \underbrace{\mtx{A} + \mtx{B}}_{r \times c} = [a_{ij} + b_{ij}] ~~~~~~~~ \underbrace{\mtx{A} - \mtx{B}}_{r \times c} = [a_{ij} - b_{ij}] $$ 
+\end{itemize}
 
 \subsection{Matrix Multiplication}
+\begin{itemize}
+\item A scalar is an ordinary number of a symbol representing a number 
+\item In multiplication of a matrix by a scalar, every element of the matrix is multiplied by the scalar
+\item If every element of a matrix has a common factor, this factor can be taken outside the matrix and treated as a scalar 
+\item In general, if $\mtx{A} = [a_{ij}]$ and $k$ is a scalar, then $$ k\mtx{A} = \mtx{A}k = [ka_{ij}] $$ 
+\item The matrix multiplication of two matrices $\mtx{A}$ and $\mtx{B}$ is denoted by $\mtx{AB}$ and is defined only when the number of columns in $\mtx{A}$ equals the number of rows in $\mtx{B}$ so that there will be corresponding terms in the cross products 
+\item When obtaining the product $\mtx{AB}$, $\mtx{A}$ is said to be postmultiplied by $\mtx{B}$, or $\mtx{B}$ is premultiplied by $\mtx{A}$
+\item In general, if $\mtx{A}$ has dimension $r \times c$ and $\mtx{B}$ has dimension $c \times s$, the product $\mtx{AB}$ is a matrix of dimension $r \times s$ whose element in the $i$th row and $j$th column is $$ \sum_{k=1}^c a_{ik}b_{kj} $$ so that $$ \underbrace{\mtx{AB}}_{r \times s} = \left[ \sum_{k=1}^c a_{ik}b_{kj} \right] ~~~ i = 1,\dots,r; j = 1,\dots,s $$ 
+\end{itemize} 
 
 \subsection{Special Types of Matrices}
+\begin{itemize}
+\item If $\mtx{A} = \tr{A}$, then $\mtx{A}$ is said to be symmetric; a symmetric matrix necessarily is square
+\item A diagonal matrix is a square matrix whose off-diagonal elements are all zeros 
+$$ \matrix{a_1 & 0 & 0 \\ 0 & a_2 & 0 \\ 0 & 0 & a_3} $$ 
+\item The identity matrix or unit matrix is denoted by $\Imtx$ and is a diagonal matrix whose elements on the main diagonal are all $1$s 
+$$ \Imtx = \matrix{1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1} $$ 
+\item Premultiplying or postmultiplying any $r \times r$ matrix $\mtx{A}$ by the $r \times r$ identify matrix $\Imtx$ leaves $\mtx{A}$ unchanged 
+$$ \mtx{IA} = \matrix{1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1} \matrix{a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \\ a_{31} & a_{32} & a_{33}} = \matrix{a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \\ a_{31} & a_{32} & a_{33}} = \matrix{a_{11} & a_{12} & a_{13} \\ a_{21} & a_{22} & a_{23} \\ a_{31} & a_{32} & a_{33}} \matrix{1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1} = \mtx{AI} $$ 
+\item In general, for any $r \times r$ matrix $\mtx{A}$, $$ \mtx{AI} = \mtx{IA} = \mtx{A} $$ The identity matrix can be inserted or dropped from a matrix expression whenever it is convenient to do so
+\item A scalar matrix is a diagonal matrix whose main-diagonal elements are the same, and can be represented as $k\Imtx$, where $k$ is the scalar 
+$$ \matrix{k & 0 & 0 \\ 0 & k & 0 \\ 0 & 0 & k } = k\matrix{1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1} = k\Imtx $$
+\item Multiplying an $r \times r$ matrix $\mtx{A}$ by the $r times r$ scalar matrix $k\Imtx$ is equivalent to multiplying $\mtx{A}$ by the scalar $k$
+\item A column vector with all elements $1$ will be denoted by $\mtx{1}$ $$ \underbrace{\mtx{1}}_{r \times 1} = \matrix{1 \\ 1 \\ \vdots \\ 1 } $$ 
+\item A square matrix with all elements $1$ will be denoted by $\mtx{J}$ $$ \underbrace{\mtx{J}}_{r \times r} = \matrix{1 & \hdots & 1 \\ \vdots & \ddots & \vdots \\ 1 & \hdots & 1} $$ 
+\item Note that for an $n \times 1$ vector $\mtx{1}$, $$ \underbrace{\tr{1}\mtx{1}}_{1 \times 1} = \matrix{1 & \hdots & 1}\matrix{1 \\ \vdots \\ 1} = [n] = n $$ and $$ \underbrace{\mtx{1}\tr{1}}_{n \times n} = \matrix{1 \\ \vdots \\ 1} \matrix{1 & \hdots & 1} = \matrix{1 & \hdots & 1 \\ \vdots & \ddots & \vdots \\ 1 & \hdots & 1 } = \underbrace{\mtx{J}}_{n \times n} $$ 
+\item A zero vector is a vector containing only zeros
+\item The zero column vector will be denoted as $\mtx{0}$ $$ \underbrace{\mtx{0}}_{r \times 1} = \matrix{0 \\ 0 \\ \vdots \\ 0} $$ 
+\end{itemize}
 
-\subsection{Linear Dependence and Rank of Matrix}
+\subsection{Linear Dependence and Rank of Matrix} 
+\begin{itemize}
+\item When $c$ scalars $k_1,\dots,k_c$, not all zero, can be found such that $$ k_1\mtx{C}_1 + k_2\mtx{C}_2 + \dots + k_c\mtx{C}_c = \mtx{0} $$ where $\mtx{0}$ denotes the zero column vector and $\mtx{C}_i$ are column vectors of a matrix, the $c$column vectors are linearly dependent; if the only set of scalars for which the equality holds is $k_1 = 0,\dots,k_c = 0$, the set of $c$ column vectors is linearly independent
+\item The rank of a matrix is defined to be the maximum number of linearly independent columns in the matrix 
+\item The rank of a matrix is unique and can equivalently be defined as the maximum number of linearly independent rows
+\item The rank of an $r \times c$ matrix cannot exceed $\min(r, c)$, the minimum of the two values $r$ and $c$ 
+\item When a matrix is the product of two matrices, its rank cannot exceed the smaller of the two ranks for the matrices being multiplied 
+\end{itemize}
 
 \subsection{Inverse of a Matrix}
+\begin{itemize}
+\item The inverse of a matrix $\mtx{A}$, denoted by $\mtxInv{A}$, is another matrix such that $$ \mtxInv{A}\mtx{A} = \mtx{A}\mtxInv{A} = \Imtx $$ where $\Imtx$ is the identity matrix 
+\item Note that the inverse of a matrix is defined only for square matrices; even so, many square matrices do not have inverses; if a square matrix does have an inverse, the inverse is unique 
+\item The inverse of a diagonal matrix is a diagonal matrix consisting simply of the reciprocals of the elements on the diagonal
+\item An inverse of a square $r \times r$ matrix exists if the rank of the matrix is $r$; such a matrix is said to be nonsingular or of full rank
+\item An $r \times r$ matrix with rank less than $r$ is said to be singular and not of full rank, and does not have an inverse
+\item The inverse of an $r \times r$ matrix of full rank also has rank $r$ 
+\item If $$ \underbrace{\mtx{A}}_{2 \times 2} = \matrix{a & b \\ c & d} $$ then $$ \underbrace{\mtxInv{A}}_{2 \times 2} = \matrixInv{a & b \\ c & d}{-1} = \matrix{ \frac{d}{D} & -\frac{b}{D} \\ -\frac{c}{D} & \frac{a}{D}} $$ where $$ D = ad - bc $$ is called the determinant of the matrix $\mtx{A}$; if $\mtx{A}$ were singular, its determinant would equal zero and no inverse of $\mtx{A}$ would exist
+\item If $$ \underbrace{\mtx{B}}_{3 \times 3} = \matrix{a & b & c \\ d & e & f \\ g & h & k} $$ then $$ \underbrace{\mtxInv{B}}_{3 \times 3} = \matrixInv{a & b & c \\ d & e & f \\ g & h & k}{-1} = \matrix{A & B & C \\ D & E & F \\ G & H & K} $$ where $$ \begin{aligned} A &= (ek - fh)/Z ~~~ B &= -(bk - ch)/Z ~~~ C &= (bf - ce)/Z \\ D &= -(dk - fg)/Z ~~~ E &= (ak - cg)/Z ~~~ F &= -(af - cd)/Z \\ G &= (dh - eg)/Z ~~~ H &= -(ah - bg)/Z ~~~ K &= (ae - bd)/Z \end{aligned} $$ 
+and $$ Z = a(ek - fh) - b(dk - fg) + c(dh - eg) $$ is called the determinant of the matrix $\mtx{B}$ 
+\item Computing the inverse of matrices with higher number of rows/columns require a large amount of computation
+\item In matrix algebra, if there is an equation $\mtx{AY} = \mtx{C}$, both sides can be premultiplied by $\mtxInv{A}$, assuming $\mtx{A}$ has an inverse, to obtain a solution for $\mtx{Y}$
+$$ \mtx{Y} = \mtxInv{A}\mtx{C} $$ 
+\end{itemize}
 
-\subsection{Some Basic Results for Matrices}
+\subsection{Some Basic Results for Matrices} 
+\begin{itemize} 
+\item $ \mtx{A} + \mtx{B} = \mtx{B} + \mtx{A} $ 
+\item $ (\mtx{A} + \mtx{B}) + \mtx{C} = \mtx{A} + (\mtx{B} + \mtx{C}) $
+\item $ (\mtx{AB})\mtx{C} = \mtx{A}(\mtx{BC}) $
+\item $ \mtx{C}(\mtx{A} + \mtx{B}) = \mtx{CA} + \mtx{CB} $
+\item $ k(\mtx{A} + \mtx{B}) = k\mtx{A} + k\mtx{B} $
+\item $ (\Imtx \mtx{A})' = \mtx{A} $
+\item $ (\mtx{A} + \mtx{B})' = \mtxT{A} + \mtxT{B} $
+\item $ (\mtx{AB})' = \mtxT{B}\mtxT{A} $
+\item $ (\mtx{ABC})' = \mtxT{C} \mtxT{B} \mtxT{A} $
+\item $ (\mtx{AB})^{-1} = \mtxInv{B} \mtxInv{A} $ 
+\item $ (\mtx{ABC})^{-1} = \mtxInv{C} \mtxInv{B} \mtxInv{A} $ 
+\item $ (\mtxInv{A})^{-1} = \mtx{A} $ 
+\item $ (\mtxT{A})^{-1} = (\mtxInv{A})' $ 
+\end{itemize} 
 
 \subsection{Random Vectors and Matrices}
 

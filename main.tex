@@ -30,9 +30,15 @@
 \newcommand{\Fdist}[2]{F_{#1, #2}}
 
 \newcommand{\prob}[1]{\mathds{P} \left( #1 \right)}
-\newcommand{\cprob}[2]{\mathds{P}\left( #1 ~!~ #2 \right)}
+\newcommand{\cprob}[2]{\mathds{P}\left( #1 ~!~ #2 \right)}  
 \newcommand{\hyptest}[2]{ $$ \begin{aligned} H_0: ~#1 \\ H_A: ~ #2 \end{aligned} $$ }
 
+\newcommand{\mtx}[1]{\mathbf{#1}}
+\renewcommand{\matrix}[1]{ \begin{bmatrix} #1 \end{bmatrix}}
+\newcommand{\mtxT}[1]{\mtx{#1}'}
+\newcommand{\Imtx}{\mtx{I}}
+\newcommand{\mtxInv}[1]{\mtx{#1}^{-1}}
+\newcommand{\matrixInv}[2]{\matrix{#1}^{#2}}
 
 \begin{document}
 
@@ -43,7 +49,7 @@
 
 \chapter{Simple Linear Regression} 
 \input{partOne.tex}
-
+ 
 \end{document}
 \chapter{Multiple Linear Regression} 
 
