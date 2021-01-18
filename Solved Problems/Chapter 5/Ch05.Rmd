@@ -1,0 +1,320 @@
+---
+title: 'ALSM: Chapter 5'
+author: "Darshan Patel"
+date: "1/18/2021"
+output:
+  html_document: default
+  pdf_document: default
+subtitle: Matrix Approach to Simple Linear Regression Analysis
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, results = 'asis')
+```
+
+```{r, message=FALSE}
+library(tidyverse)
+library(latex2exp)
+library(gridExtra)
+library(wesanderson)
+library(broom)
+theme_set(theme_minimal())
+```
+
+### Problem 1: 
+For the matrices below, obtain (1) $\mathbf{A + B}$, (2) $\mathbf{A - B}$, (3) $\mathbf{AC}$, (4) $\mathbf{AB'}$, (5) $\mathbf{B'A}$.
+$$ \mathbf{A} = \begin{bmatrix} 1 & 4 \\ 2 & 6 \\ 3 & 8 \end{bmatrix} ~~~ B = \begin{bmatrix} 1 & 3 \\ 1 & 4 \\ 2 & 5 \end{bmatrix} ~~~ C = \begin{bmatrix} 3 & 8 & 1 \\ 5 & 4 & 0 \end{bmatrix} $$
+State the dimension of each resulting matrix.
+
+Answer: 
+
+### Problem 2: 
+For the matrices below, obtain (1) $\mathbf{A + C}$, (2) $\mathbf{A - C}$, (3) $\mathbf{B'A}$, (4) $\mathbf{AC'}$, (5) $\mathbf{C'A}$.
+$$ \mathbf{A} = \begin{bmatrix} 2 & 1 \\ 3 & 5 \\ 5 & 7 \\ 4 & 8 \end{bmatrix} ~~~ \mathbf{B} = \begin{bmatrix} 6 \\ 9 \\ 3 \\ 1 \end{bmatrix} ~~~ \mathbf{C} = \begin{bmatrix} 3 & 8 \\ 8 & 6 \\ 5 & 1 \\ 2 & 4 \end{bmatrix} $$ 
+
+State the dimension of each resulting matrix. 
+
+Answer: 
+
+### Problem 3: 
+Show how the following expressions are written in terms of matrices: (1) $Y_i - \hat{Y}_i = e_i$, (2) $\sum X_ie_i = 0$. Assume $i = 1,\dots, 4$. 
+
+Answer: 
+
+### Problem 4: 
+*Flavor deterioration*, Results were obtained in a small-scale experiment to study the relation between $^\circ F$ of storage temperature ($X$) and number of weeks before flavor deterioration of a food product begins to occur ($Y$). 
+
+Assume that first-order regression model is applicable. Using matrix methods, find (1) $\mathbf{Y'Y}$, (2) $\mathbf{X'X}$, (3) $\mathbf{X'Y}$. 
+
+Answer:
+
+### Problem 5: 
+*Consumer finance*. The data shows, for a consumer finance company operating in six cities, the number of competing loan companies operating in the city ($X$) and the number per thousand of the company's loans made in that city that are currently delinquent ($Y$). 
+
+Assume that first-order regression model is applicable. Using matrix methods, find (1) $\mathbf{Y'Y}$ (2) $\mathbf{X'X}$, (3) $\mathbf{X'Y}$. 
+
+Answer: 
+
+
+### Problem 6: 
+Refer to *Airfreight breakage* Problem 1.21. Using matrix methods, find (1) $\mathbf{Y'Y}$ (2) $\mathbf{X'X}$, (3) $\mathbf{X'Y}$. 
+
+Answer: 
+
+
+### Problem 7: 
+Refer to *Plastic hardness* Problem 1.22. Using matrix methods, find (1) $\mathbf{Y'Y}$ (2) $\mathbf{X'X}$, (3) $\mathbf{X'Y}$. 
+
+Answer: 
+
+
+### Problem 8: 
+Let $\mathbf{B}$ be defined as follows: $$ \mathbf{B} = \begin{bmatrix} 1 & 5 & 0 \\ 1 & 0 & 5 \\ 1 & 0 & 5 \end{bmatrix} $$ 
+
+(a) Are the column vectors of $\mathbf{B}$ linearly dependent? 
+
+Answer: 
+
+(b) What is the rank of $\mathbf{B}$? 
+
+Answer: 
+
+(c) What must be the determinant of $\mathbf{B}$? 
+
+Answer: 
+
+
+### Problem 9: 
+Let $\mathbf{A}$ be defined as follows: 
+$$ \mathbf{A} = \begin{bmatrix} 0 & 1 & 8 \\ 0 & 3 & 1 \\ 0 & 5 & 5 \end{bmatrix} $$ 
+
+(a) Are the column vectors of $\mathbf{A}$ linearly dependent? 
+
+Answer: 
+
+(b) Restate definition (5.20) in terms of row vectors. Are the row vectors of $\mathbf{A}$ linearly dependent? 
+
+Answer: 
+
+(c) What is the rank of $\mathbf{A}$? 
+
+Answer: 
+
+(d) Calculate the determinant of $\mathbf{A}$.
+
+Answer: 
+
+
+### Problem 10: 
+Find the inverse of each of the following matrices: 
+$$ \mathbf{A} = \begin{bmatrix} 2 & 4 \\ 3 & 1 \end{bmatrix} ~~~ \mathbf{B} = \begin{bmatrix} 4 & 3 & 2 \\ 6 & 5 & 10 \\ 10 & 1 & 6 \end{bmatrix} $$ 
+Check that in each case, the resulting matrix is indeed the inverse.
+
+Answer: 
+
+### Problem 11: 
+Find the inverse of the following matrix: $$ \mathbf{A} = \begin{bmatrix} 5 & 1 & 3 \\ 4 & 0 & 5 \\ 1 & 9 & 6 \end{bmatrix} $$ Check that the resulting matrix is indeed the inverse.
+
+Answer: 
+
+### Problem 12: 
+Refer to *Flavor deterioration* Problem 5.4. Find $(\mathbf{X'X})^{-1}$.
+
+Answer: 
+
+
+### Problem 13: 
+Refer to *Consumer finance* Problem 5.5. Find $(\mathbf{X'X})^{-1}$. 
+
+Answer: 
+
+
+### Problem 14: 
+Consider the simultaneous equations: 
+$$ \begin{aligned} 4y_1 + 7y_2 &= 25 \\ 2y_1 + 3y_2 &= 12 \end{aligned} $$ 
+
+(a) Write these equations in matrix notation.
+
+Answer: 
+
+(b) Using matrix methods, find the solutions for $y_1$ and $y_2$. 
+
+Answer: 
+
+
+### Problem 15: 
+Consider the simultaneous equations: 
+$$ \begin{aligned} 5y_1 + 2y_2 &= 8 \\ 23y_1 + 7y_2 &= 28 \end{aligned} $$ 
+
+(a) Write these equations in matrix notation.
+
+Answer: 
+
+(b) Using matrix methods, find the solutions for $y_1$ and $y_2$. 
+
+Answer: 
+
+
+### Problem 16: 
+Consider the estimated linear regression function in the form of (1.15). Write expressions in this form for the fitted values $\hat{Y}_i$ in matrix terms for $i=1,\dots,5$.
+
+Answer: 
+
+
+### Problem 17: 
+Consider the following functions of the random variables $Y_1$, $Y_2$, and $Y_3$. 
+$$ \begin{aligned} W_1 &= Y_1 + Y_2 + Y_3 \\ W_2 &= Y_1 - Y_2 \\ W_3 &= Y_1 - Y_2 - Y_3 \end{aligned} $$ 
+
+(a) State the above in matrix notation.
+
+Answer: 
+
+(b) Find the expectation of the random vector $\mathbf{W}$. 
+
+Answer: 
+
+(c) Find the variance-covariance matrix of $\mathbf{W}$. 
+
+Answer: 
+
+
+### Problem 18: 
+Consider the following functions of the random variables $Y_1$, $Y_2$, $Y_3$, and $Y_4$. 
+$$ \begin{aligned} W_1 &= \frac{1}{4}(Y_1 + Y_2 + Y_3  + Y_4) \\ W_2 &= \frac{1}{2}(Y_1 + Y_2) - \frac{1}{2}(Y_3 + Y_4) \end{aligned} $$ 
+
+(a) State the above in matrix notation.
+
+Answer: 
+
+(b) Find the expectation of the random vector $\mathbf{W}$. 
+
+Answer: 
+
+(c) Find the variance-covariance matrix of $\mathbf{W}$. 
+
+Answer: 
+
+
+### Problem 19: 
+Find the matrix $\mathbf{A}$ of the quadratic form: $$ 3Y_1^2 + 10Y_1Y_2 + 17Y_2^2 $$ 
+
+Answer: 
+
+
+### Problem 20: 
+Find the matrix $\mathbf{A}$ of the quadratic form $$ 7Y_1^2 - 8Y_1Y_2 + 8Y_2^2 $$ 
+
+Answer: 
+
+
+### Problem 21: 
+For the matrix $$ \mathbf{A} = \begin{bmatrix} 5 & 2 \\ 2 & 1 \end{bmatrix} $$ find the quadratic form of the observations $Y_1$ and $Y_2$. 
+
+Answer: 
+
+
+### Problem 22: 
+For the matrix $$ \mathbf{A} = \begin{bmatrix} 1 & 0 & 4 \\ 0 & 3 & 0 \\ 4 & 0 & 9 \end{bmatrix} $$ find the quadratic form of the observations $Y_1$, $Y_2$, and $Y_3$. 
+
+Answer: 
+
+
+### Problem 23: 
+Refer to *Flavor deterioration* Problems 5.4 and 5.12. 
+
+(a) Using matrix methods, obtain the following: (1) vector of estimated regression coefficients, (2) vector of residuals, (3) SSR, (4) SSE, (5) estimated variance-covariance matrix of $\mathbf{b}$, (6) point estimate of $E[Y_h]$ when $X_h = -6$, (7) estimated variance of $\hat{Y}_h$ when $X_h = -6$. 
+
+Answer: 
+
+(b) What simplifications arose from the spacing of the $X$ levels in the experiment? 
+
+Answer: 
+
+(c) Find the hat matrix $\mathbf{H}$. 
+
+Answer: 
+
+(d) Find $s^2[\mathbf{e}]$. 
+
+Answer: 
+
+
+### Problem 24: 
+Refer to *Consumer finance* Problems 5.5 and 5.13. 
+
+(a) Using matrix methods, obtain the following: (1) vector of estimated regression coefficients, (2) vector of residuals, (3) SSR, (4) SSE, (5) estimated variance-covariance matrix of $\mathbf{b}$, (6) point estimate of $E[Y_h]$ when $X_h = 4$, (7) $s^2[\text{pred}]$ when $X_h = 4$. 
+
+Answer: 
+
+(b) From your estimated variance-covariance matrix in part (a5), obtain the following: (1) $s[b_0, b_1]$, (2) $s^2[b_0]$, (3) $s[b_1]$.
+
+Answer: 
+
+(c) Find the hat matrix $\mathbf{H}$. 
+
+Answer: 
+
+(d) Find $s^2[\mathbf{e}]$. 
+
+Answer: 
+
+
+### Problem 25: 
+Refer to *Airfreight breakage* Problems 1.21 and 5.6. 
+
+(a) Using matrix methods, obtain the following: (1) $(\mathbf{X'X})^{-1}$, (2) $\mathbf{b}$, (3) $\mathbf{e}$, (4) $\mathbf{H}$, (5) SSE, (6) $s^2[\mathbf{b}]$, (7) $\hat{Y}_h$ when $X_h = 2$, (8) $s^2[\hat{Y}_h]$ when $X_h = 2$. 
+
+Answer: 
+
+(b) From part (a6), obtain the following: (1) $s^2[b_1]$, (2) $s[b_0, b_1]$, (3) $[b_0]$.
+
+Answer: 
+
+(c) Find the matrix of the quadratic form for SSR. 
+
+
+### Problem 26: 
+Refer to *Plastic hardness* Problems 1.22 and 5.7. 
+
+(a) Using matrix methods, obtain the following: (1) $(\mathbf{X'X})^{-1}$, (2) $\mathbf{b}$, (3) $\mathbf{\hat{Y}}$, (4) $\mathbf{H}$, (5) SSE, (6) $s^2[\mathbf{b}]$, (7) $s^2[\text{pred}]$ when $X_h = 30$.
+
+Answer: 
+
+(b) From part (a6), obtain the following: (1) $s^2[b_0]$, (2) $s[b_0, b_1]$, (3) $s[b_1]$.
+
+Answer: 
+
+(c) Find the matrix of the quadratic form for SSE.
+
+
+### Problem 27: 
+Refer to regression-through-the-origin model (4.10). Set up the expectation vector for $\mathbf{\varepsilon}$. Assume that $i = 1,\dots,4$. 
+
+Answer: 
+
+
+### Problem 28: 
+Consider model (4.10) for regression through the origin and the estimator $b_1$ given in (4.14). Obtain (4.14) by utilizing (5.60) with $\mathbf{X}$ suitably defined.
+
+Answer: 
+
+
+### Problem 29: 
+Consider the least squares estimator $\mathbf{b}$ given in (5.60). Using matrix methods, show that $\mathbf{b}$ is an unbiased estimator.
+
+Answer: 
+
+
+### Problem 30: 
+Show that $\hat{Y}_h$ in (5.96) can be expressed in matrix terms as $\mathbf{b'X}_h$.
+
+Answer: 
+
+
+### Problem 31: 
+Obtain an expression for the variance-covariance matrix of the fitted values $\hat{Y}_i$, $i = 1,\dots,n$, in terms of the hat matrix. 
+
+Answer: 
+
+
+
