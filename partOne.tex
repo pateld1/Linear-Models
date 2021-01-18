@@ -965,14 +965,81 @@ $$ \mtx{Y} = \mtxInv{A}\mtx{C} $$
 \end{itemize} 
 
 \subsection{Random Vectors and Matrices}
+\begin{itemize}
+\item A random vector or a random matrix contains elements that are random variables 
+\item The expected value of a random vector is a vector whose elements are the expected values of the random variables that are the elements of the random vector; for a random vector $\mtx{Y}$, the expectation is $$ \underbrace{\mtx{E[Y]}}_{n \times 1} = [E[Y_i]] ~~~ i = 1,\dots,n $$ 
+\item The expectation of a random matrix is a matrix whose elements are the expected values of the corresponding variables in the original matrix; for a random matrix $\mtx{Y}$ with dimension $n \times p$, the expectation is $$ \underbrace{E[\mtx{Y}]}_{n \times p} = [E[Y_{ij}]] ~~~ i = 1,\dots,n; j = 1,\dots, p $$ 
+\item The variances and covariances of a random vector $\mtx{Y}$ are assembled in a variance-covariance matrix of $\mtx{Y}$, denoted by $\sigma^2[\mtx{Y}]$; the variance-covariance matrix for an $n \times 1$ random vector $\mtx{Y}$ is $$ \underbrace{\sigma^2[\mtx{Y}]}_{n \times n} = \matrix{\sigma^2[Y_1] & \sigma[Y_1, Y_2] & \hdots & \sigma[Y_1,Y_n] \\ \sigma[Y_2, Y_1] & \sigma^2[Y_2] & \hdots & \sigma[Y_2, Y_n] \\  \vdots & \vdots & \ddots & \vdots \\ \sigma[Y_n,Y_1] & \sigma[Y_n, Y_2] & \hdots & \sigma^2[Y_n]} $$ Note that $\sigma^2[\mtx{Y}]$ is a symmetric matrix since $\sigma[Y_i, Y_j] = \sigma[Y_j, Y_i]$ for all $i \neq j$ 
+\item The derivation of the variance-covariance matrix arises from $$\sigma^2[\mtx{Y}]  = E[[\mtx{Y} - E[\mtx{Y}]][\mtx{Y} - E[\mtx{Y}]]']$$ 
+\item Suppose $\mtx{W}$ is a random vector, $\mtx{A}$ is a constant matrix ( a matrix whose elements are fixed) and $\mtx{Y}$ is a random vector, then if $\mtx{W} = \mtx{AY}$, then $$ \begin{aligned} E[\mtx{A}] &= \mtx{A} \\ E[\mtx{W} ]&= E[\mtx{AY}] = \mtx{A}E[\mtx{Y}] \\ \sigma^2[\mtx{W}] &= \sigma^2[\mtx{AY}] = \mtx{A}\sigma^2[\mtx{Y}]\mtx{A'} \end{aligned} $$ where $\sigma^2[\mtx{Y}]$ is the variance-covariance matrix of $\mtx{Y}$
+\item The density function for the multivariate normal distribution is best given in matrix form; Let the observations vector $\mtx{Y}$ contain observation on each of the $p$ $Y$ variables as defined as usual: $$ \underbrace{\mtx{Y}}_{p \times 1} = \matrix{Y_1 \\ Y_2 \\ \vdots \\ Y_p} $$ The mean vector $E[\mtx{Y}]$, denoted by $\bm{\mu}$, contains the expected values for each of the $p$ $Y$ variables $$ \underbrace{\bm{\mu}}_{p \times 1} = \matrix{ \mu_1 \\ \mu_2 \\ \vdots \\ \mu_p} $$ The variance-covariance matrix $\sigma^2[\mtx{Y}]$, denoted by $\mtx{\Sigma}$, contains the variances and covariances of the $p$ $Y$ variables $$ \underbrace{\mtx{\Sigma}}_{p \times p} = \matrix{ \sigma^2_1 & \sigma_{12} & \hdots & \sigma_{1p} \\ \sigma_{21} & \sigma_2^2 & \hdots & \sigma_{2p} \\ \vdots & \vdots & \ddots & \vdots \\ \sigma_{p1} & \sigma_{p2} & \hdots & \sigma^2_p} $$ where $\sigma_1^2$ denotes the variance of $Y_1$, $\sigma_{12}$ denotes the covariance of $Y_1$ and $Y_2$, and so forth
+\item The density function of the multivariate normal distribution can be stated as follows: $$ f(\mtx{Y}) = \frac{1}{(2\pi)^{p/2} \abs{\mtx{\Sigma}}^{1/2}}\exp\left[-\frac{1}{2} (\mtx{Y} - \mtx{\mu})'\mtx{\Sigma}^{-1}(\mtx{Y} - \mtx{\mu})\right] $$ where $\abs{\mtx{\sum}}$ is the determinant of the variance-covariance matrix $\mtx{\Sigma}$
+\item Note that when there are $p=2$ variables, the multivariate normal density function simplifies to the bivariate normal density function 
+\item The multivariate normal density function has properties that correspond to the ones described for the bivariate normal distribution, such as, if $Y_1,\dots, Y_p$ are jointly normally distributed (i.e., they follow the multivariate normal distribution), the marginal probability distribution of each variable $Y_k$ is normal, with mean $\mu_k$ and standard deviation $\sigma_k$
+\end{itemize}  
 
 \subsection{Simple Linear Regression Model in Matrix Terms}
+\begin{itemize} 
+\item The normal error regression model is $$ Y_i = \beta_0 + \beta_1X_i + \varepsilon_i ~~~ i = 1,\dots,n $$ which simplifies to $$ \begin{aligned} Y_1 &= \beta_0 + \beta_1X_1 + \varepsilon_1 \\ Y_2 &= \beta_0 + \beta_1X_2 + \varepsilon_2 \\ &\vdots \\ Y_n &= \beta_0 + \beta_1X_n + \varepsilon_n \end{aligned} $$ 
+\item To develop simple linear regression in matrix terms, define the following: $$ \underbrace{\mtx{Y}}_{n \times 1} = \matrix{Y_1 \\ Y_2 \\ \vdots \\ Y_n} ~~~ \underbrace{\mtx{X}}_{n \times 2} = \matrix{ 1 & X_1 \\ 1 & X_2 \\ \vdots & \vdots \\ 1 & X_n} ~~~ \underbrace{\bm{\beta}}_{2 \times 1} = \matrix{\beta_0 \\ \beta_1} ~~~ \underbrace{\bm{\varepsilon}}_{n \times 1} = \matrix{\varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ \varepsilon_n} $$ Then the normal error regression model can be rewritten as $$ \underbrace{\mtx{Y}}_{n \times 1} = \underbrace{\mtx{X}}_{n \times 2} \underbrace{\bm{\beta}}_{2 \times 1} + \underbrace{\bm{\varepsilon}}_{n \times 1} $$ This is derived from 
+$$ \begin{aligned} 
+\matrix{Y_1 \\ Y_2 \\ \vdots \\ Y_n} &= \matrix{1 & X_1 \\ 1 & X_2 \\ \vdots & \vdots \\ 1 & X_n}\matrix{\beta_0 \\ \beta_1} + \matrix{ \varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ \varepsilon_n} \\ &= \matrix{\beta_0 + \beta_1X_1 \\ \beta_0 + \beta_1X_2 \\ \vdots \\ \beta_0 + \beta_1X_n} + \matrix{\varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ \varepsilon_n} \\ &= \matrix{\beta_0 + \beta_1X_1 + \varepsilon_1 \\ \beta_0 + \beta_1X_2 + \varepsilon_2 \\ \vdots \\ \beta_0 + \beta_1X_n + \varepsilon_n} \end{aligned} $$ 
+\item $\mtx{XB}$ is the vector of the expected values of the $Y_i$ observations since $E[Y_i] = \beta_0 + \beta_1X_i$ $$ \underbrace{E[\mtx{Y}]}_{n \times 1} = \underbrace{\mtx{XB}}_{n \times 1} $$ 
+\item The $\mtx{X}$ matrix may be considered to contained a column vector consisting of $1$s and another column vector consisting of the predictor variable observations $X_i$
+\item The condition $E[\varepsilon_i] = 0$ in matrix terms is $$ \underbrace{E[\bm{\varepsilon}]}_{n \times 1} = \underbrace{\mtx{0}}_{n \times 1} $$ since $$ \matrix{E[\varepsilon_1] \\ E[\varepsilon_2] \\ \vdots \\ E[\varepsilon_n]} = \matrix{0 \\ 0 \\ \vdots \\ 0} $$ 
+\item The condition that the error terms have constant variance $\sigma^2$ and that all covariances $\sigma[\varepsilon_i, \varepsilon_j]$ for $i\neq j$ are zero (since the $\varepsilon_i$ are independent) is expressed in matrix terms through the variance-covariance matrix of the error terms $$ \underbrace{\bm{\sigma^2[\varepsilon]}}_{n \times n} = \matrix{\sigma^2 & 0 & 0 & \hdots & 0 \\ 0 & \sigma^2 & 0 & \hdots & 0 \\ &\vdots & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & 0 & \hdots & \sigma^2} $$ which can be expressed as $$ \underbrace{\bm{\sigma^2[\varepsilon]}}_{n \times n} = \underbrace{\sigma^2 \Imtx}_{n \times n} $$ 
+\item The normal error regression model in matrix terms is $$ \mtx{Y} = \mtx{XB} + \bm{\varepsilon} $$ where $\bm{\varepsilon}$ is a vector of independent normal random variables with $E[\bm{\varepsilon}] = \mtx{0}$ and $\bm{\sigma^2[\varepsilon]} = \sigma^2\Imtx $
+\end{itemize} 
 
 \subsection{Least Squares Estimation of Regression Parameters}
+\begin{itemize}
+\item The normal equations $$ \begin{aligned} nb_0 + b_1 \sum X_I &= \sum Y_i \\ b_0 \sum X_I + b_1 \sum X_i^2 &= \sum X_i Y_i \end{aligned} $$ in matrix terms are $$ \underbrace{\mtx{X}'\mtx{X}}_{2 \times 2} \underbrace{\mtx{b}}_{2 \times 1} = \underbrace{\mtx{X}'\mtx{Y}}_{2 \times 1} $$ where $\mtx{b}$ is the vector of the least squares regression coefficients
+\item This is derived as follows: $$ \begin{aligned} \underbrace{\mtx{X}'\mtx{X}}_{2 \times 2} &= \matrix{1 & 1 & \hdots & 1 \\ X_1 & X_2 & \hdots & X_n} \matrix{1 & X_1 \\ 1 & X_2 \\ \vdots & \vdots \\ 1 & X_n} = \matrix{n & \sum X_i \\ \sum X_i & \sum X_i^2} \\ \underbrace{\mtx{X}'\mtx{Y}}_{2 \times 1} &= \matrix{ 1 & 1 & \hdots & 1 \\ X_1 & X_2 & \hdots & X_n}\matrix{Y_1 \\ Y_2 \\ \vdots \\ Y_n} = \matrix{\sum Y_i \\ \sum X_i Y_i}  \\ 
+\mtx{X}'\mtx{X} \mtx{b} &= \matrix{n & \sum X_i \\ \sum X_i & \sum X_i^2} \matrix{b_0 \\ b_1} \\ &= \matrix{nb_0 + b_1 \sum X_i \\ b_0 \sum X_i + b_1 \sum X_i^2} \\ &= \matrix{\sum Y_i \\ \sum X_i Y_i} \\ &= \mtx{X}'\mtx{Y} \end{aligned} $$ 
+\item To obtain the estimated regression coefficients from the normal equations by matrix methods, premultiply both sides by the inverse of $\mtx{X}'\mtx{X}$ to get the following 
+$$ \underbrace{\mtx{b}}_{2 \times 1} = \underbrace{(\mtx{X}'\mtx{X})}_{2 \times 2}^{-1} \underbrace{\mtx{X}'\mtx{Y}}_{2 \times 1} $$ 
+The estimators $b_0$ and $b_1$ in $\mtx{b}$ are the same as given before
+\item A comparison of the normal equations and $\mtx{X}'\mtx{X}$ shows that whenever the columns of $\mtx{X}'\mtx{X}$ are linearly dependent, the normal equations will be linearly dependent also; no unique solutions can then be obtained for $b_0$ and $b_1$; fortunately, in most regression applications, the columns of $\mtx{X}'\mtx{X}$ are linearly independent, leading to unique solutions for $b_0$ and $b_1$ 
+\end{itemize}
 
 \subsection{Fitted Values and Residuals}
+\begin{itemize}
+\item Let the vector of the fitted values $\hat{Y}_i$ be denoted by $\mtx{\hat{Y}}_i$ $$ \underbrace{\mtx{\hat{Y}}}_{n \times 1} = \matrix{\hat{Y}_1 \\ \hat{Y}_2 \\ \vdots \\ \hat{Y}_n} $$ In matrix notation, this is $$ \underbrace{\mtx{\hat{Y}}}_{n \times 1} = \underbrace{\mtx{X}}_{n \times 2} \underbrace{\mtx{b}}_{2 \times 1} $$ because $$ \matrix{\hat{Y}_1 \\ \hat{Y}_2 \\ \vdots \\ \hat{Y}_n} = \matrix{1 & X_1 \\ 1 & X_2 \\ \vdots & \vdots \\ 1 & X_n} \matrix{b_0 \\ b_1} = \matrix{b_0 + b_1X_1 \\ b_0 + b_1X_2 \\ \vdots \\ b_0 + b_1X_n} $$ 
+\item The matrix result for $\mtx{\hat{Y}}$ can be expressed as $$ \underbrace{\mtx{\hat{Y}}}_{n \times 1} = \underbrace{\mtx{H}}_{n \times n} \underbrace{\mtx{Y}}_{n \times 1} $$ where $$ \underbrace{\mtx{H}}_{n \times n} = \mtx{X}(\mtx{X}'\mtx{X})^{-1}\mtx{X}' $$ so that $$ \mtx{\hat{Y}} = \underbrace{\mtx{X}(\mtx{X}'\mtx{X})^{-1}\mtx{X}'}_{\mtx{H}} \mtx{Y} $$ The square $n \times n$ matrix $\mtx{H}$ is called the hat matrix
+\item The matrix $\mtx{H}$ is symmetric and has following property (called idempotency): $$ \mtx{HH} = \mtx{H} $$ 
+\item A matrix $\mtx{M}$ is said to be idempotent if $\mtx{MM} = \mtx{M}$ 
+\item Let the vector of the residuals $e_i = Y_i - \hat{Y}_i$ be denoted by $\mtx{e}$: $$ \underbrace{\mtx{e}}_{n \times 1} = \matrix{e_1 \\ e_2 \\ \vdots \\ e_n} $$ In matrix notation, this becomes 
+$$ \underbrace{\mtx{e}}_{n \times 1} = \underbrace{\mtx{Y}}_{n \times 1} - \underbrace{\mtx{\hat{Y}}}_{n \times 1} = \underbrace{\mtx{Y}}_{n \times 1} - \underbrace{\mtx{Xb}}_{n \times 1} $$ 
+\item The residuals $e_i$ can be expressed as linear combinations of the response variable observations $Y_i$ in matrix form as follows: $$ \mtx{e} = \mtx{Y} - \mtx{\hat{Y}} = \mtx{Y} - \mtx{HY} = (\Imtx - \mtx{H})\mtx{Y} $$ which can be simplified to $$ \underbrace{\mtx{e}}_{n \times 1} = (\underbrace{\Imtx}_{n \times n} - \underbrace{\mtx{H}}_{n \times n}) \underbrace{\mtx{Y}}_{n \times 1} $$ where $\mtx{H}$ is the hat matrix and the matrix $\Imtx - \mtx{H}$ is also symmetric and idempotent 
+\item The variance-covariance matrix of the vector of residuals $\mtx{e}$ involves the matrix $\Imtx - \mtx{H}$ as follows: $$ \underbrace{\bm{\sigma^2[e]}}_{n \times n} = \sigma^2(\Imtx - \mtx{H}) $$ and is estimated by $$ \underbrace{\mtx{s^2[e]}}_{n \times n} = MSE(\Imtx - \mtx{H}) $$ 
+\end{itemize} 
 
-\subsection{Analysis of Variance Results}
+\subsection{Analysis of Variance Results} 
+\begin{itemize}
+\item The total sum of squares SSTO, in matrix notation, is derived to be $$ SSTO = \mtx{Y}'\mtx{Y} - \left(\frac{1}{n}\right)\mtx{Y}'\mtx{J}\mtx{Y} $$ where $\mtx{J}$ is a matrix of $1$s 
+\item The sum of square errors SSE, in matrix notation, is derived to be $$ SSE = \mtx{e}'\mtx{e} = (\mtx{Y}-\mtx{Xb})'(\mtx{Y} - \mtx{Xb}) $$ which is equivalent to $$ SSE = \mtx{Y}'\mtx{Y} - \mtx{b}'\mtx{X}'\mtx{Y}' $$ 
+\item The sum of square due to regression SSR, in matrix notation, is derived to be $$ SSR = \mtx{b}'\mtx{X}'\mtx{Y}' - \left(\frac{1}{n}\right)\mtx{Y}'\mtx{J}\mtx{Y} $$ 
+\item In general, a quadratic form is defined as $$ \underbrace{\mtx{Y}'\mtx{AY}}_{1 \times 1} = \sum_{i=1}^n \sum_{j=1}^n a_{ij}Y_iY_j ~~~~ \text{where } a_{ij} = a_{ji} $$  
+$\mtx{A}$ is a symmetric $n \times n$ matrix and is called the matrix of the quadratic form
+\item The ANOVA sum of squares SSTO, SSE and SSR are all quadratic forms, as can be seen by reexpressing $\mtx{b}'\mtx{X}'$
+$$ \mtx{b}'\mtx{X}' = (\mtx{Xb})'  = \mtx{\hat{Y}}' = (\mtx{HY})' = \mtx{Y}'\mtx{H} $$ 
+This result then leads to the following $$ \begin{aligned} SSTO &= \mtx{Y}'\left[\Imtx - \left(\frac{1}{n}\right)\mtx{J}\right]\mtx{Y} \\ SSE &= \mtx{Y}'(\Imtx - \mtx{H})\mtx{Y} \\ SSR &= \mtx{Y}'\left[\mtx{H} - \left(\frac{1}{n}\right) \mtx{J}\right] \mtx{Y} \end{aligned} $$ 
+Each of these sum of squares can be seen to be of the form $\mtx{Y}'\mtx{AY}$, where the three $\mtx{A}$ matrices are: $$ \begin{aligned} \Imtx - \left(\frac{1}{n}\right)\mtx{J} \\ \Imtx - \mtx{H} \\ \mtx{H} - \left(\frac{1}{n}\right) \mtx{J} \end{aligned} $$ 
+Since each of these $\mtx{A}$ matrices is symmetric, SSTO, SSE and SSR are quadratic forms, with the matrices of the quadratic forms give above
+\item Quadratic forms play an important role in statistics because all sums of squares in the analysis of variance for linear statistical models can be expressed as quadratic forms 
+\end{itemize} 
 
 \subsection{Inferences in Regression Analysis}
+\begin{itemize} 
+\item The variance-covariance matrix of $\mtx{b}$, in matrix notation, is $$ \underbrace{\bm{\sigma^2[b]}}_{2\times 2} = \sigma^2(\mtx{X}'\mtx{X})^{-1} $$ which can be shown to be 
+$$ \underbrace{\bm{\sigma^2[b]}}_{2 \times 2} = \matrix{ \frac{\sigma^2}{n} + \frac{\sigma^2 \overline{X}^2}{\sum (X_i - \overline{X})^2} & -\frac{\overline{X}\sigma^2}{\sum (X_i - \overline{X})^2} \\ -\frac{\overline{X} \sigma^2}{\sum (X_i - \overline{X})^2} & \frac{\sigma^2}{\sum (X_i - \overline{X})^2} } $$ 
+\item When MSE is substituted for $\sigma^2$ in the variance-covariance matrix, the estimated variance-covariance matrix of $\mtx{b}$, or $\bm{s^2[b]}$, is obtained 
+$$ \underbrace{\bm{s^2[b]}}_{2 \times 2} = MSE(\mtx{X}'\mtx{X})^{-1} = \matrix{ \frac{MSE}{n} + \frac{MSE \overline{X}^2}{\sum (X_i - \overline{X})^2} & -\frac{\overline{X}MSE}{\sum (X_i - \overline{X})^2} \\ -\frac{\overline{X} MSE}{\sum (X_i - \overline{X})^2} & \frac{MSE}{\sum (X_i - \overline{X})^2} }  $$ 
+\item To estimate the mean response at $X_h$, let $$ \underbrace{\mtx{X}_h}_{2 \times 1} = \matrix{1 \\ X_h} ~~~ \text{or} ~~~ \underbrace{\mtx{X}'_h}_{1 \times 2} = \matrix{1 & X_h} $$ 
+Then the fitted value in matrix notation is $$ \mtx{\hat{Y}}_h = \mtx{X}'_h\mtx{b} $$ since $$ \mtx{X}'_h\mtx{b} = \matrix{1 & X_h}\matrix{b_0 \\ b_1} = \matrix{b_0 + b_1X_h} = \matrix{\hat{Y}_h} = \hat{Y}_h $$ 
+Note that $\mtx{X}'_h\mtx{b}$ is a $1 \times 1$ matrix and thus the final result can be written as a scalar 
+\item The variance of $\hat{Y}_h$, in matrix notation, is $$ \sigma^2[\hat{Y}_h] = \sigma^2\mtx{X}'_h(\mtx{X}'\mtx{X})^{-1}\mtx{X}_h $$ and can be reexpressed using the variance-covariance matrix of the estimated regression coefficients as follows $$ \sigma^2[\hat{Y}_h] = \mtx{X}'_h\bm{\sigma^2[b]}\mtx{X}_h $$ 
+\item The estimated variance of $\hat{Y}_h$, in matrix notation, is $$ s^2[\hat{Y}_h] = MSE(\mtx{X}'_h(\mtx{X}'\mtx{X})^{-1}\mtx{X}_h) $$ 
+\item The estimated variance $s^2[\text{pred}]$, in matrix notation, is $$ s^2[\text{pred}] = MSE(1 + \mtx{X}'_h(\mtx{X}'\mtx{X})^{-1}\mtx{X}_h) $$ 
+\end{itemize} 
 
